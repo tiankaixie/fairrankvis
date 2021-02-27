@@ -1,0 +1,9 @@
+gunicorn
+gevent
+Flask
+networkx
+numpy
+sklearn
+node2vec
+matplotlib
+# click
