@@ -16,7 +16,7 @@ import {
     Select,
     Card
 } from "antd";
-import { Typography } from "antd";
+import { Typography, Space } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import {
     updatePairwiseCommonAttributes,
@@ -130,12 +130,47 @@ class Main extends React.Component {
             miningResultDensity = (
                 <React.Fragment>
                     <Title level={5}>Ranking range:</Title>
-                    <Row>
-                        <Col span={6}>
+                    {/* <Space>
+                        <InputNumber
+                            min={clusterSliderUI.minValue}
+                            max={clusterSliderUI.maxValue}
+                            // style={{ margin: "0 16px" }}
+                            value={
+                                selectedMiningResult[0] !== undefined
+                                    ? rankMap[selectedMiningResult[1]]
+                                    : -1
+                            }
+                            onChange={() => {}}
+                            size={"small"}
+                        />
+                        <Slider
+                            style={{width:"100%"}}
+                            min={1}
+                            max={20}
+                            onChange={this.onChange}
+                            value={selectedMiningResult}
+                            range={{ draggableTrack: true }}
+                            defaultValue={[0, 0]}
+                        />
+                        <InputNumber
+                            min={clusterSliderUI.minValue}
+                            max={clusterSliderUI.maxValue}
+                            // style={{ margin: "0 16px" }}
+                            value={
+                                selectedMiningResult[0] !== undefined
+                                    ? rankMap[selectedMiningResult[1]]
+                                    : -1
+                            }
+                            onChange={() => {}}
+                            size={"small"}
+                        />
+                    </Space> */}
+                    <Row justify="space-between">
+                        <Col span={5}>
                             <InputNumber
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                // style={{ margin: "0 16px" }}
+                                style={{ width: "60px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
                                         ? rankMap[selectedMiningResult[1]]
@@ -146,19 +181,20 @@ class Main extends React.Component {
                         </Col>
                         <Col span={12}>
                             <Slider
-                                min={1}
-                                max={20}
-                                onChange={this.onChange}
+                                min={clusterSliderUI.minValue}
+                                max={clusterSliderUI.maxValue}
+                                onChange={()=>{}}
                                 value={selectedMiningResult}
-                                range={{ draggableTrack: true }}
-                                defaultValue={[0, 0]}
+                                // range={{ draggableTrack: true }}
+                                range
+
                             />
                         </Col>
-                        <Col span={6}>
+                        <Col span={5}>
                             <InputNumber
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                // style={{ margin: "0 16px" }}
+                                style={{ width: "60px"  }}
                                 value={
                                     selectedMiningResult[0] !== undefined
                                         ? rankMap[selectedMiningResult[1]]
@@ -175,7 +211,7 @@ class Main extends React.Component {
         const setting = (
             <Menu>
                 <Menu.Item>
-                    <Row>
+                    <Row justify="space-around">
                         <Col span={5}>
                             <Text># of bins</Text>
                         </Col>
@@ -191,7 +227,6 @@ class Main extends React.Component {
                             <InputNumber
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                style={{ margin: "0 16px" }}
                                 value={
                                     clusterSliderUI.value !== undefined
                                         ? clusterSliderUI.value
@@ -218,14 +253,23 @@ class Main extends React.Component {
                                         Object.keys(input.edges).length +
                                         " edges"}
                                 </Text>
-                                <Divider />
-                                <Title level={5}>Ranking Score Density</Title>
-                                <Dropdown
-                                    overlay={setting}
-                                    placement="bottomLeft"
-                                >
-                                    <SettingOutlined />
-                                </Dropdown>
+                                <Divider style={{margin: "0, 8px"}} />
+                                <Row>
+                                    <Col span={16}>
+                                        <Title level={5}>
+                                            Ranking Score Density
+                                        </Title>
+                                    </Col>
+                                    <Col span={8}>
+                                        <Dropdown
+                                            overlay={setting}
+                                            placement="bottomLeft"
+                                        >
+                                            <SettingOutlined />
+                                        </Dropdown>
+                                    </Col>
+                                </Row>
+
                                 <MiningResultDensity
                                     canvasHeight={globalHeight * 0.16}
                                     miningResultControl={
