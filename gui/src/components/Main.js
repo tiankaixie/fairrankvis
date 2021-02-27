@@ -131,11 +131,11 @@ class Main extends React.Component {
                 <React.Fragment>
                     <Title level={5}>Ranking range:</Title>
                     <Row>
-                        <Col span={4}>
+                        <Col span={6}>
                             <InputNumber
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                style={{ margin: "0 16px" }}
+                                // style={{ margin: "0 16px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
                                         ? rankMap[selectedMiningResult[1]]
@@ -154,11 +154,11 @@ class Main extends React.Component {
                                 defaultValue={[0, 0]}
                             />
                         </Col>
-                        <Col span={4}>
+                        <Col span={6}>
                             <InputNumber
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                style={{ margin: "0 16px" }}
+                                // style={{ margin: "0 16px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
                                         ? rankMap[selectedMiningResult[1]]
@@ -208,8 +208,8 @@ class Main extends React.Component {
         return (
             <React.Fragment>
                 <Layout>
-                    <Row gutter={8}>
-                        <Col span={4}>
+                    <Row>
+                        <Col span={5}>
                             <Card size="small" title="Data Setting">
                                 <Text>{"Dataset: " + dataName}</Text>
                                 <Text>
@@ -253,7 +253,7 @@ class Main extends React.Component {
                                 </Text>
                             </Card>
                         </Col>
-                        <Col span={15}>
+                        <Col span={14}>
                             <Card size="small" title="Attributes View">
                                 <ParallelSetView
                                     canvasHeight={globalHeight * 0.42}
@@ -262,13 +262,25 @@ class Main extends React.Component {
                         </Col>
                         <Col span={5}>
                             <Card size="small" title="Attributes Setting">
-                                <Text>Sensitive Attributes</Text>
-                                <Select onChange={updateHighlightedAttribute}>
-                                    <Option key="none" value="">
-                                        none
-                                    </Option>
-                                    {attributes}
-                                </Select>
+                                <Row>
+                                    <Col span={12}>
+                                        <Text>Sensitive Attributes</Text>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Select
+                                            onChange={
+                                                updateHighlightedAttribute
+                                            }
+                                            style={{ width: "100%" }}
+                                        >
+                                            <Option key="none" value="">
+                                                none
+                                            </Option>
+                                            {attributes}
+                                        </Select>
+                                    </Col>
+                                </Row>
+
                                 {/*<MultipleSelect />*/}
                                 <Divider />
                                 <Title level={5}>KL Divergence</Title>
