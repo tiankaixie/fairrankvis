@@ -27,6 +27,8 @@ import MiningResultDensity from "./MiningResultDensity";
 import RankMappingView from "./RankMappingView";
 import ParallelSetView from "./ParallelSetView";
 import KLDivergenceView from "./KLDivergenceView";
+import MultipleSelect from "./MultipleSelect";
+import SubgroupTable from "./SubgroupTable";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -130,41 +132,6 @@ class Main extends React.Component {
             miningResultDensity = (
                 <React.Fragment>
                     <Title level={5}>Ranking range:</Title>
-                    {/* <Space>
-                        <InputNumber
-                            min={clusterSliderUI.minValue}
-                            max={clusterSliderUI.maxValue}
-                            // style={{ margin: "0 16px" }}
-                            value={
-                                selectedMiningResult[0] !== undefined
-                                    ? rankMap[selectedMiningResult[1]]
-                                    : -1
-                            }
-                            onChange={() => {}}
-                            size={"small"}
-                        />
-                        <Slider
-                            style={{width:"100%"}}
-                            min={1}
-                            max={20}
-                            onChange={this.onChange}
-                            value={selectedMiningResult}
-                            range={{ draggableTrack: true }}
-                            defaultValue={[0, 0]}
-                        />
-                        <InputNumber
-                            min={clusterSliderUI.minValue}
-                            max={clusterSliderUI.maxValue}
-                            // style={{ margin: "0 16px" }}
-                            value={
-                                selectedMiningResult[0] !== undefined
-                                    ? rankMap[selectedMiningResult[1]]
-                                    : -1
-                            }
-                            onChange={() => {}}
-                            size={"small"}
-                        />
-                    </Space> */}
                     <Row justify="space-between">
                         <Col span={5}>
                             <InputNumber
@@ -183,18 +150,17 @@ class Main extends React.Component {
                             <Slider
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                onChange={()=>{}}
+                                onChange={() => {}}
                                 value={selectedMiningResult}
                                 // range={{ draggableTrack: true }}
                                 range
-
                             />
                         </Col>
                         <Col span={5}>
                             <InputNumber
                                 min={clusterSliderUI.minValue}
                                 max={clusterSliderUI.maxValue}
-                                style={{ width: "60px"  }}
+                                style={{ width: "60px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
                                         ? rankMap[selectedMiningResult[1]]
@@ -242,103 +208,127 @@ class Main extends React.Component {
 
         return (
             <React.Fragment>
-                <Layout>
-                    <Row>
+                <Layout style={{ padding: 16 }}>
+                    <Row
+                        justify="space-around"
+                        gutter={16}
+                        style={{ marginBottom: 16 }}
+                    >
                         <Col span={5}>
                             <Card size="small" title="Data Setting">
-                                <Text>{"Dataset: " + dataName}</Text>
-                                <Text>
-                                    {Object.keys(input.nodes).length +
-                                        " nodes, " +
-                                        Object.keys(input.edges).length +
-                                        " edges"}
-                                </Text>
-                                <Divider style={{margin: "0, 8px"}} />
-                                <Row>
-                                    <Col span={16}>
-                                        <Title level={5}>
-                                            Ranking Score Density
-                                        </Title>
-                                    </Col>
-                                    <Col span={8}>
-                                        <Dropdown
-                                            overlay={setting}
-                                            placement="bottomLeft"
-                                        >
-                                            <SettingOutlined />
-                                        </Dropdown>
-                                    </Col>
-                                </Row>
+                                <div style={{ padding: 16 }}>
+                                    <Text>{"Dataset: " + dataName}</Text>
+                                    <Text>
+                                        {Object.keys(input.nodes).length +
+                                            " nodes, " +
+                                            Object.keys(input.edges).length +
+                                            " edges"}
+                                    </Text>
+                                    <Divider style={{ margin: "0, 8px" }} />
+                                    <Row>
+                                        <Col span={15}>
+                                            <Title level={5}>
+                                                Ranking Score Density
+                                            </Title>
+                                        </Col>
+                                        <Col span={8}>
+                                            <Dropdown
+                                                overlay={setting}
+                                                placement="bottomLeft"
+                                            >
+                                                <SettingOutlined />
+                                            </Dropdown>
+                                        </Col>
+                                    </Row>
 
-                                <MiningResultDensity
-                                    canvasHeight={globalHeight * 0.16}
-                                    miningResultControl={
-                                        this.state.miningResultControl
-                                    }
-                                />
-                                {miningResultDensity}
-                                <Divider />
-                                <Title level={5}>Selected Data</Title>
-                                <Text>
-                                    {selectedNodes.length +
-                                        " nodes, " +
-                                        selectedEdges.length +
-                                        " edges"}
-                                </Text>
-                                <Text>
-                                    {"Mining Result Range: " +
-                                        (selectedMiningResult[0] !== undefined
-                                            ? selectedMiningResult[0].toFixed(
-                                                  6
-                                              ) +
-                                              " ~ " +
-                                              selectedMiningResult[1].toFixed(6)
-                                            : "null")}
-                                </Text>
+                                    <MiningResultDensity
+                                        canvasHeight={globalHeight * 0.16}
+                                        miningResultControl={
+                                            this.state.miningResultControl
+                                        }
+                                    />
+                                    <br />
+                                    {miningResultDensity}
+                                    <Divider />
+                                    <Text>
+                                        {"Selected Data: " +
+                                            selectedNodes.length +
+                                            " nodes, " +
+                                            selectedEdges.length +
+                                            " edges"}
+                                    </Text>
+                                    <br />
+                                    <Text>
+                                        {"Mining Result Range: " +
+                                            (selectedMiningResult[0] !==
+                                            undefined
+                                                ? selectedMiningResult[0].toFixed(
+                                                      6
+                                                  ) +
+                                                  " ~ " +
+                                                  selectedMiningResult[1].toFixed(
+                                                      6
+                                                  )
+                                                : "null")}
+                                    </Text>
+                                </div>
                             </Card>
                         </Col>
                         <Col span={14}>
                             <Card size="small" title="Attributes View">
                                 <ParallelSetView
-                                    canvasHeight={globalHeight * 0.42}
+                                    canvasHeight={globalHeight * 0.4}
                                 />
                             </Card>
                         </Col>
                         <Col span={5}>
                             <Card size="small" title="Attributes Setting">
-                                <Row>
-                                    <Col span={12}>
-                                        <Text>Sensitive Attributes</Text>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Select
-                                            onChange={
-                                                updateHighlightedAttribute
-                                            }
-                                            style={{ width: "100%" }}
-                                        >
-                                            <Option key="none" value="">
-                                                none
-                                            </Option>
-                                            {attributes}
-                                        </Select>
-                                    </Col>
-                                </Row>
+                                <div style={{ padding: 16 }}>
+                                    <Row>
+                                        <Col span={10}>
+                                            <Text>Sensitive Attributes</Text>
+                                        </Col>
+                                        <Col span={14}>
+                                            <Select
+                                                onChange={
+                                                    updateHighlightedAttribute
+                                                }
+                                                style={{ width: "100%" }}
+                                                value={
+                                                    attributeList.highlightedAttribute
+                                                }
+                                            >
+                                                <Option key="none" value="">
+                                                    none
+                                                </Option>
+                                                {attributes}
+                                            </Select>
+                                        </Col>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Col span={10}>
+                                            <Text>Attributes</Text>
+                                        </Col>
+                                        <Col span={14}>
+                                            <MultipleSelect />
+                                        </Col>
+                                    </Row>
 
-                                {/*<MultipleSelect />*/}
-                                <Divider />
-                                <Title level={5}>KL Divergence</Title>
-                                <KLDivergenceView
-                                    canvasHeight={globalHeight * 0.25}
-                                    canvasWidth={300}
-                                />
+                                    <Divider />
+                                    <Title level={5}>KL Divergence</Title>
+                                    <KLDivergenceView
+                                        canvasHeight={globalHeight * 0.25}
+                                        canvasWidth={300}
+                                    />
+                                </div>
                             </Card>
                         </Col>
                     </Row>
-                    <Row gutter={8}>
+                    <Row justify="space-around" gutter={16}>
                         <Col span={9}>
                             <Card size="small" title="Subgroup Table">
-                                {/*<SubgroupTable />*/}
+                                <SubgroupTable canvasHeight={globalHeight * 0.45}/>
                             </Card>
                         </Col>
                         <Col span={15}>

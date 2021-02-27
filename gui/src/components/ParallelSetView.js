@@ -218,7 +218,7 @@ class ParallelSetView extends React.Component {
                     .domain(
                         Object.keys(input.labels[highlightedDimension]["map"])
                     )
-                    .range(d3.schemeSet2 );
+                    .range(d3.schemeSet2);
             } else {
                 // console.log(d3.extent(data.map(d => d[highlightedDimension])));
                 highlightColor = d3
@@ -298,8 +298,8 @@ class ParallelSetView extends React.Component {
                     linkByKey.set(key, link);
                 }
             }
-            console.log(nodes);
-            console.log(links);
+            // console.log(nodes);
+            // console.log(links);
 
             let sankey = d3
                 .sankey()
@@ -315,7 +315,7 @@ class ParallelSetView extends React.Component {
                 links: links.map(d => Object.assign({}, d))
             });
             //console.log(graph.nodes);
-            console.log(graph)
+            // console.log(graph)
             // console.log(linksData)
             svg.append("g")
                 .selectAll("rect")
@@ -380,12 +380,11 @@ class ParallelSetView extends React.Component {
                 .attr("y", d => (d.y1 + d.y0) / 2)
                 .attr("dy", "0.35em")
                 .attr("text-anchor", d => (d.x0 < width / 2 ? "start" : "end"))
-                .text(d => d.name)
+                .text(d => "feature" + d.name)
                 .append("tspan")
                 .attr("fill-opacity", 0.7);
             // .text(d => ` ${d.value.toLocaleString()}`);
         }
-
 
         // Extract the list of dimensions and create a scale for each.
         const dimensions = d3.keys(data[0]).filter(function(d) {
@@ -433,7 +432,7 @@ class ParallelSetView extends React.Component {
 
         g.append("g")
             .attr("class", "attributeStat")
-            .attr("transform", "translate(-95,-130)")
+            .attr("transform", "translate(-75,-130)")
             .attr("id", d => "attribute-stat-" + d);
 
         this.renderStat(
