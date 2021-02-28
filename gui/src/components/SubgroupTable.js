@@ -161,4 +161,4 @@ class SubgroupTable extends React.Component {
     }
 }
 
-export default connect(mapStateToProps, null)(SubgroupTable);
+export default connect(mapStateToProps)(SubgroupTable);

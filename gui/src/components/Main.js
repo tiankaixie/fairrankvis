@@ -135,12 +135,12 @@ class Main extends React.Component {
                     <Row justify="space-between">
                         <Col span={5}>
                             <InputNumber
-                                min={clusterSliderUI.minValue}
-                                max={clusterSliderUI.maxValue}
+                                min={0}
+                                max={Object.keys(output.res).length}
                                 style={{ width: "60px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
-                                        ? rankMap[selectedMiningResult[1]]
+                                        ? Number(rankMap[selectedMiningResult[1]])
                                         : -1
                                 }
                                 onChange={() => {}}
@@ -148,22 +148,25 @@ class Main extends React.Component {
                         </Col>
                         <Col span={12}>
                             <Slider
-                                min={clusterSliderUI.minValue}
-                                max={clusterSliderUI.maxValue}
+                                min={0}
+                                max={Object.keys(output.res).length}
                                 onChange={() => {}}
-                                value={selectedMiningResult}
+                                value={[
+                                    rankMap[selectedMiningResult[0]],
+                                    rankMap[selectedMiningResult[1]]
+                                ]}
                                 // range={{ draggableTrack: true }}
                                 range
                             />
                         </Col>
                         <Col span={5}>
                             <InputNumber
-                                min={clusterSliderUI.minValue}
-                                max={clusterSliderUI.maxValue}
+                                min={0}
+                                max={Object.keys(output.res).length}
                                 style={{ width: "60px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
-                                        ? rankMap[selectedMiningResult[1]]
+                                        ? Number(rankMap[selectedMiningResult[0]])
                                         : -1
                                 }
                                 onChange={() => {}}
@@ -326,12 +329,14 @@ class Main extends React.Component {
                         </Col>
                     </Row>
                     <Row justify="space-around" gutter={16}>
-                        <Col span={9}>
+                        <Col span={8}>
                             <Card size="small" title="Subgroup Table">
-                                <SubgroupTable canvasHeight={globalHeight * 0.45}/>
+                                <SubgroupTable
+                                    canvasHeight={globalHeight * 0.45}
+                                />
                             </Card>
                         </Col>
-                        <Col span={15}>
+                        <Col span={16}>
                             <Card size="small" title="Rank Mapping View">
                                 <RankMappingView
                                     svgID={"rank-mapping"}
