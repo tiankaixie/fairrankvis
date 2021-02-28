@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import * as d3 from "d3";
-import {Table, Tag} from "antd";
+import { Table, Tag } from "antd";
 
 const mapStateToProps = state => {
     return {
@@ -18,7 +18,12 @@ class SubgroupTable extends React.Component {
     render() {
         let data = [];
         let columns = [];
-        const { input, attributeList, brushSelectedCluster, canvasHeight } = this.props;
+        const {
+            input,
+            attributeList,
+            brushSelectedCluster,
+            canvasHeight
+        } = this.props;
         if (brushSelectedCluster.size === 0) return <div />;
         let wholeData = [];
         let groupData = [];
@@ -96,11 +101,19 @@ class SubgroupTable extends React.Component {
                         color={subgroupColor(rowData["id"])}
                         key={rowData["id"]}
                     >
-                        ' '
+                        {rowData["id"]}
                     </Tag>
                 );
             }
         });
+
+        // columns.push({
+        //     title: "ID",
+        //     field: "id",
+        //     cellStyle: {
+        //         fontSize: "0.8rem"
+        //     }
+        // });
 
         dimensions.forEach(d => {
             columns.push({
@@ -153,7 +166,7 @@ class SubgroupTable extends React.Component {
         return (
             <Table
                 id={"summary-view"}
-                style={{height: canvasHeight}}
+                style={{ height: canvasHeight }}
                 columns={columns}
                 dataSource={similarGroup}
             />

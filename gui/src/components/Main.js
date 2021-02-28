@@ -29,6 +29,8 @@ import ParallelSetView from "./ParallelSetView";
 import KLDivergenceView from "./KLDivergenceView";
 import MultipleSelect from "./MultipleSelect";
 import SubgroupTable from "./SubgroupTable";
+import ProportionView from "./ProportionView";
+import GroupShiftingView from "./GroupShiftingView";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -57,8 +59,8 @@ class Main extends React.Component {
         this.props.getData();
     }
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             tool: "zoom",
             displayEdges: true,
@@ -140,7 +142,9 @@ class Main extends React.Component {
                                 style={{ width: "60px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
-                                        ? Number(rankMap[selectedMiningResult[1]])
+                                        ? Number(
+                                              rankMap[selectedMiningResult[1]]
+                                          )
                                         : -1
                                 }
                                 onChange={() => {}}
@@ -166,7 +170,9 @@ class Main extends React.Component {
                                 style={{ width: "60px" }}
                                 value={
                                     selectedMiningResult[0] !== undefined
-                                        ? Number(rankMap[selectedMiningResult[0]])
+                                        ? Number(
+                                              rankMap[selectedMiningResult[0]]
+                                          )
                                         : -1
                                 }
                                 onChange={() => {}}
@@ -336,11 +342,25 @@ class Main extends React.Component {
                                 />
                             </Card>
                         </Col>
-                        <Col span={16}>
+                        <Col span={11}>
                             <Card size="small" title="Rank Mapping View">
                                 <RankMappingView
                                     svgID={"rank-mapping"}
                                     canvasHeight={globalHeight * 0.45}
+                                />
+                            </Card>
+                        </Col>
+                        <Col span={5}>
+                            <Card size="small" title="Proportion View">
+                                <ProportionView
+                                    svgID={"proportion"}
+                                    canvasHeight={globalHeight * 0.2}
+                                />
+                            </Card>
+                            <Card size="small" title="Group Shift View">
+                                <GroupShiftingView
+                                    svgID={"group-shifting"}
+                                    canvasHeight={globalHeight * 0.2}
                                 />
                             </Card>
                         </Col>

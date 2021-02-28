@@ -192,7 +192,7 @@ class rankMappingView extends React.Component {
         let subgroupIDs = Object.keys(subgroups);
         subgroupIDs.sort((a, b) => subgroups[b] - subgroups[a]);
         console.log(subgroups);
-        const NodeColor = d3
+        const nodeColor = d3
             .scaleOrdinal()
             .domain(subgroupIDs)
             .range(d3.schemeTableau10);
@@ -218,7 +218,7 @@ class rankMappingView extends React.Component {
             .attr("width", rectLength)
             .attr("height", inputYScale.bandwidth() - 1)
             .attr("stroke", regularGreyStroke)
-            .attr("fill", d => NodeColor(inputNodesGroupMap[d]))
+            .attr("fill", d => nodeColor(inputNodesGroupMap[d]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.select(this)
@@ -281,7 +281,7 @@ class rankMappingView extends React.Component {
             .attr("width", rectLength)
             .attr("height", outputYScale.bandwidth() - 1)
             .attr("stroke", regularGreyStroke)
-            .attr("fill", d => NodeColor(outputNodesGroupMap[d]))
+            .attr("fill", d => nodeColor(outputNodesGroupMap[d]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.select(this)
@@ -432,7 +432,7 @@ class rankMappingView extends React.Component {
             )
             .attr("height", groupHeight)
             .attr("stroke", regularGreyStroke)
-            .attr("fill", d => NodeColor(d["id"]))
+            .attr("fill", d => nodeColor(d["id"]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.selectAll(".group" + d.id)
@@ -525,7 +525,7 @@ class rankMappingView extends React.Component {
             )
             .attr("height", groupHeight)
             .attr("stroke", regularGreyStroke)
-            .attr("fill", d => NodeColor(d["id"]))
+            .attr("fill", d => nodeColor(d["id"]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.selectAll(".group" + d.id)
@@ -682,64 +682,7 @@ class rankMappingView extends React.Component {
             .attr("y", textTop)
             .text("Output Similar Instances");
 
-        const statX = 1100;
-        const statWidth = 400;
-        const statHeight = 250;
-        const statMargin = {top: 30}
-        const statData = [
-            { id: 1, value: 3 },
-            { id: 2, value: -4 },
-            { id: 3, value: -5 },
-            { id: 4, value: 2 },
-            { id: 5, value: 5 },
-            { id: 6, value: 1 },
-            { id: 7, value: 2 },
-            { id: 8, value: 4 }
-        ];
 
-        const statXScale = d3
-            .scaleBand()
-            .domain(statData.map(x => x.id))
-            .range([statX, statX + statWidth]);
-
-        const statYScale = d3
-            .scaleLinear()
-            .domain(d3.extent(statData.map(x => x.value)))
-            .range([statHeight, statMargin.top]);
-
-        const detailView = svgBase.append("g").attr("class", "detail");
-
-        detailView
-            .selectAll("rect")
-            .data(statData)
-            .join("rect")
-            .attr("x", d => statXScale(d.id))
-            .attr("y", d => {
-                if (d.value >= 0) {
-                    return statYScale(d.value);
-                } else {
-                    return statYScale(0);
-                }
-            })
-            .attr("width", statXScale.bandwidth())
-            .attr("height", d => {
-                if (d.value >= 0) {
-                    return statHeight - statYScale(0) - statYScale(d.value) + statMargin.top;
-                } else {
-                    return  statYScale(d.value) - statYScale(0);
-                }
-            })
-            .attr("fill", regularGreyDark);
-
-        detailView
-            .append("g")
-            .attr("transform", "translate(0," + statYScale(0) + ")")
-            .call(d3.axisBottom(statXScale));
-
-        detailView
-            .append("g")
-            .attr("transform", "translate(" + statX + ",0)")
-            .call(d3.axisLeft(statYScale));
     }
 
     initializeCanvas() {
