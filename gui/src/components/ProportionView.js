@@ -6,6 +6,8 @@ const mapStateToProps = state => {
     return {
         input: state.input,
         output: state.output,
+        modelName: state.modelName,
+        individualSim: state.individualSim,
         clusterList: state.ui.clusterList,
         attributeList: state.ui.attributeList,
         clusterSliderUI: state.ui.clusterSliderUI,
@@ -58,6 +60,131 @@ class ProportionView extends React.Component {
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
         const margin = { top: 60, right: 20, bottom: 20, left: 65 };
+
+        /***
+         * Data processing
+         */
+        const resultTopK = {};
+        const inputTopK = {};
+        const nodeResKey = Object.keys(output["res"]);
+        const selectedNodes = nodeResKey.filter(item => {
+            return brushSelectedCluster.has(String(item));
+        });
+        const dimensions = [...attributeList.selectedAttributes];
+        selectedNodes.sort(
+            (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
+        );
+        selectedNodes.forEach(node => {
+            let itemSetID = "";
+            dimensions.forEach(d => {
+                itemSetID += input["nodes"][node][d];
+            });
+            if (!resultTopK.hasOwnProperty(itemSetID)) {
+                resultTopK[itemSetID] = 0;
+            }
+            resultTopK[itemSetID]++;
+        });
+
+        let inputNodes = Object.keys(input["topological_feature"]["pagerank"]);
+        inputNodes.sort(
+            (a, b) =>
+                input["topological_feature"]["pagerank"][a]["rank"] -
+                input["topological_feature"]["pagerank"][b]["rank"]
+        );
+        inputNodes = inputNodes.slice(
+            output["res"][selectedNodes[0]]["rank"] - 1,
+            output["res"][selectedNodes[selectedNodes.length - 1]]["rank"]
+        );
+        console.log(inputNodes);
+        inputNodes.forEach(node => {
+            let itemSetID = "";
+            dimensions.forEach(d => {
+                itemSetID += input["nodes"][node][d];
+            });
+            if (!inputTopK.hasOwnProperty(itemSetID)) {
+                inputTopK[itemSetID] = 0;
+            }
+            inputTopK[itemSetID]++;
+        });
+
+        const commonKeys = new Set([
+            ...Object.keys(inputTopK),
+            ...Object.keys(resultTopK)
+        ]);
+        console.log(inputTopK);
+        console.log(resultTopK);
+        commonKeys.forEach(key => {
+            if (!inputTopK.hasOwnProperty(key)) {
+                inputTopK[key] = 0;
+            }
+            if (!resultTopK.hasOwnProperty(key)) {
+                resultTopK[key] = 0;
+            }
+        });
+        const data = [];
+
+        data.push(Object.assign({}, { name: individualSim }, inputTopK));
+        data.push(Object.assign({}, { name: modelName }, resultTopK));
+
+        console.log(data);
+
+        const xScale = d3
+            .scaleLinear()
+            .range([margin.left, width - margin.right]);
+
+        const yScale = d3
+            .scaleBand()
+            .domain(data.map(d => d.name))
+            .range([margin.top, height - margin.bottom])
+            .padding(0.08);
+
+        console.log(Object.keys(data[0]).filter(d => d !== "name"));
+        const series = d3
+            .stack()
+            .keys(Object.keys(data[0]).filter(d => d !== "name"))
+            .offset(d3.stackOffsetExpand)(data)
+            .map(d => (d.forEach(v => (v.key = d.key)), d));
+
+        console.log(series);
+        let subgroupIDs = Object.keys(resultTopK);
+        subgroupIDs.sort((a, b) => resultTopK[b] - resultTopK[a]);
+
+        const nodeColor = d3
+            .scaleOrdinal()
+            .domain(subgroupIDs)
+            .range(d3.schemeTableau10);
+
+        const xAxis = g =>
+            g
+                .attr("transform", `translate(0,${margin.top})`)
+                .call(d3.axisTop(xScale).ticks(width / 100, "%"))
+                .call(g => g.selectAll(".domain").remove());
+
+        const yAxis = g =>
+            g
+                .attr("transform", `translate(${margin.left},0)`)
+                .call(d3.axisLeft(yScale).tickSizeOuter(0))
+                .call(g => g.selectAll(".domain").remove());
+
+        svgBase
+            .append("g")
+            .selectAll("g")
+            .data(series)
+            .enter()
+            .append("g")
+            .attr("fill", d => nodeColor(d.key))
+            .attr("opacity", 0.5)
+            .selectAll("rect")
+            .data(d => d)
+            .join("rect")
+            .attr("x", d => xScale(d[0]))
+            .attr("y", (d, i) => yScale(d.data.name))
+            .attr("width", d => xScale(d[1]) - xScale(d[0]))
+            .attr("height", yScale.bandwidth());
+
+        svgBase.append("g").call(xAxis);
+
+        svgBase.append("g").call(yAxis);
     }
 
     /**
