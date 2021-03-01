@@ -60,7 +60,7 @@ class rankMappingView extends React.Component {
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 60, right: 20, bottom: 20, left: 35 };
+        const margin = { top: 50, right: 20, bottom: 20, left: 35 };
 
         /***
          *  Data processing
@@ -102,6 +102,7 @@ class rankMappingView extends React.Component {
         let bandwidth = (bound[1] - bound[0]) / numberOfBins;
         const inputNodesGroupMap = {};
         const inputNodesBinMap = {};
+        let maxInstanceSizeOfBins = 0;
         inputNodes.forEach(node => {
             let itemSetID = "";
             dimensions.forEach((d, i) => {
@@ -127,6 +128,10 @@ class rankMappingView extends React.Component {
             inputNodesBinMap[node] = index;
             inputBins[index]["stat"][itemSetID]++;
             inputBins[index]["instances"].push(node);
+            maxInstanceSizeOfBins = Math.max(
+                maxInstanceSizeOfBins,
+                inputBins[index]["instances"].length
+            );
         });
         // console.log(inputBins);
 
@@ -140,10 +145,10 @@ class rankMappingView extends React.Component {
         const rectLength = 50;
         const outputX = 500;
 
-        const outputGroupNodesX = 800;
+        const outputGroupNodesX = 650;
         const outputGroupNodeLen = 70;
 
-        const inputGroupNodesX = 50;
+        const inputGroupNodesX = 100;
         const inputGroupNodeLen = 70;
         const groupHeight = 30;
         const outputNodes = Object.keys(output["res"]);
@@ -157,6 +162,7 @@ class rankMappingView extends React.Component {
         const outputNodesGroupMap = {};
         const outputNodesBinMap = {};
         const subgroups = {};
+
         selectedNodes.forEach(node => {
             let itemSetID = "";
             dimensions.forEach((d, i) => {
@@ -184,6 +190,10 @@ class rankMappingView extends React.Component {
             outputNodesBinMap[node] = index;
             outputBins[index]["stat"][itemSetID]++;
             outputBins[index]["instances"].push(node);
+            maxInstanceSizeOfBins = Math.max(
+                maxInstanceSizeOfBins,
+                outputBins[index]["instances"].length
+            );
         });
 
         const sortedOutputBinKeys = Object.keys(outputBins);
@@ -327,42 +337,67 @@ class rankMappingView extends React.Component {
 
         //////////////////////////////////////////////////////////////////////////////////////////
         // input group links
+        const inputGroupXOffset = 120;
+        const inputGroupYOffset = 20;
         const inputGroupYScale = d3
             .scaleBand()
             .domain(sortedInputBinKeys)
             .range([margin.top, height - margin.bottom]);
 
-        const inputPathData = sortedInputBinKeys.map(d => {
-            return {
-                binID: d,
-                area: [
-                    {
-                        x: inputGroupNodesX + inputGroupNodeLen,
-                        y0: inputGroupYScale(d),
-                        y1: inputGroupYScale(d) + groupHeight
-                    },
-                    {
-                        x: inputX - 50,
-                        y0: inputYScale(inputBins[d]["instances"][0]),
-                        y1:
-                            inputYScale(
-                                inputBins[d]["instances"][
-                                    inputBins[d]["instances"].length - 1
-                                ]
-                            ) + inputYScale.bandwidth()
-                    },
-                    {
-                        x: inputX,
-                        y0: inputYScale(inputBins[d]["instances"][0]),
-                        y1:
-                            inputYScale(
-                                inputBins[d]["instances"][
-                                    inputBins[d]["instances"].length - 1
-                                ]
-                            ) + inputYScale.bandwidth()
-                    }
-                ]
-            };
+        const inputPathData = sortedInputBinKeys.map((d, i) => {
+            if (i % 2 === 0) {
+                return {
+                    binID: d,
+                    area: [
+                        {
+                            x: inputGroupNodesX,
+                            y0: inputGroupYScale(d) + inputGroupYOffset,
+                            y1: inputGroupYScale(d) + inputGroupYOffset
+                        },
+                        {
+                            x: inputX - 50,
+                            y0: inputGroupYScale(d),
+                            y1: inputGroupYScale(d) + inputGroupYOffset
+                        },
+                        {
+                            x: inputX,
+                            y0: inputYScale(inputBins[d]["instances"][0]),
+                            y1:
+                                inputYScale(
+                                    inputBins[d]["instances"][
+                                        inputBins[d]["instances"].length - 1
+                                    ]
+                                ) + inputYScale.bandwidth()
+                        }
+                    ]
+                };
+            } else {
+                return {
+                    binID: d,
+                    area: [
+                        {
+                            x: inputGroupNodesX + inputGroupXOffset,
+                            y0: inputGroupYScale(d) + inputGroupYOffset,
+                            y1: inputGroupYScale(d) + inputGroupYOffset
+                        },
+                        {
+                            x: inputX - 50,
+                            y0: inputGroupYScale(d),
+                            y1: inputGroupYScale(d) + inputGroupYOffset
+                        },
+                        {
+                            x: inputX,
+                            y0: inputYScale(inputBins[d]["instances"][0]),
+                            y1:
+                                inputYScale(
+                                    inputBins[d]["instances"][
+                                        inputBins[d]["instances"].length - 1
+                                    ]
+                                ) + inputYScale.bandwidth()
+                        }
+                    ]
+                };
+            }
         });
 
         let area = d3
@@ -388,6 +423,19 @@ class rankMappingView extends React.Component {
 
         ////////////////////////////////////////////////////////////////////////////////////////
         // input group nodes
+        const generalRadius = 50;
+        const baseRadius = 10;
+
+        const pie = d3.pie().value(d => d.totalSum - d.preSum);
+        const arc = d3
+            .arc()
+            .innerRadius(0)
+            .outerRadius(
+                d =>
+                    (d["data"]["totalSum"] / maxInstanceSizeOfBins) *
+                        generalRadius +
+                    baseRadius
+            );
 
         linkArea
             .selectAll(".circleInputSummaryGroup")
@@ -395,6 +443,25 @@ class rankMappingView extends React.Component {
             .enter()
             .append("g")
             .attr("class", "circleInputSummaryGroup")
+            .attr("transform", (d, i) => {
+                if (i % 2 === 0) {
+                    return (
+                        "translate(" +
+                        inputGroupNodesX +
+                        "," +
+                        (inputGroupYScale(d) + inputGroupYOffset) +
+                        ")"
+                    );
+                } else {
+                    return (
+                        "translate(" +
+                        (inputGroupNodesX + inputGroupXOffset) +
+                        "," +
+                        (inputGroupYScale(d) + inputGroupYOffset) +
+                        ")"
+                    );
+                }
+            })
             .selectAll(".circleInputSummary")
             .data(d => {
                 const statGroupIDs = Object.keys(inputBins[d]["stat"]);
@@ -402,64 +469,62 @@ class rankMappingView extends React.Component {
                     (a, b) => inputBins[d]["stat"][b] - inputBins[d]["stat"][a]
                 );
                 let tempPrefix = 0;
-                return statGroupIDs.map(id => {
-                    const tempRes = {
-                        id: id,
-                        binID: d,
-                        preSum: tempPrefix,
-                        totalSum: inputBins[d]["instances"].length
-                    };
-                    tempPrefix += inputBins[d]["stat"][id];
-                    return tempRes;
-                });
+                return pie(
+                    statGroupIDs.map(id => {
+                        const tempRes = {
+                            id: id,
+                            binID: d,
+                            preSum: tempPrefix,
+                            totalSum: inputBins[d]["instances"].length
+                        };
+                        tempPrefix += inputBins[d]["stat"][id];
+                        return tempRes;
+                    })
+                );
             })
-            .join("rect")
+            .join("path")
             .attr("class", d => {
-                return "circleInputSummary " + "group" + d.id;
+                return "circleInputSummary " + "group" + d["data"]["id"];
             })
-            .attr(
-                "x",
-                (d, i) =>
-                    inputGroupNodesX +
-                    (d["preSum"] / d["totalSum"]) * inputGroupNodeLen
-            )
-            .attr("y", d => inputGroupYScale(d["binID"]))
-            .attr(
-                "width",
-                d =>
-                    (inputBins[d["binID"]]["stat"][d["id"]] / d["totalSum"]) *
-                    inputGroupNodeLen
-            )
-            .attr("height", groupHeight)
-            .attr("stroke", regularGreyStroke)
-            .attr("fill", d => nodeColor(d["id"]))
+            .attr("d", arc)
+            .attr("fill", d => nodeColor(d["data"]["id"]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
-                d3.selectAll(".group" + d.id)
+                d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
                     .attr("opacity", 0.85);
 
-                d3.select("#inputArea" + d.binID)
+                d3.select("#inputArea" + d["data"]["binID"])
                     .transition()
                     .duration("50")
                     .attr("opacity", 0.85);
 
-                d3.selectAll(".inputNode" + d.id + "inputBin" + d.binID)
+                d3.selectAll(
+                    ".inputNode" +
+                        d["data"]["id"] +
+                        "inputBin" +
+                        d["data"]["binID"]
+                )
                     .transition()
                     .duration("50")
                     .attr("opacity", 0.85);
             })
             .on("mouseout", function(d, i) {
-                d3.selectAll(".group" + d.id)
+                d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
                     .attr("opacity", 0.5);
-                d3.select("#inputArea" + d.binID)
+                d3.select("#inputArea" + d["data"]["binID"])
                     .transition()
                     .duration("50")
                     .attr("opacity", 0.3);
-                d3.selectAll(".inputNode" + d.id + "inputBin" + d.binID)
+                d3.selectAll(
+                    ".inputNode" +
+                        d["data"]["id"] +
+                        "inputBin" +
+                        d["data"]["binID"]
+                )
                     .transition()
                     .duration("50")
                     .attr("opacity", 0.5);
@@ -469,137 +534,74 @@ class rankMappingView extends React.Component {
                 (d, i) =>
                     "Group: " +
                     (
-                        (inputBins[d["binID"]]["stat"][d["id"]] * 100) /
-                        d["totalSum"]
+                        (inputBins[d["data"]["binID"]]["stat"][d["id"]] * 100) /
+                        d["data"]["totalSum"]
                     ).toFixed(2) +
                     "%"
             );
 
-        ///////////////////////////////////////////////////////////////////////////////////////
-        // output group nodes
-
+        //////////////////////////////////////////////////////////////////////////////////////////
+        // output group links
+        const outputGroupXOffset = 150;
+        const outputGroupYOffset = 30;
         const outputGroupYScale = d3
             .scaleBand()
             .domain(sortedOutputBinKeys)
             .range([margin.top, height - margin.bottom]);
-
-        linkArea
-            .selectAll(".rectOutputSummaryGroup")
-            .data(sortedOutputBinKeys)
-            .enter()
-            .append("g")
-            .attr("class", "circleInputSummaryGroup")
-            .selectAll(".rectOutputSummary")
-            .data(d => {
-                const statGroupIDs = Object.keys(outputBins[d]["stat"]);
-                statGroupIDs.sort(
-                    (a, b) =>
-                        outputBins[d]["stat"][b] - outputBins[d]["stat"][a]
-                );
-                let tempPrefix = 0;
-                return statGroupIDs.map(id => {
-                    const tempRes = {
-                        id: id,
-                        binID: d,
-                        preSum: tempPrefix,
-                        totalSum: outputBins[d]["instances"].length
-                    };
-                    tempPrefix += outputBins[d]["stat"][id];
-                    return tempRes;
-                });
-            })
-            .join("rect")
-            .attr("class", d => "rectOutputSummary " + "group" + d.id)
-            .attr(
-                "x",
-                (d, i) =>
-                    outputGroupNodesX +
-                    (d["preSum"] / d["totalSum"]) * outputGroupNodeLen
-            )
-            .attr("y", d => outputGroupYScale(d["binID"]))
-            .attr(
-                "width",
-                d =>
-                    (outputBins[d["binID"]]["stat"][d["id"]] / d["totalSum"]) *
-                    outputGroupNodeLen
-            )
-            .attr("height", groupHeight)
-            .attr("stroke", regularGreyStroke)
-            .attr("fill", d => nodeColor(d["id"]))
-            .attr("opacity", 0.5)
-            .on("mouseover", function(d, i) {
-                d3.selectAll(".group" + d.id)
-                    .transition()
-                    .duration("50")
-                    .attr("opacity", 0.85);
-
-                d3.select("#outputArea" + d.binID)
-                    .transition()
-                    .duration("50")
-                    .attr("opacity", 0.85);
-
-                d3.selectAll(".outputNode" + d.id + "outputBin" + d.binID)
-                    .transition()
-                    .duration("50")
-                    .attr("opacity", 0.85);
-            })
-            .on("mouseout", function(d, i) {
-                d3.selectAll(".group" + d.id)
-                    .transition()
-                    .duration("50")
-                    .attr("opacity", 0.5);
-                d3.select("#outputArea" + d.binID)
-                    .transition()
-                    .duration("50")
-                    .attr("opacity", 0.3);
-                d3.selectAll(".outputNode" + d.id + "outputBin" + d.binID)
-                    .transition()
-                    .duration("50")
-                    .attr("opacity", 0.5);
-            })
-            .append("text")
-            .attr(
-                "x",
-                (d, i) =>
-                    outputGroupNodesX +
-                    (d["preSum"] / d["totalSum"]) * outputGroupNodeLen
-            )
-            .attr("dy", "2em")
-            .text((d, i) => "Group: " + i);
-
-        //////////////////////////////////////////////////////////////////////////////////////////
-        // output group links
-        const outputPathData = sortedOutputBinKeys.map(d => {
-            return {
-                binID: d,
-                area: [
-                    {
-                        x: outputX + rectLength,
-                        y0: outputYScale(outputBins[d]["instances"][0]),
-                        y1:
-                            outputYScale(
-                                outputBins[d]["instances"][
-                                    outputBins[d]["instances"].length - 1
-                                ]
-                            ) + outputYScale.bandwidth()
-                    },
-                    {
-                        x: outputX + rectLength + 50,
-                        y0: outputYScale(outputBins[d]["instances"][0]),
-                        y1:
-                            outputYScale(
-                                outputBins[d]["instances"][
-                                    outputBins[d]["instances"].length - 1
-                                ]
-                            ) + outputYScale.bandwidth()
-                    },
-                    {
-                        x: outputGroupNodesX,
-                        y0: outputGroupYScale(d),
-                        y1: outputGroupYScale(d) + groupHeight
-                    }
-                ]
-            };
+        const outputPathData = sortedOutputBinKeys.map((d, i) => {
+            if (i % 2 === 0) {
+                return {
+                    binID: d,
+                    area: [
+                        {
+                            x: outputX + rectLength,
+                            y0: outputYScale(outputBins[d]["instances"][0]),
+                            y1:
+                                outputYScale(
+                                    outputBins[d]["instances"][
+                                        outputBins[d]["instances"].length - 1
+                                    ]
+                                ) + outputYScale.bandwidth()
+                        },
+                        {
+                            x: outputX + rectLength + 50,
+                            y0: outputGroupYScale(d),
+                            y1: outputGroupYScale(d) + outputGroupYOffset
+                        },
+                        {
+                            x: outputGroupNodesX + outputGroupXOffset,
+                            y0: outputGroupYScale(d) + outputGroupYOffset,
+                            y1: outputGroupYScale(d) + outputGroupYOffset
+                        }
+                    ]
+                };
+            } else {
+                return {
+                    binID: d,
+                    area: [
+                        {
+                            x: outputX + rectLength,
+                            y0: outputYScale(outputBins[d]["instances"][0]),
+                            y1:
+                                outputYScale(
+                                    outputBins[d]["instances"][
+                                        outputBins[d]["instances"].length - 1
+                                    ]
+                                ) + outputYScale.bandwidth()
+                        },
+                        {
+                            x: outputX + rectLength + 50,
+                            y0: outputGroupYScale(d),
+                            y1: outputGroupYScale(d) + outputGroupYOffset
+                        },
+                        {
+                            x: outputGroupNodesX,
+                            y0: outputGroupYScale(d) + outputGroupYOffset,
+                            y1: outputGroupYScale(d) + outputGroupYOffset
+                        }
+                    ]
+                };
+            }
         });
 
         linkArea
@@ -615,6 +617,115 @@ class rankMappingView extends React.Component {
             .style("stroke", regularGreyStroke)
             .attr("fill", regularGreyDark)
             .attr("opacity", 0.3);
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // output group nodes
+
+        linkArea
+            .selectAll(".circleOutputSummaryGroup")
+            .data(sortedOutputBinKeys)
+            .enter()
+            .append("g")
+            .attr("class", "circleOutputSummaryGroup")
+            .attr("transform", (d, i) => {
+                if (i % 2 === 0) {
+                    return (
+                        "translate(" +
+                        (outputGroupNodesX + outputGroupXOffset) +
+                        "," +
+                        (outputGroupYScale(d) + outputGroupYOffset) +
+                        ")"
+                    );
+                } else {
+                    return (
+                        "translate(" +
+                        outputGroupNodesX +
+                        "," +
+                        (outputGroupYScale(d) + outputGroupYOffset) +
+                        ")"
+                    );
+                }
+            })
+            .selectAll(".circleOutputSummary")
+            .data(d => {
+                const statGroupIDs = Object.keys(outputBins[d]["stat"]);
+                statGroupIDs.sort(
+                    (a, b) =>
+                        outputBins[d]["stat"][b] - outputBins[d]["stat"][a]
+                );
+                let tempPrefix = 0;
+                return pie(
+                    statGroupIDs.map(id => {
+                        const tempRes = {
+                            id: id,
+                            binID: d,
+                            preSum: tempPrefix,
+                            totalSum: outputBins[d]["instances"].length
+                        };
+                        tempPrefix += outputBins[d]["stat"][id];
+                        return tempRes;
+                    })
+                );
+            })
+            .join("path")
+            .attr("d", arc)
+            .attr(
+                "class",
+                d => "circleOutputSummary " + "group" + d["data"]["id"]
+            )
+            .attr("stroke", regularGreyStroke)
+            .attr("fill", d => nodeColor(d["data"]["id"]))
+            .attr("opacity", 0.5)
+            .on("mouseover", function(d, i) {
+                d3.selectAll(".group" + d["data"]["id"])
+                    .transition()
+                    .duration("50")
+                    .attr("opacity", 0.85);
+
+                d3.select("#outputArea" + d["data"]["binID"])
+                    .transition()
+                    .duration("50")
+                    .attr("opacity", 0.85);
+
+                d3.selectAll(
+                    ".outputNode" +
+                        d["data"]["id"] +
+                        "outputBin" +
+                        d["data"]["binID"]
+                )
+                    .transition()
+                    .duration("50")
+                    .attr("opacity", 0.85);
+            })
+            .on("mouseout", function(d, i) {
+                d3.selectAll(".group" + d["data"]["id"])
+                    .transition()
+                    .duration("50")
+                    .attr("opacity", 0.5);
+                d3.select("#outputArea" + d["data"]["binID"])
+                    .transition()
+                    .duration("50")
+                    .attr("opacity", 0.3);
+                d3.selectAll(
+                    ".outputNode" +
+                        d["data"]["id"] +
+                        "outputBin" +
+                        d["data"]["binID"]
+                )
+                    .transition()
+                    .duration("50")
+                    .attr("opacity", 0.5);
+            })
+            .append("text")
+            .attr(
+                "x",
+                (d, i) =>
+                    outputGroupNodesX +
+                    (d["data"]["preSum"] / d["data"]["totalSum"]) *
+                        outputGroupNodeLen
+            )
+            .attr("dy", "2em")
+            .text((d, i) => "Group: " + i);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         // input and output links
@@ -640,7 +751,7 @@ class rankMappingView extends React.Component {
             .attr("y1", d => d.y1)
             .attr("x2", d => d.x2)
             .attr("y2", d => d.y2)
-            .attr("stroke", regularGreyStroke)
+            .attr("stroke", "#ccc")
             .attr("stroke-width", 2);
 
         // const yAxis = svgBase
@@ -681,8 +792,6 @@ class rankMappingView extends React.Component {
             .attr("x", outputGroupNodesX)
             .attr("y", textTop)
             .text("Output Similar Instances");
-
-
     }
 
     initializeCanvas() {
