@@ -60,7 +60,7 @@ class rankMappingView extends React.Component {
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 60, right: 20, bottom: 20, left: 65 };
+        const margin = { top: 60, right: 20, bottom: 20, left: 35 };
 
         /***
          *  Data processing
@@ -136,15 +136,15 @@ class rankMappingView extends React.Component {
             .range([margin.top, height - margin.bottom]);
 
         const linkArea = svgBase.append("g");
-        const inputX = 400;
+        const inputX = 350;
         const rectLength = 50;
-        const outputX = 550;
+        const outputX = 500;
 
         const outputGroupNodesX = 800;
-        const outputGroupNodeLen = 150;
+        const outputGroupNodeLen = 70;
 
         const inputGroupNodesX = 50;
-        const inputGroupNodeLen = 150;
+        const inputGroupNodeLen = 70;
         const groupHeight = 30;
         const outputNodes = Object.keys(output["res"]);
         bound = d3.extent(
@@ -390,12 +390,12 @@ class rankMappingView extends React.Component {
         // input group nodes
 
         linkArea
-            .selectAll(".rectInputSummaryGroup")
+            .selectAll(".circleInputSummaryGroup")
             .data(sortedInputBinKeys)
             .enter()
             .append("g")
-            .attr("class", "rectInputSummaryGroup")
-            .selectAll(".rectInputSummary")
+            .attr("class", "circleInputSummaryGroup")
+            .selectAll(".circleInputSummary")
             .data(d => {
                 const statGroupIDs = Object.keys(inputBins[d]["stat"]);
                 statGroupIDs.sort(
@@ -415,7 +415,7 @@ class rankMappingView extends React.Component {
             })
             .join("rect")
             .attr("class", d => {
-                return "rectInputSummary " + "group" + d.id;
+                return "circleInputSummary " + "group" + d.id;
             })
             .attr(
                 "x",
@@ -488,7 +488,7 @@ class rankMappingView extends React.Component {
             .data(sortedOutputBinKeys)
             .enter()
             .append("g")
-            .attr("class", "rectInputSummaryGroup")
+            .attr("class", "circleInputSummaryGroup")
             .selectAll(".rectOutputSummary")
             .data(d => {
                 const statGroupIDs = Object.keys(outputBins[d]["stat"]);
@@ -643,18 +643,18 @@ class rankMappingView extends React.Component {
             .attr("stroke", regularGreyStroke)
             .attr("stroke-width", 2);
 
-        const yAxis = svgBase
-            .append("g")
-            .attr("transform", "translate(" + inputX + ",0)")
-            .call(
-                d3.axisLeft(outputYScale).tickFormat((t, i) => {
-                    if (i === 0 || i === selectedNodes.length - 1) {
-                        return "rank " + output["res"][t]["rank"];
-                    } else {
-                        return "";
-                    }
-                })
-            );
+        // const yAxis = svgBase
+        //     .append("g")
+        //     .attr("transform", "translate(" + inputX + ",0)")
+        //     .call(
+        //         d3.axisLeft(outputYScale).tickFormat((t, i) => {
+        //             if (i === 0 || i === selectedNodes.length - 1) {
+        //                 return "rank " + output["res"][t]["rank"];
+        //             } else {
+        //                 return "";
+        //             }
+        //         })
+        //     );
 
         const textGroup = linkArea.append("g");
         const textTop = 30;

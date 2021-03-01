@@ -166,7 +166,8 @@ class SubgroupTable extends React.Component {
         return (
             <Table
                 id={"summary-view"}
-                style={{ height: canvasHeight }}
+                style={{ height: canvasHeight * 1.08 }}
+                size={"small"}
                 columns={columns}
                 dataSource={similarGroup}
             />

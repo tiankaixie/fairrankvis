@@ -376,6 +376,7 @@ class ParallelSetView extends React.Component {
                 .selectAll("text")
                 .data(graph.nodes)
                 .join("text")
+                .attr("font-size", "0.8rem")
                 .attr("x", d => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
                 .attr("y", d => (d.y1 + d.y0) / 2)
                 .attr("dy", "0.35em")

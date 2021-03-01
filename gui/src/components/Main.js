@@ -133,7 +133,8 @@ class Main extends React.Component {
         if (Object.keys(output.res).length !== 0) {
             miningResultDensity = (
                 <React.Fragment>
-                    <Title level={5}>Ranking range:</Title>
+                    <Text strong>Ranking range:</Text>
+                    <br />
                     <Row justify="space-between">
                         <Col span={5}>
                             <InputNumber
@@ -226,19 +227,26 @@ class Main extends React.Component {
                         <Col span={5}>
                             <Card size="small" title="Data Setting">
                                 <div style={{ padding: 16 }}>
-                                    <Text>{"Dataset: " + dataName}</Text>
+                                    <Text strong>
+                                        {"Dataset: " + dataName + " "}
+                                    </Text>
                                     <Text>
                                         {Object.keys(input.nodes).length +
                                             " nodes, " +
                                             Object.keys(input.edges).length +
                                             " edges"}
                                     </Text>
-                                    <Divider style={{ margin: "0, 8px" }} />
+                                    <Divider
+                                        style={{
+                                            marginTop: "8px",
+                                            marginBottom: "8px"
+                                        }}
+                                    />
                                     <Row>
                                         <Col span={15}>
-                                            <Title level={5}>
+                                            <Text strong>
                                                 Ranking Score Density
-                                            </Title>
+                                            </Text>
                                         </Col>
                                         <Col span={8}>
                                             <Dropdown
@@ -258,17 +266,23 @@ class Main extends React.Component {
                                     />
                                     <br />
                                     {miningResultDensity}
-                                    <Divider />
+                                    <Divider
+                                        style={{
+                                            marginTop: "8px",
+                                            marginBottom: "8px"
+                                        }}
+                                    />
+                                    <Text strong> Selected Data: </Text>
                                     <Text>
-                                        {"Selected Data: " +
-                                            selectedNodes.length +
+                                        {selectedNodes.length +
                                             " nodes, " +
                                             selectedEdges.length +
                                             " edges"}
                                     </Text>
                                     <br />
+                                    <Text strong>Mining Result Range:</Text>
                                     <Text>
-                                        {"Mining Result Range: " +
+                                        {" " +
                                             (selectedMiningResult[0] !==
                                             undefined
                                                 ? selectedMiningResult[0].toFixed(
@@ -286,7 +300,7 @@ class Main extends React.Component {
                         <Col span={14}>
                             <Card size="small" title="Attributes View">
                                 <ParallelSetView
-                                    canvasHeight={globalHeight * 0.4}
+                                    canvasHeight={globalHeight * 0.37}
                                 />
                             </Card>
                         </Col>
@@ -295,7 +309,9 @@ class Main extends React.Component {
                                 <div style={{ padding: 16 }}>
                                     <Row>
                                         <Col span={10}>
-                                            <Text>Sensitive Attributes</Text>
+                                            <Text strong>
+                                                Highlight Attribute
+                                            </Text>
                                         </Col>
                                         <Col span={14}>
                                             <Select
@@ -317,17 +333,22 @@ class Main extends React.Component {
                                     <br />
                                     <Row>
                                         <Col span={10}>
-                                            <Text>Attributes</Text>
+                                            <Text strong>Attributes</Text>
                                         </Col>
                                         <Col span={14}>
                                             <MultipleSelect />
                                         </Col>
                                     </Row>
 
-                                    <Divider />
-                                    <Title level={5}>KL Divergence</Title>
+                                    <Divider
+                                        style={{
+                                            marginTop: "8px",
+                                            marginBottom: "8px"
+                                        }}
+                                    />
+                                    <Text strong>KL Divergence</Text>
                                     <KLDivergenceView
-                                        canvasHeight={globalHeight * 0.25}
+                                        canvasHeight={globalHeight * 0.22}
                                         canvasWidth={300}
                                     />
                                 </div>
@@ -335,14 +356,14 @@ class Main extends React.Component {
                         </Col>
                     </Row>
                     <Row justify="space-around" gutter={16}>
-                        <Col span={8}>
+                        <Col span={7}>
                             <Card size="small" title="Subgroup Table">
                                 <SubgroupTable
-                                    canvasHeight={globalHeight * 0.45}
+                                    canvasHeight={globalHeight * 0.42}
                                 />
                             </Card>
                         </Col>
-                        <Col span={11}>
+                        <Col span={12}>
                             <Card size="small" title="Rank Mapping View">
                                 <RankMappingView
                                     svgID={"rank-mapping"}
@@ -354,7 +375,7 @@ class Main extends React.Component {
                             <Card size="small" title="Proportion View">
                                 <ProportionView
                                     svgID={"proportion"}
-                                    canvasHeight={globalHeight * 0.2}
+                                    canvasHeight={globalHeight * 0.18}
                                 />
                             </Card>
                             <Card size="small" title="Group Shift View">

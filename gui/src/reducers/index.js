@@ -57,7 +57,7 @@ const initialState = {
             selectedCluster: 1
         },
         attributeList: {
-            highlightedAttribute: "gender",
+            highlightedAttribute: "",
             selectedAttributes: new Set()
         }
     }
@@ -68,7 +68,7 @@ function rootReducer(state = initialState, action) {
         console.info("LOADING_DATA");
         console.info(action.payload);
         let attributeListValues = {
-            highlightedAttribute: "gender",
+            highlightedAttribute: "",
             selectedAttributes: new Set(
                 Object.keys(action.payload.input.labels)
             )
