@@ -227,7 +227,6 @@ class rankMappingView extends React.Component {
             .attr("y", d => inputYScale(d))
             .attr("width", rectLength)
             .attr("height", inputYScale.bandwidth() - 1)
-            .attr("stroke", regularGreyStroke)
             .attr("fill", d => nodeColor(inputNodesGroupMap[d]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
@@ -290,7 +289,6 @@ class rankMappingView extends React.Component {
             .attr("y", d => outputYScale(d))
             .attr("width", rectLength)
             .attr("height", outputYScale.bandwidth() - 1)
-            .attr("stroke", regularGreyStroke)
             .attr("fill", d => nodeColor(outputNodesGroupMap[d]))
             .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {

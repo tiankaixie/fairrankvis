@@ -356,7 +356,7 @@ class Main extends React.Component {
                         </Col>
                     </Row>
                     <Row justify="space-around" gutter={16}>
-                        <Col span={7}>
+                        <Col span={6}>
                             <Card size="small" title="Subgroup Table">
                                 <SubgroupTable
                                     canvasHeight={globalHeight * 0.42}
@@ -371,17 +371,17 @@ class Main extends React.Component {
                                 />
                             </Card>
                         </Col>
-                        <Col span={5}>
+                        <Col span={6}>
                             <Card size="small" title="Proportion View">
                                 <ProportionView
                                     svgID={"proportion"}
-                                    canvasHeight={globalHeight * 0.18}
+                                    canvasHeight={globalHeight * 0.15}
                                 />
                             </Card>
                             <Card size="small" title="Group Shift View">
                                 <GroupShiftingView
                                     svgID={"group-shifting"}
-                                    canvasHeight={globalHeight * 0.2}
+                                    canvasHeight={globalHeight * 0.23}
                                 />
                             </Card>
                         </Col>

@@ -59,7 +59,7 @@ class ProportionView extends React.Component {
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 60, right: 20, bottom: 20, left: 65 };
+        const margin = { top: 30, right: 20, bottom: 20, left: 65 };
 
         /***
          * Data processing
