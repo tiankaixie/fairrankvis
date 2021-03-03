@@ -364,29 +364,26 @@ class Main extends React.Component {
                                 />
                             </Card>
                         </Col>
-                        <Col span={12}>
+                        <Col span={18}>
                             <Card size="small" title="Rank Mapping View">
-                                <RankMappingView
-                                    svgID={"rank-mapping"}
-                                    canvasHeight={globalHeight * 0.45}
-                                />
-                            </Card>
-                        </Col>
-                        <Col span={6}>
-                            <Card size="small" title="Proportion View">
-                                <ProportionView
-                                    svgID={"proportion"}
-                                    canvasHeight={globalHeight * 0.1}
-                                />
-                            </Card>
-                            <Card size="small" title="Group Shift View">
-                                <GroupShiftingView
-                                    svgID={"group-shifting"}
-                                    canvasHeight={globalHeight * 0.15}
-                                />
-                            </Card>
-                            <Card size="small" title="Group Shift View">
-                                <GroupShiftingViewNew />
+                                <Row>
+                                    <Col span={16}>
+
+                                        <RankMappingView
+                                            svgID={"rank-mapping"}
+                                            canvasHeight={globalHeight * 0.45}
+                                        />
+                                    </Col>
+                                    <Col span={8}>
+                                        <Text strong>Group Proportion</Text>
+                                        <ProportionView
+                                            svgID={"proportion"}
+                                            canvasHeight={globalHeight * 0.1}
+                                        />
+                                        <Text strong>Group Shift</Text>
+                                        <GroupShiftingViewNew />
+                                    </Col>
+                                </Row>
                             </Card>
                         </Col>
                     </Row>

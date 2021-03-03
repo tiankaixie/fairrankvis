@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { regularGreyDark } from "../constants/colorScheme";
 import { Row, Col, List } from "antd";
 import IndividualGroupShift from "./IndividualGroupShift";
+import IndividualGroupDistribution from "./IndividualGroupDistribution";
 
 const mapStateToProps = state => {
     return {
@@ -237,14 +238,22 @@ class GroupShiftingView extends React.Component {
                                 {"Group ID: " + item}
                                 <IndividualGroupShift
                                     svgID={"igs-" + item}
-                                    canvasHeight={"150"}
+                                    canvasHeight={"100"}
                                     data={data[item]}
                                     extent={extent}
                                     nodeColor={nodeColor}
-
                                 />
                             </Col>
-                            <Col span={14}>{"Distribution Changes"}</Col>
+                            <Col span={14}>
+                                {"Distribution Changes"}
+                                <IndividualGroupDistribution
+                                    svgID={"igd-" + item}
+                                    canvasHeight={"100"}
+                                    groupID={item}
+                                    extent={extent}
+                                    nodeColor={nodeColor}
+                                />
+                            </Col>
                         </Row>
                     </List.Item>
                 )}

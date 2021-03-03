@@ -49,7 +49,7 @@ class IndividualGroupShift extends React.Component {
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
         const margin = {
-            top: 70,
+            top: 25,
             right: 20,
             bottom: 20,
             left: 10

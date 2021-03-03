@@ -38,11 +38,13 @@ class IndividualGroupDistribution extends React.Component {
             canvasHeight,
             input,
             output,
+            groupID,
             clusterSliderUI,
             attributeList,
             brushSelectedCluster,
             modelName,
-            individualSim
+            individualSim,
+            nodeColor
         } = props;
 
         /***
@@ -63,89 +65,103 @@ class IndividualGroupDistribution extends React.Component {
         /***
          * Data processing
          */
-        const data = {};
+        const data = [];
         const nodeResKey = Object.keys(output["res"]);
         const selectedNodes = nodeResKey.filter(item => {
             return brushSelectedCluster.has(String(item));
         });
         const dimensions = [...attributeList.selectedAttributes];
-        selectedNodes.forEach(node => {
+        selectedNodes.sort(
+            (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
+        );
+        const rankStart = output["res"][selectedNodes[0]]["rank"];
+        const rankEnd =
+            output["res"][selectedNodes[selectedNodes.length - 1]]["rank"];
+
+        const nodes = Object.keys(input["nodes"]);
+
+        nodes.forEach(node => {
             let itemSetID = "";
             dimensions.forEach(d => {
                 itemSetID += input["nodes"][node][d];
             });
-            if (!data.hasOwnProperty(itemSetID)) {
-                data[itemSetID] = {
-                    id: itemSetID,
-                    value: 0,
-                    count: 0
-                };
+            if (groupID !== itemSetID) {
+                return;
             }
-            data[itemSetID]["value"] +=
-                input["topological_feature"]["pagerank"][node]["rank"] -
-                output["res"][node]["rank"];
-
-            data[itemSetID]["count"]++;
+            let currRank = output["res"][node]["rank"];
+            if (currRank >= rankStart && currRank <= rankEnd) {
+                data.push({ x: currRank, y: -1 });
+            }
+            currRank = input["topological_feature"]["pagerank"][node]["rank"];
+            if (currRank >= rankStart && currRank <= rankEnd) {
+                data.push({ x: currRank, y: 1 });
+            }
         });
 
         console.log(data);
 
-        const statData = Object.values(data);
-
-        let subgroupIDs = Object.keys(data);
-        subgroupIDs.sort((a, b) => data[b]["count"] - data[a]["count"]);
-
-        const nodeColor = d3
-            .scaleOrdinal()
-            .domain(subgroupIDs)
-            .range(d3.schemeTableau10);
+        const rankRange = [];
+        for (let i = rankStart; i <= rankEnd; i++) {
+            rankRange.push(i);
+        }
 
         const statXScale = d3
             .scaleBand()
-            .domain(statData.map(x => x.id))
+            .domain(rankRange)
             .range([margin.left, width - margin.right]);
 
         const statYScale = d3
             .scaleLinear()
-            .domain(d3.extent(statData.map(x => x.value / x.count)))
+            .domain([-1, 1])
             .range([height - margin.bottom, margin.top]);
 
-        const detailView = svgBase.append("g").attr("class", "detail");
+        const detailView = svgBase.append("g").attr("class", "distribution");
 
         detailView
             .selectAll("rect")
-            .data(statData)
+            .data(data)
             .join("rect")
-            .attr("x", d => statXScale(d.id))
+            .attr("x", d => statXScale(d.x))
             .attr("y", d => {
-                if (d.value >= 0) {
-                    return statYScale(d.value / d.count);
+                if (d.y >= 0) {
+                    return statYScale(d.y);
                 } else {
                     return statYScale(0);
                 }
             })
             .attr("width", statXScale.bandwidth())
             .attr("height", d => {
-                if (d.value >= 0) {
-                    return statYScale(0) - statYScale(d.value / d.count);
+                if (d.y >= 0) {
+                    return statYScale(0) - statYScale(d.y);
                 } else {
-                    return statYScale(d.value / d.count) - statYScale(0);
+                    return statYScale(d.y) - statYScale(0);
                 }
             })
-            .attr("fill", d => nodeColor(d.id))
-            .attr("opacity", 0.5)
+            .attr("fill", nodeColor(groupID))
+            .attr("opacity", d => {
+                if (d.y >= 0) {
+                    return 0.5;
+                } else {
+                    return 1;
+                }
+            })
             .append("title")
-            .text(d => (d.value / d.count).toFixed(2));
+            .text(d => (d.y).toFixed(2));
 
         detailView
             .append("g")
             .attr("transform", "translate(0," + statYScale(0) + ")")
-            .call(d3.axisBottom(statXScale));
+            .call(
+                d3.axisBottom(statXScale).tickFormat(t => {
+                    if (t === rankStart || t === rankEnd) {
+                        return "rank " + t;
+                    } else {
+                        return "";
+                    }
+                })
+            );
 
-        detailView
-            .append("g")
-            .attr("transform", "translate(" + margin.left + ",0)")
-            .call(d3.axisLeft(statYScale));
+        detailView.selectAll("g.tick").select("line").remove();
     }
 
     /**
