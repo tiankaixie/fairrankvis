@@ -255,7 +255,7 @@ class rankMappingView extends React.Component {
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
-                    .attr("stroke", regularGreyStroke);
+                    .attr("stroke", "#ccc");
             })
             .append("title")
             .text(
@@ -317,7 +317,7 @@ class rankMappingView extends React.Component {
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
-                    .attr("stroke", regularGreyStroke);
+                    .attr("stroke", "#ccc");
             })
             .append("title")
             .text(
@@ -530,9 +530,9 @@ class rankMappingView extends React.Component {
             .append("title")
             .text(
                 (d, i) =>
-                    "Group: " +
+                    "Group" + d["data"]["id"] + ": " +
                     (
-                        (inputBins[d["data"]["binID"]]["stat"][d["id"]] * 100) /
+                        (inputBins[d["data"]["binID"]]["stat"][d["data"]["id"]] * 100) /
                         d["data"]["totalSum"]
                     ).toFixed(2) +
                     "%"
@@ -714,16 +714,17 @@ class rankMappingView extends React.Component {
                     .duration("50")
                     .attr("opacity", 0.5);
             })
-            .append("text")
-            .attr(
-                "x",
+            .append("title")
+            .text(
                 (d, i) =>
-                    outputGroupNodesX +
-                    (d["data"]["preSum"] / d["data"]["totalSum"]) *
-                        outputGroupNodeLen
-            )
-            .attr("dy", "2em")
-            .text((d, i) => "Group: " + i);
+                    "Group" + d["data"]["id"] + ": " +
+                    (
+                        (outputBins[d["data"]["binID"]]["stat"][d["data"]["id"]] * 100) /
+                        d["data"]["totalSum"]
+                    ).toFixed(2) +
+                    "%"
+            );
+
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         // input and output links

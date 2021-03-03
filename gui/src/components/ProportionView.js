@@ -180,7 +180,15 @@ class ProportionView extends React.Component {
             .attr("x", d => xScale(d[0]))
             .attr("y", (d, i) => yScale(d.data.name))
             .attr("width", d => xScale(d[1]) - xScale(d[0]))
-            .attr("height", yScale.bandwidth());
+            .attr("height", yScale.bandwidth())
+            .on("mouseover", d => {
+                d3.select(this)
+                    .transition()
+                    .duration("50")
+                    .attr("stroke", "black");
+            })
+            .append("title")
+            .text((d, i) => ((xScale(d[1]) - xScale(d[0])) * 100 / (width - margin.right - margin.left)).toFixed(2) + "%");
 
         svgBase.append("g").call(xAxis);
 

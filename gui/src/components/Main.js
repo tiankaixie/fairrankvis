@@ -31,6 +31,7 @@ import MultipleSelect from "./MultipleSelect";
 import SubgroupTable from "./SubgroupTable";
 import ProportionView from "./ProportionView";
 import GroupShiftingView from "./GroupShiftingView";
+import GroupShiftingViewNew from "./GroupShiftingViewNew";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -375,14 +376,17 @@ class Main extends React.Component {
                             <Card size="small" title="Proportion View">
                                 <ProportionView
                                     svgID={"proportion"}
-                                    canvasHeight={globalHeight * 0.15}
+                                    canvasHeight={globalHeight * 0.1}
                                 />
                             </Card>
                             <Card size="small" title="Group Shift View">
                                 <GroupShiftingView
                                     svgID={"group-shifting"}
-                                    canvasHeight={globalHeight * 0.23}
+                                    canvasHeight={globalHeight * 0.15}
                                 />
+                            </Card>
+                            <Card size="small" title="Group Shift View">
+                                <GroupShiftingViewNew />
                             </Card>
                         </Col>
                     </Row>

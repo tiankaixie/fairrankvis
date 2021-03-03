@@ -24,7 +24,16 @@ class SubgroupTable extends React.Component {
             brushSelectedCluster,
             canvasHeight
         } = this.props;
-        if (brushSelectedCluster.size === 0) return <div />;
+        if (brushSelectedCluster.size === 0)
+            return (
+                <Table
+                    id={"summary-view"}
+                    style={{ height: canvasHeight * 1.08 }}
+                    size={"small"}
+                    columns={columns}
+                    dataSource={[]}
+                />
+            );
         let wholeData = [];
         let groupData = [];
         let similarGroup = {};

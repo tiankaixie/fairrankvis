@@ -14,7 +14,7 @@ const mapStateToProps = state => {
     };
 };
 
-class GroupShiftingView extends React.Component {
+class IndividualGroupDistribution extends React.Component {
     constructor(props) {
         super(props);
         this.container = React.createRef();
@@ -181,4 +181,4 @@ class GroupShiftingView extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(GroupShiftingView);
+export default connect(mapStateToProps)(IndividualGroupDistribution);
