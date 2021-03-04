@@ -2,9 +2,10 @@ import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
 import { regularGreyDark } from "../constants/colorScheme";
-import { Row, Col, List } from "antd";
+import { Row, Col, List, Space } from "antd";
 import IndividualGroupShift from "./IndividualGroupShift";
 import IndividualGroupDistribution from "./IndividualGroupDistribution";
+import Text from "antd/es/typography/Text";
 
 const mapStateToProps = state => {
     return {
@@ -231,11 +232,17 @@ class GroupShiftingView extends React.Component {
                 size="small"
                 style={{ height: canvasHeight, overflow: "auto" }}
                 dataSource={Object.keys(data)}
+                header={
+                    <Space>
+                        <Text strong>Group ID & Group Shifting</Text>{" "}
+                        <Text strong> Distribution Changes</Text>
+                    </Space>
+                }
                 renderItem={item => (
                     <List.Item>
                         <Row style={{ width: "100%" }}>
                             <Col span={10}>
-                                {"Group ID: " + item}
+                                <Text strong> {item}</Text>
                                 <IndividualGroupShift
                                     svgID={"igs-" + item}
                                     canvasHeight={"100"}
@@ -245,7 +252,6 @@ class GroupShiftingView extends React.Component {
                                 />
                             </Col>
                             <Col span={14}>
-                                {"Distribution Changes"}
                                 <IndividualGroupDistribution
                                     svgID={"igd-" + item}
                                     canvasHeight={"100"}

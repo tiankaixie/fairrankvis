@@ -146,7 +146,7 @@ class IndividualGroupDistribution extends React.Component {
                 }
             })
             .append("title")
-            .text(d => (d.y).toFixed(2));
+            .text(d => "rank " + d.x);
 
         detailView
             .append("g")
@@ -161,7 +161,10 @@ class IndividualGroupDistribution extends React.Component {
                 })
             );
 
-        detailView.selectAll("g.tick").select("line").remove();
+        detailView
+            .selectAll("g.tick")
+            .select("line")
+            .remove();
     }
 
     /**

@@ -100,7 +100,9 @@ class IndividualGroupShift extends React.Component {
             .attr("fill", d => nodeColor(d.id))
             .attr("opacity", 0.5)
             .append("title")
-            .text(d => (d.value / d.count).toFixed(2));
+            .text(
+                d => "Average ranking shift: " + (d.value / d.count).toFixed(2)
+            );
     }
 
     /**

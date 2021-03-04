@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { Row, Col, Space } from "antd";
+import { Row, Col, Space, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
 
 const mapStateToProps = state => {
@@ -143,46 +143,65 @@ class ProportionViewNew extends React.Component {
         const inputProportionComponent = [];
         const outputProportionComponent = [];
 
-        const containerWidth = 40;
         const totalWidth = 320;
-        const swt = false;
         commonKeys.forEach(key => {
             inputProportionComponent.push(
                 <div
                     style={{
-                        width: swt
+                        width: this.props.comparisonMode
                             ? (inputTopK[key]["maxCount"] / total) * totalWidth
-                            : null
+                            : null,
+                        transition: "width 1s"
                     }}
                 >
-                    <div
-                        style={{
-                            width:
-                                (inputTopK[key]["count"] / total) * totalWidth,
-                            backgroundColor: nodeColor(key),
-                            height: 20,
-                            opacity: 0.5
-                        }}
-                    />
+                    <Tooltip
+                        placement="top"
+                        title={
+                            ((inputTopK[key]["count"] * 100) / total).toFixed(
+                                2
+                            ) + "%"
+                        }
+                    >
+                        <div
+                            style={{
+                                width:
+                                    (inputTopK[key]["count"] / total) *
+                                    totalWidth,
+                                backgroundColor: nodeColor(key),
+                                height: 20,
+                                opacity: 0.5
+                            }}
+                        />
+                    </Tooltip>
                 </div>
             );
             outputProportionComponent.push(
                 <div
                     style={{
-                        width: swt
+                        width: this.props.comparisonMode
                             ? (resultTopK[key]["maxCount"] / total) * totalWidth
                             : null
                     }}
                 >
-                    <div
-                        style={{
-                            width:
-                                (resultTopK[key]["count"] / total) * totalWidth,
-                            backgroundColor: nodeColor(key),
-                            height: 20,
-                            opacity: 0.5
-                        }}
-                    />
+                    <Tooltip
+                        placement="bottom"
+                        title={
+                            ((resultTopK[key]["count"] * 100) / total).toFixed(
+                                2
+                            ) + "%"
+                        }
+                    >
+                        <div
+                            style={{
+                                width:
+                                    (resultTopK[key]["count"] / total) *
+                                    totalWidth,
+                                backgroundColor: nodeColor(key),
+                                height: 20,
+                                opacity: 0.5
+                            }}
+                        />
+                    </Tooltip>
                 </div>
             );
         });
@@ -197,7 +216,7 @@ class ProportionViewNew extends React.Component {
                         <div
                             style={{
                                 display: "flex",
-                                justifyContent: swt
+                                justifyContent: this.props.comparisonMode
                                     ? "space-around"
                                     : "flex-start",
                                 width: "100%"
@@ -216,7 +235,7 @@ class ProportionViewNew extends React.Component {
                             style={{
                                 marginTop: 5,
                                 display: "flex",
-                                justifyContent: swt
+                                justifyContent: this.props.comparisonMode
                                     ? "space-around"
                                     : "flex-start",
                                 width: "100%"

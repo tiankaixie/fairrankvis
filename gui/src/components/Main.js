@@ -13,7 +13,9 @@ import {
     Dropdown,
     Menu,
     Select,
-    Card
+    Card,
+    Switch,
+    Space
 } from "antd";
 import { Typography } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
@@ -57,7 +59,9 @@ class Main extends React.Component {
             displayEdges: true,
             tabIndex: 0,
             miningResultControl: "zoom",
-            openRankingDensitySettings: false
+            openRankingDensitySettings: false,
+            comparisonMode: true,
+            showDisadvantagedNode: false
         };
     }
 
@@ -375,7 +379,34 @@ class Main extends React.Component {
                             </Card>
                         </Col>
                         <Col span={18}>
-                            <Card size="small" title="Rank Mapping View">
+                            <Card
+                                size="small"
+                                title="Rank Mapping View"
+                                extra={
+                                    <Space>
+                                        <Text>Show disadvantaged nodes</Text>
+                                        <Switch
+                                            checked={
+                                                this.state.showDisadvantagedNode
+                                            }
+                                            onChange={checked => {
+                                                this.setState({
+                                                    showDisadvantagedNode: checked
+                                                });
+                                            }}
+                                        />
+                                        <Text>Comparison</Text>
+                                        <Switch
+                                            checked={this.state.comparisonMode}
+                                            onChange={checked => {
+                                                this.setState({
+                                                    comparisonMode: checked
+                                                });
+                                            }}
+                                        />
+                                    </Space>
+                                }
+                            >
                                 <Row>
                                     <Col span={16}>
                                         <RankMappingView
@@ -388,7 +419,11 @@ class Main extends React.Component {
                                         {/*    svgID={"proportion"}*/}
                                         {/*    canvasHeight={globalHeight * 0.1}*/}
                                         {/*/>*/}
-                                        <ProportionViewNew />
+                                        <ProportionViewNew
+                                            comparisonMode={
+                                                this.state.comparisonMode
+                                            }
+                                        />
                                         <br />
                                         <GroupShiftingViewNew
                                             canvasHeight={globalHeight * 0.38}
