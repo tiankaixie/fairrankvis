@@ -38,6 +38,7 @@ const mapStateToProps = state => {
         clusterSliderUI: state.ui.clusterSliderUI,
         output: state.output,
         input: state.input,
+        modelName: state.modelName,
         dataName: state.dataName,
         clusterList: state.ui.clusterList,
         individualSim: state.individualSim,
@@ -75,6 +76,7 @@ class Main extends React.Component {
             input,
             updateHighlightedAttribute,
             dataName,
+            modelName,
             brushSelectedCluster,
             attributeList
         } = this.props;
@@ -130,51 +132,58 @@ class Main extends React.Component {
                 <React.Fragment>
                     <Text strong>Ranking range:</Text>
                     <br />
-                    <Row justify="space-between">
-                        <Col span={5}>
-                            <InputNumber
-                                min={0}
-                                max={Object.keys(output.res).length}
-                                style={{ width: "60px" }}
-                                value={
-                                    selectedMiningResult[0] !== undefined
-                                        ? Number(
-                                              rankMap[selectedMiningResult[1]]
-                                          )
-                                        : -1
-                                }
-                                onChange={() => {}}
-                            />
-                        </Col>
-                        <Col span={12}>
-                            <Slider
-                                min={0}
-                                max={Object.keys(output.res).length}
-                                onChange={() => {}}
-                                value={[
-                                    rankMap[selectedMiningResult[0]],
-                                    rankMap[selectedMiningResult[1]]
-                                ]}
-                                // range={{ draggableTrack: true }}
-                                range
-                            />
-                        </Col>
-                        <Col span={5}>
-                            <InputNumber
-                                min={0}
-                                max={Object.keys(output.res).length}
-                                style={{ width: "60px" }}
-                                value={
-                                    selectedMiningResult[0] !== undefined
-                                        ? Number(
-                                              rankMap[selectedMiningResult[0]]
-                                          )
-                                        : -1
-                                }
-                                onChange={() => {}}
-                            />
-                        </Col>
-                    </Row>
+                    <br />
+                    <div>
+                        <Row justify="space-between">
+                            <Col span={5}>
+                                <InputNumber
+                                    min={0}
+                                    max={Object.keys(output.res).length}
+                                    style={{ width: "60px" }}
+                                    value={
+                                        selectedMiningResult[0] !== undefined
+                                            ? Number(
+                                                  rankMap[
+                                                      selectedMiningResult[1]
+                                                  ]
+                                              )
+                                            : -1
+                                    }
+                                    onChange={() => {}}
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <Slider
+                                    min={0}
+                                    max={Object.keys(output.res).length}
+                                    onChange={() => {}}
+                                    value={[
+                                        rankMap[selectedMiningResult[0]],
+                                        rankMap[selectedMiningResult[1]]
+                                    ]}
+                                    // range={{ draggableTrack: true }}
+                                    range
+                                />
+                            </Col>
+                            <Col span={5}>
+                                <InputNumber
+                                    min={0}
+                                    max={Object.keys(output.res).length}
+                                    style={{ width: "60px" }}
+                                    value={
+                                        selectedMiningResult[0] !== undefined
+                                            ? Number(
+                                                  rankMap[
+                                                      selectedMiningResult[0]
+                                                  ]
+                                              )
+                                            : -1
+                                    }
+                                    onChange={() => {}}
+                                />
+                            </Col>
+                        </Row>
+                    </div>
                 </React.Fragment>
             );
         }
@@ -214,44 +223,79 @@ class Main extends React.Component {
         return (
             <React.Fragment>
                 <Layout style={{ padding: 16 }}>
-                    <Row
-                        justify="space-around"
-                        gutter={16}
-                        style={{ marginBottom: 16 }}
-                    >
-                        <Col span={5}>
+                    <Row gutter={16} justify="space-around">
+                        <Col span={6}>
                             <Card size="small" title="Data Setting">
-                                <div style={{ padding: 16 }}>
-                                    <Text strong>
-                                        {"Dataset: " + dataName + " "}
-                                    </Text>
-                                    <Text>
-                                        {Object.keys(input.nodes).length +
-                                            " nodes, " +
-                                            Object.keys(input.edges).length +
-                                            " edges"}
-                                    </Text>
-                                    <Divider
-                                        style={{
-                                            marginTop: "8px",
-                                            marginBottom: "8px"
-                                        }}
-                                    />
+                                <div
+                                    style={{
+                                        paddingLeft: 16,
+                                        paddingRight: 16
+                                    }}
+                                >
                                     <Row>
-                                        <Col span={15}>
-                                            <Text strong>
-                                                Ranking Score Density
-                                            </Text>
+                                        <Col span={11}>
+                                            <Text strong>Dataset</Text>
                                         </Col>
-                                        <Col span={8}>
-                                            <Dropdown
-                                                overlay={setting}
-                                                placement="bottomLeft"
+                                        <Col span={13}>
+                                            <Select
+                                                onChange={() => {}}
+                                                style={{
+                                                    width: "100%"
+                                                }}
+                                                value={dataName}
                                             >
-                                                <SettingOutlined />
-                                            </Dropdown>
+                                                <Option
+                                                    key="facebook"
+                                                    value="facebook"
+                                                >
+                                                    Facebook
+                                                </Option>
+                                            </Select>
                                         </Col>
                                     </Row>
+                                    <br />
+                                    <Row>
+                                        <Col span={11}>
+                                            <Text strong>
+                                                {"Ranking Model"}
+                                            </Text>
+                                        </Col>
+                                        <Col span={13}>
+                                            <Select
+                                                onChange={() => {}}
+                                                style={{
+                                                    width: "100%"
+                                                }}
+                                                value={modelName}
+                                            >
+                                                <Option
+                                                    key="attrirank"
+                                                    value="attrirank"
+                                                >
+                                                    Attrirank
+                                                </Option>
+                                            </Select>
+                                        </Col>
+                                    </Row>
+
+                                    <Divider
+                                        style={{
+                                            marginTop: "12px",
+                                            marginBottom: "12px"
+                                        }}
+                                    />
+                                    <Space>
+                                        <Text strong>
+                                            Ranking Score Density
+                                        </Text>
+
+                                        <Dropdown
+                                            overlay={setting}
+                                            placement="bottomLeft"
+                                        >
+                                            <SettingOutlined />
+                                        </Dropdown>
+                                    </Space>
 
                                     <MiningResultDensity
                                         canvasHeight={globalHeight * 0.16}
@@ -263,174 +307,229 @@ class Main extends React.Component {
                                     {miningResultDensity}
                                     <Divider
                                         style={{
-                                            marginTop: "8px",
-                                            marginBottom: "8px"
+                                            marginTop: "12px",
+                                            marginBottom: "12px"
                                         }}
                                     />
-                                    <Text strong> Selected Data: </Text>
-                                    <Text>
-                                        {selectedNodes.length +
-                                            " nodes, " +
-                                            selectedEdges.length +
-                                            " edges"}
-                                    </Text>
-                                    <br />
-                                    <Text strong>Mining Result Range:</Text>
-                                    <Text>
-                                        {" " +
-                                            (selectedMiningResult[0] !==
-                                            undefined
-                                                ? selectedMiningResult[0].toFixed(
-                                                      6
-                                                  ) +
-                                                  " ~ " +
-                                                  selectedMiningResult[1].toFixed(
-                                                      6
-                                                  )
-                                                : "null")}
-                                    </Text>
-                                </div>
-                            </Card>
-                        </Col>
-                        <Col span={14}>
-                            <Card size="small" title="Attributes View">
-                                <ParallelSetView
-                                    canvasHeight={globalHeight * 0.37}
-                                />
-                            </Card>
-                        </Col>
-                        <Col span={5}>
-                            <Card size="small" title="Attributes Setting">
-                                <div style={{ padding: 16 }}>
                                     <Row>
-                                        <Col span={10}>
-                                            <Text strong>
-                                                Highlight Attribute
-                                            </Text>
+                                        <Col span={11}>
+                                            <Text strong> Selected Data </Text>
                                         </Col>
-                                        <Col span={14}>
-                                            <Select
-                                                onChange={
-                                                    updateHighlightedAttribute
-                                                }
-                                                style={{ width: "100%" }}
-                                                value={
-                                                    attributeList.highlightedAttribute
-                                                }
-                                            >
-                                                <Option key="none" value="">
-                                                    none
-                                                </Option>
-                                                {attributes}
-                                            </Select>
+                                        <Col span={13}>
+                                            <Text>
+                                                {selectedNodes.length +
+                                                    "/" +
+                                                    Object.keys(input.nodes)
+                                                        .length +
+                                                    " nodes, " +
+                                                    selectedEdges.length +
+                                                    "/" +
+                                                    Object.keys(input.edges)
+                                                        .length +
+                                                    " edges"}
+                                            </Text>
                                         </Col>
                                     </Row>
                                     <br />
                                     <Row>
-                                        <Col span={10}>
-                                            <Text strong>Attributes</Text>
+                                        <Col span={11}>
+                                            <Text strong>
+                                                Mining Result Range:
+                                            </Text>
                                         </Col>
-                                        <Col span={14}>
-                                            <MultipleSelect />
+                                        <Col span={13}>
+                                            {" "}
+                                            <Text>
+                                                {" " +
+                                                    (selectedMiningResult[0] !==
+                                                    undefined
+                                                        ? selectedMiningResult[0].toFixed(
+                                                              6
+                                                          ) +
+                                                          " ~ " +
+                                                          selectedMiningResult[1].toFixed(
+                                                              6
+                                                          )
+                                                        : "null")}
+                                            </Text>
                                         </Col>
                                     </Row>
 
-                                    <Divider
-                                        style={{
-                                            marginTop: "8px",
-                                            marginBottom: "8px"
-                                        }}
-                                    />
-                                    <Row>
-                                        <Col span={10}>
-                                            <Text strong>
-                                                Distribution Similarity
-                                            </Text>
-                                        </Col>
-                                        <Col span={14}>
-                                            <Select
-                                                onChange={() => {}}
-                                                style={{ width: "100%" }}
-                                                value={"kldivergence"}
-                                            >
-                                                <Option
-                                                    key="kldivergence"
-                                                    value="kldivergence"
-                                                >
-                                                    KL Divergence
-                                                </Option>
-                                            </Select>
-                                        </Col>
-                                    </Row>
-                                    <KLDivergenceView
-                                        canvasHeight={globalHeight * 0.21}
-                                        canvasWidth={300}
-                                    />
+                                    <br />
                                 </div>
                             </Card>
-                        </Col>
-                    </Row>
-                    <Row justify="space-around" gutter={16}>
-                        <Col span={6}>
+                            <br />
                             <Card size="small" title="Subgroup Table">
                                 <SubgroupTable
-                                    canvasHeight={globalHeight * 0.42}
+                                    canvasHeight={globalHeight * 0.32}
                                 />
                             </Card>
                         </Col>
                         <Col span={18}>
-                            <Card
-                                size="small"
-                                title="Rank Mapping View"
-                                extra={
-                                    <Space>
-                                        <Text>Show disadvantaged nodes</Text>
-                                        <Switch
-                                            checked={
-                                                this.state.showDisadvantagedNode
-                                            }
-                                            onChange={checked => {
-                                                this.setState({
-                                                    showDisadvantagedNode: checked
-                                                });
-                                            }}
-                                        />
-                                        <Text>Comparison</Text>
-                                        <Switch
-                                            checked={this.state.comparisonMode}
-                                            onChange={checked => {
-                                                this.setState({
-                                                    comparisonMode: checked
-                                                });
-                                            }}
-                                        />
-                                    </Space>
-                                }
+                            <Row
+                                justify="space-around"
+                                gutter={16}
+                                style={{ marginBottom: 16 }}
                             >
-                                <Row>
-                                    <Col span={16}>
-                                        <RankMappingView
-                                            svgID={"rank-mapping"}
-                                            canvasHeight={globalHeight * 0.45}
+                                <Col span={17}>
+                                    <Card size="small" title="Attributes View">
+                                        <ParallelSetView
+                                            canvasHeight={globalHeight * 0.37}
                                         />
-                                    </Col>
-                                    <Col span={8}>
-                                        {/*<ProportionView*/}
-                                        {/*    svgID={"proportion"}*/}
-                                        {/*    canvasHeight={globalHeight * 0.1}*/}
-                                        {/*/>*/}
-                                        <ProportionViewNew
-                                            comparisonMode={
-                                                this.state.comparisonMode
-                                            }
-                                        />
-                                        <br />
-                                        <GroupShiftingViewNew
-                                            canvasHeight={globalHeight * 0.38}
-                                        />
-                                    </Col>
-                                </Row>
-                            </Card>
+                                    </Card>
+                                </Col>
+                                <Col span={7}>
+                                    <Card
+                                        size="small"
+                                        title="Attributes Setting"
+                                    >
+                                        <div style={{ padding: 16 }}>
+                                            <Row>
+                                                <Col span={11}>
+                                                    <Text strong>
+                                                        Highlight Attribute
+                                                    </Text>
+                                                </Col>
+                                                <Col span={13}>
+                                                    <Select
+                                                        onChange={
+                                                            updateHighlightedAttribute
+                                                        }
+                                                        style={{
+                                                            width: "100%"
+                                                        }}
+                                                        value={
+                                                            attributeList.highlightedAttribute
+                                                        }
+                                                    >
+                                                        <Option
+                                                            key="none"
+                                                            value=""
+                                                        >
+                                                            none
+                                                        </Option>
+                                                        {attributes}
+                                                    </Select>
+                                                </Col>
+                                            </Row>
+                                            <br />
+                                            <Row>
+                                                <Col span={11}>
+                                                    <Text strong>
+                                                        Attributes
+                                                    </Text>
+                                                </Col>
+                                                <Col span={13}>
+                                                    <MultipleSelect />
+                                                </Col>
+                                            </Row>
+
+                                            <Divider
+                                                style={{
+                                                    marginTop: "12px",
+                                                    marginBottom: "12px"
+                                                }}
+                                            />
+                                            <Row>
+                                                <Col span={11}>
+                                                    <Text strong>
+                                                        Distribution Similarity
+                                                    </Text>
+                                                </Col>
+                                                <Col span={13}>
+                                                    <Select
+                                                        onChange={() => {}}
+                                                        style={{
+                                                            width: "100%"
+                                                        }}
+                                                        value={"kldivergence"}
+                                                    >
+                                                        <Option
+                                                            key="kldivergence"
+                                                            value="kldivergence"
+                                                        >
+                                                            KL Divergence
+                                                        </Option>
+                                                    </Select>
+                                                </Col>
+                                            </Row>
+                                            <KLDivergenceView
+                                                canvasHeight={
+                                                    globalHeight * 0.21
+                                                }
+                                                canvasWidth={300}
+                                            />
+                                        </div>
+                                    </Card>
+                                </Col>
+                            </Row>
+                            <Row justify="space-around" gutter={16}>
+                                <Col span={24}>
+                                    <Card
+                                        size="small"
+                                        title="Rank Mapping View"
+                                        extra={
+                                            <Space>
+                                                <Text>
+                                                    Show disadvantaged nodes
+                                                </Text>
+                                                <Switch
+                                                    checked={
+                                                        this.state
+                                                            .showDisadvantagedNode
+                                                    }
+                                                    onChange={checked => {
+                                                        this.setState({
+                                                            showDisadvantagedNode: checked
+                                                        });
+                                                    }}
+                                                />
+                                                <Text>Comparison</Text>
+                                                <Switch
+                                                    checked={
+                                                        this.state
+                                                            .comparisonMode
+                                                    }
+                                                    onChange={checked => {
+                                                        this.setState({
+                                                            comparisonMode: checked
+                                                        });
+                                                    }}
+                                                />
+                                            </Space>
+                                        }
+                                    >
+                                        <Row>
+                                            <Col span={16}>
+                                                <RankMappingView
+                                                    svgID={"rank-mapping"}
+                                                    canvasHeight={
+                                                        globalHeight * 0.45
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col span={8}>
+                                                {/*<ProportionView*/}
+                                                {/*    svgID={"proportion"}*/}
+                                                {/*    canvasHeight={globalHeight * 0.1}*/}
+                                                {/*/>*/}
+                                                <ProportionViewNew
+                                                    comparisonMode={
+                                                        this.state
+                                                            .comparisonMode
+                                                    }
+                                                />
+                                                <br />
+                                                <GroupShiftingViewNew
+                                                    canvasHeight={
+                                                        globalHeight * 0.38
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </Card>
+                                </Col>
+                            </Row>
                         </Col>
                     </Row>
                 </Layout>

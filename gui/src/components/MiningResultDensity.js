@@ -207,18 +207,11 @@ class MiningResultDensity extends React.Component {
         const width = this.container.current.getBoundingClientRect().width;
 
         let padding = 40;
-        let dataset = [
-            [23, 43],
-            [54, 65],
-            [2, 3],
-            [77, 56],
-            [80, 3]
-        ];
 
-        if (output.similarity.length > 0) {
-            dataset = output.similarity;
+        if (Object.keys(output.similarity).length === 0) {
+            return;
         }
-
+        const dataset = output.similarity;
         //scale function
         let xScale = d3
             .scaleLinear()
@@ -296,7 +289,6 @@ class MiningResultDensity extends React.Component {
                 .attr("cx", d => newX(d[0]))
                 .attr("cy", d => newY(d[1]));
         }
-
     }
 
     renderSvg(baseGroup, props) {

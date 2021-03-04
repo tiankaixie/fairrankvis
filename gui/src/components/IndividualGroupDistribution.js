@@ -60,7 +60,7 @@ class IndividualGroupDistribution extends React.Component {
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 10, right: 20, bottom: 20, left: 5 };
+        const margin = { top: 40, right: 20, bottom: 20, left: 5 };
 
         /***
          * Data processing
