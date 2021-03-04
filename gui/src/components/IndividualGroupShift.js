@@ -50,16 +50,16 @@ class IndividualGroupShift extends React.Component {
         const svgBase = svgRoot.select("g");
         const margin = {
             top: 25,
-            right: 20,
+            right: 25,
             bottom: 20,
-            left: 10
+            left: 5
         };
 
         /***
          * Data processing
          */
-        console.log(data);
-        const barHeight = 20;
+        // console.log(data);
+        const barHeight = 15;
         // const statXScale = d3
         //     .scaleBand()
         //     .domain(statData.map(x => x.id))

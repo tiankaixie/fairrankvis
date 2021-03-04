@@ -51,7 +51,7 @@ class KLDivergenceView extends React.Component {
         } = props;
         const klHeight = canvasHeight;
         const klWidth = this.container.current.getBoundingClientRect().width;
-        const margin = {left: 60, bottom: 20, right: 40, top: 10}
+        const margin = { left: 35, bottom: 20, right: 30, top: 10 };
         // const margin.left = 60;
         // const margin.bottom = 20;
         // const margin.top = 10;

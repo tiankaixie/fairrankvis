@@ -95,7 +95,7 @@ class ProportionView extends React.Component {
             output["res"][selectedNodes[0]]["rank"] - 1,
             output["res"][selectedNodes[selectedNodes.length - 1]]["rank"]
         );
-        console.log(inputNodes);
+        // console.log(inputNodes);
         inputNodes.forEach(node => {
             let itemSetID = "";
             dimensions.forEach(d => {
@@ -111,8 +111,8 @@ class ProportionView extends React.Component {
             ...Object.keys(inputTopK),
             ...Object.keys(resultTopK)
         ]);
-        console.log(inputTopK);
-        console.log(resultTopK);
+        // console.log(inputTopK);
+        // console.log(resultTopK);
         commonKeys.forEach(key => {
             if (!inputTopK.hasOwnProperty(key)) {
                 inputTopK[key] = 0;
@@ -126,7 +126,7 @@ class ProportionView extends React.Component {
         data.push(Object.assign({}, { name: individualSim }, inputTopK));
         data.push(Object.assign({}, { name: modelName }, resultTopK));
 
-        console.log(data);
+        // console.log(data);
 
         const xScale = d3
             .scaleLinear()
@@ -138,7 +138,7 @@ class ProportionView extends React.Component {
             .range([margin.top, height - margin.bottom])
             .padding(0.08);
 
-        console.log(Object.keys(data[0]).filter(d => d !== "name"));
+        // console.log(Object.keys(data[0]).filter(d => d !== "name"));
         const series = d3
             .stack()
             .keys(Object.keys(data[0]).filter(d => d !== "name"))

@@ -229,7 +229,7 @@ class GroupShiftingView extends React.Component {
         return (
             <List
                 size="small"
-                style={{ height: "300px", overflow: "auto" }}
+                style={{ height: canvasHeight, overflow: "auto" }}
                 dataSource={Object.keys(data)}
                 renderItem={item => (
                     <List.Item>

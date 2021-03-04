@@ -60,7 +60,7 @@ class IndividualGroupDistribution extends React.Component {
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 10, right: 20, bottom: 20, left: 30 };
+        const margin = { top: 10, right: 20, bottom: 20, left: 5 };
 
         /***
          * Data processing
@@ -98,7 +98,7 @@ class IndividualGroupDistribution extends React.Component {
             }
         });
 
-        console.log(data);
+        // console.log(data);
 
         const rankRange = [];
         for (let i = rankStart; i <= rankEnd; i++) {
@@ -154,7 +154,7 @@ class IndividualGroupDistribution extends React.Component {
             .call(
                 d3.axisBottom(statXScale).tickFormat(t => {
                     if (t === rankStart || t === rankEnd) {
-                        return "rank " + t;
+                        return t;
                     } else {
                         return "";
                     }

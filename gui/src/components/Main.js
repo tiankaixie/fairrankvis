@@ -1,6 +1,5 @@
 import React from "react";
 import * as d3 from "d3";
-// import MultipleSelect from "./MultipleSelect";
 import { connect } from "react-redux";
 import { getData } from "../actions";
 import {
@@ -16,12 +15,8 @@ import {
     Select,
     Card
 } from "antd";
-import { Typography, Space } from "antd";
+import { Typography } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-import {
-    updatePairwiseCommonAttributes,
-    updateSelectedCluster
-} from "../actions";
 import "antd/dist/antd.css";
 import MiningResultDensity from "./MiningResultDensity";
 import RankMappingView from "./RankMappingView";
@@ -30,16 +25,11 @@ import KLDivergenceView from "./KLDivergenceView";
 import MultipleSelect from "./MultipleSelect";
 import SubgroupTable from "./SubgroupTable";
 import ProportionView from "./ProportionView";
-import GroupShiftingView from "./GroupShiftingView";
+
 import GroupShiftingViewNew from "./GroupShiftingViewNew";
+import ProportionViewNew from "./ProportionViewNew";
 const { Title, Text } = Typography;
 const { Option } = Select;
-
-// import MiningResultDensity from "./MiningResultDensity";
-// import KLDivergenceView from "./KLDivergenceView";
-// import ParallelSetView from "./ParallelSetView";
-// import RankMappingView from "./RankMappingView";
-// import SubgroupTable from "./SubgroupTable";
 
 const mapStateToProps = state => {
     return {
@@ -347,9 +337,29 @@ class Main extends React.Component {
                                             marginBottom: "8px"
                                         }}
                                     />
-                                    <Text strong>KL Divergence</Text>
+                                    <Row>
+                                        <Col span={10}>
+                                            <Text strong>
+                                                Distribution Similarity
+                                            </Text>
+                                        </Col>
+                                        <Col span={14}>
+                                            <Select
+                                                onChange={() => {}}
+                                                style={{ width: "100%" }}
+                                                value={"kldivergence"}
+                                            >
+                                                <Option
+                                                    key="kldivergence"
+                                                    value="kldivergence"
+                                                >
+                                                    KL Divergence
+                                                </Option>
+                                            </Select>
+                                        </Col>
+                                    </Row>
                                     <KLDivergenceView
-                                        canvasHeight={globalHeight * 0.22}
+                                        canvasHeight={globalHeight * 0.21}
                                         canvasWidth={300}
                                     />
                                 </div>
@@ -368,20 +378,21 @@ class Main extends React.Component {
                             <Card size="small" title="Rank Mapping View">
                                 <Row>
                                     <Col span={16}>
-
                                         <RankMappingView
                                             svgID={"rank-mapping"}
                                             canvasHeight={globalHeight * 0.45}
                                         />
                                     </Col>
                                     <Col span={8}>
-                                        <Text strong>Group Proportion</Text>
-                                        <ProportionView
-                                            svgID={"proportion"}
-                                            canvasHeight={globalHeight * 0.1}
+                                        {/*<ProportionView*/}
+                                        {/*    svgID={"proportion"}*/}
+                                        {/*    canvasHeight={globalHeight * 0.1}*/}
+                                        {/*/>*/}
+                                        <ProportionViewNew />
+                                        <br />
+                                        <GroupShiftingViewNew
+                                            canvasHeight={globalHeight * 0.38}
                                         />
-                                        <Text strong>Group Shift</Text>
-                                        <GroupShiftingViewNew />
                                     </Col>
                                 </Row>
                             </Card>
