@@ -119,10 +119,10 @@ class ProportionViewNew extends React.Component {
 
         commonKeys.forEach(key => {
             if (!inputTopK.hasOwnProperty(key)) {
-                inputTopK[key]["count"] = 0;
+                inputTopK[key] = { count: 0 };
             }
             if (!resultTopK.hasOwnProperty(key)) {
-                resultTopK[key]["count"] = 0;
+                resultTopK[key] = { count: 0 };
             }
             inputTopK[key]["maxCount"] = Math.max(
                 inputTopK[key]["count"],

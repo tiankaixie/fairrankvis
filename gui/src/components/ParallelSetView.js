@@ -2,7 +2,11 @@ import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
 import { updateTableData } from "../actions";
-import { regularGreyDark, textGrey } from "../constants/colorScheme";
+import {
+    attributeColor,
+    regularGreyDark, subGroupColor,
+    textGrey
+} from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -200,6 +204,43 @@ class ParallelSetView extends React.Component {
         let highlightColor = null;
 
         wholeData = Object.keys(input.nodes).map(key => input.nodes[key]);
+        let similarGroup = {};
+        let groupData = wholeData.filter(item => {
+            return brushSelectedCluster.has(String(item.id));
+        });
+        const tempDimensions = [...attributeList.selectedAttributes];
+        groupData.forEach(value => {
+            let itemSetID = "";
+            let itemSetList = [];
+            let itemSetAttr = {};
+            tempDimensions.forEach((d, i) => {
+                itemSetID += value[d];
+                itemSetAttr[d] = input.labels[d]["map"][value[d]];
+            });
+            if (similarGroup.hasOwnProperty(itemSetID)) {
+                similarGroup[itemSetID].groupCount += 1;
+            } else {
+                similarGroup[itemSetID] = {
+                    id: itemSetID,
+                    name: itemSetList,
+                    groupCount: 1
+                };
+                similarGroup[itemSetID] = Object.assign(
+                    {},
+                    similarGroup[itemSetID],
+                    itemSetAttr
+                );
+            }
+        });
+        similarGroup = Object.values(similarGroup);
+        similarGroup.sort((a, b) => {
+            return b.groupCount - a.groupCount;
+        });
+
+        const subgroupColor = d3
+            .scaleOrdinal()
+            .domain(similarGroup.map(item => item["id"]))
+            .range(subGroupColor);
 
         data = wholeData.filter(item => {
             return brushSelectedCluster.has(String(item.id));
@@ -218,7 +259,7 @@ class ParallelSetView extends React.Component {
                     .domain(
                         Object.keys(input.labels[highlightedDimension]["map"])
                     )
-                    .range(d3.schemeSet2);
+                    .range(attributeColor);
             } else {
                 // console.log(d3.extent(data.map(d => d[highlightedDimension])));
                 highlightColor = d3
@@ -347,25 +388,19 @@ class ParallelSetView extends React.Component {
                 })
                 .attr("d", d3.sankeyLinkHorizontal())
                 .attr("stroke", d => {
-                    const selectedAttributes = [
-                        ...attributeList.selectedAttributes
-                    ];
-                    let index = 0;
-                    for (let i = 0; i < selectedAttributes.length; i++) {
-                        if (selectedAttributes[i] === highlightedDimension) {
-                            index = i;
-                            break;
-                        }
-                    }
-                    if (
-                        index >= d.names.length ||
-                        highlightedDimension === ""
-                    ) {
-                        return regularGreyDark;
-                    }
-                    return highlightColor(d.names[index]);
+                    // if (
+                    //     index >= d.names.length ||
+                    //     highlightedDimension === ""
+                    // ) {
+                    //     return regularGreyDark;
+                    // }
+                    let groupID = "";
+                    d.names.forEach(g => {
+                        groupID += g;
+                    });
+                    return subgroupColor(groupID);
                 })
-                .attr("opacity", 0.5)
+                .attr("opacity", 0.7)
                 .attr("stroke-width", d => d.width)
                 .style("mix-blend-mode", "multiply");
             // .append("title")

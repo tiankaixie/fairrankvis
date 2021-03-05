@@ -8,3 +8,21 @@ export const regularGreyDark = "#cccccc";
 // export const regularGreyDark = "#D6D6D6";
 
 export const textGrey = "#333";
+
+export const subGroupColor = [
+    "#A7BCD3",
+    "#F9C796",
+    "#F0ABAC",
+    "#BBDBD9",
+    "#ACD0A7",
+    "#F6E4A4",
+    "#D7BDD0",
+    "#CEBAAF"
+];
+
+export const attributeColor = [
+    "#636363",
+    "#969696",
+    "#cccccc",
+    "#f7f7f7",
+];

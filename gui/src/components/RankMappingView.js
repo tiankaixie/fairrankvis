@@ -1,7 +1,11 @@
 import React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { regularGreyDark, regularGreyStroke } from "../constants/colorScheme";
+import {
+    regularGreyDark,
+    regularGreyStroke,
+    subGroupColor
+} from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -205,8 +209,12 @@ class rankMappingView extends React.Component {
         const nodeColor = d3
             .scaleOrdinal()
             .domain(subgroupIDs)
-            .range(d3.schemeTableau10);
+            .range(subGroupColor);
 
+        const hightlightNodeColor = d3
+            .scaleOrdinal()
+            .domain(subgroupIDs)
+            .range(d3.schemeTableau10);
         //////////////////////////////////////////////////////////////////////////////
         // Input Nodes
         linkArea
@@ -228,16 +236,19 @@ class rankMappingView extends React.Component {
             .attr("width", rectLength)
             .attr("height", inputYScale.bandwidth() - 1)
             .attr("fill", d => nodeColor(inputNodesGroupMap[d]))
-            .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d =>
+                        hightlightNodeColor(inputNodesGroupMap[d])
+                    );
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d =>
+                        hightlightNodeColor(inputNodesGroupMap[d])
+                    );
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
@@ -247,11 +258,11 @@ class rankMappingView extends React.Component {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(inputNodesGroupMap[d]));
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(inputNodesGroupMap[d]));
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
@@ -290,16 +301,19 @@ class rankMappingView extends React.Component {
             .attr("width", rectLength)
             .attr("height", outputYScale.bandwidth() - 1)
             .attr("fill", d => nodeColor(outputNodesGroupMap[d]))
-            .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d =>
+                        hightlightNodeColor(outputNodesGroupMap[d])
+                    );
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d =>
+                        hightlightNodeColor(outputNodesGroupMap[d])
+                    );
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
@@ -309,11 +323,11 @@ class rankMappingView extends React.Component {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(outputNodesGroupMap[d]));
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(outputNodesGroupMap[d]));
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
@@ -486,12 +500,11 @@ class rankMappingView extends React.Component {
             })
             .attr("d", arc)
             .attr("fill", d => nodeColor(d["data"]["id"]))
-            .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d => hightlightNodeColor(d["data"]["id"]));
 
                 d3.select("#inputArea" + d["data"]["binID"])
                     .transition()
@@ -506,13 +519,15 @@ class rankMappingView extends React.Component {
                 )
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d =>
+                        hightlightNodeColor(inputNodesGroupMap[d])
+                    );
             })
             .on("mouseout", function(d, i) {
                 d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(d["data"]["id"]));
                 d3.select("#inputArea" + d["data"]["binID"])
                     .transition()
                     .duration("50")
@@ -525,14 +540,19 @@ class rankMappingView extends React.Component {
                 )
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(inputNodesGroupMap[d]));
             })
             .append("title")
             .text(
                 (d, i) =>
-                    "Group" + d["data"]["id"] + ": " +
+                    "Group" +
+                    d["data"]["id"] +
+                    ": " +
                     (
-                        (inputBins[d["data"]["binID"]]["stat"][d["data"]["id"]] * 100) /
+                        (inputBins[d["data"]["binID"]]["stat"][
+                            d["data"]["id"]
+                        ] *
+                            100) /
                         d["data"]["totalSum"]
                     ).toFixed(2) +
                     "%"
@@ -673,12 +693,11 @@ class rankMappingView extends React.Component {
             )
             .attr("stroke", regularGreyStroke)
             .attr("fill", d => nodeColor(d["data"]["id"]))
-            .attr("opacity", 0.5)
             .on("mouseover", function(d, i) {
                 d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d => hightlightNodeColor(d["data"]["id"]));
 
                 d3.select("#outputArea" + d["data"]["binID"])
                     .transition()
@@ -693,13 +712,16 @@ class rankMappingView extends React.Component {
                 )
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.85);
+                    .attr("fill", d =>
+                        hightlightNodeColor(outputNodesGroupMap[d])
+                    );
             })
             .on("mouseout", function(d, i) {
                 d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(d["data"]["id"]));
+
                 d3.select("#outputArea" + d["data"]["binID"])
                     .transition()
                     .duration("50")
@@ -712,19 +734,23 @@ class rankMappingView extends React.Component {
                 )
                     .transition()
                     .duration("50")
-                    .attr("opacity", 0.5);
+                    .attr("fill", d => nodeColor(outputNodesGroupMap[d]));
             })
             .append("title")
             .text(
                 (d, i) =>
-                    "Group" + d["data"]["id"] + ": " +
+                    "Group" +
+                    d["data"]["id"] +
+                    ": " +
                     (
-                        (outputBins[d["data"]["binID"]]["stat"][d["data"]["id"]] * 100) /
+                        (outputBins[d["data"]["binID"]]["stat"][
+                            d["data"]["id"]
+                        ] *
+                            100) /
                         d["data"]["totalSum"]
                     ).toFixed(2) +
                     "%"
             );
-
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         // input and output links

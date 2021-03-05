@@ -1,7 +1,7 @@
 import React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { getData } from "../actions";
+import { getData, updateHighlightedAttribute } from "../actions";
 import {
     Layout,
     Row,
@@ -48,11 +48,14 @@ const mapStateToProps = state => {
     };
 };
 
-class Main extends React.Component {
-    componentDidMount() {
-        this.props.getData();
-    }
+const mapDispatchToProps = dispatch => {
+    return {
+        updateHighlightedAttribute: value =>
+            dispatch(updateHighlightedAttribute(value))
+    };
+};
 
+class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,7 +65,8 @@ class Main extends React.Component {
             miningResultControl: "zoom",
             openRankingDensitySettings: false,
             comparisonMode: true,
-            showDisadvantagedNode: false
+            showDisadvantagedNode: false,
+            highlightAttribute: true
         };
     }
 
@@ -372,7 +376,26 @@ class Main extends React.Component {
                                 style={{ marginBottom: 16 }}
                             >
                                 <Col span={17}>
-                                    <Card size="small" title="Attributes View">
+                                    <Card
+                                        size="small"
+                                        title="Attributes View"
+                                        extra={
+                                            <Space>
+                                                <Text>Highlight Attribute</Text>
+                                                <Switch
+                                                    checked={
+                                                        this.state
+                                                            .highlightAttribute
+                                                    }
+                                                    onChange={checked => {
+                                                        this.setState({
+                                                            highlightAttribute: checked
+                                                        });
+                                                    }}
+                                                />
+                                            </Space>
+                                        }
+                                    >
                                         <ParallelSetView
                                             canvasHeight={globalHeight * 0.37}
                                         />
@@ -384,35 +407,6 @@ class Main extends React.Component {
                                         title="Attributes Setting"
                                     >
                                         <div style={{ padding: 16 }}>
-                                            <Row>
-                                                <Col span={11}>
-                                                    <Text strong>
-                                                        Highlight Attribute
-                                                    </Text>
-                                                </Col>
-                                                <Col span={13}>
-                                                    <Select
-                                                        onChange={
-                                                            updateHighlightedAttribute
-                                                        }
-                                                        style={{
-                                                            width: "100%"
-                                                        }}
-                                                        value={
-                                                            attributeList.highlightedAttribute
-                                                        }
-                                                    >
-                                                        <Option
-                                                            key="none"
-                                                            value=""
-                                                        >
-                                                            none
-                                                        </Option>
-                                                        {attributes}
-                                                    </Select>
-                                                </Col>
-                                            </Row>
-                                            <br />
                                             <Row>
                                                 <Col span={11}>
                                                     <Text strong>
@@ -455,7 +449,7 @@ class Main extends React.Component {
                                             </Row>
                                             <KLDivergenceView
                                                 canvasHeight={
-                                                    globalHeight * 0.21
+                                                    globalHeight * 0.26
                                                 }
                                                 canvasWidth={300}
                                             />
@@ -538,4 +532,4 @@ class Main extends React.Component {
     }
 }
 
-export default connect(mapStateToProps, { getData })(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
