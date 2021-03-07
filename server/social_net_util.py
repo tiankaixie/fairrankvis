@@ -6,7 +6,7 @@ import os.path
 from os.path import dirname
 
 import networkx as nx
-import numpy as np
+import random
 
 BASE_PATH = dirname(os.path.abspath(__file__))
 
@@ -56,6 +56,7 @@ def load_socialnet_data(data_name: str):
     network = nx.Graph()
     # build the index from data/*.featnames files
     featname_files = glob.iglob("%s/*.featnames" % (path,))
+    temp_label_map = collections.defaultdict(dict)
     for featname_file_name in featname_files:
         ego_feature_map = collections.defaultdict(tuple)
         node_id = featname_file_name.split("/")[-1].split(".")[0]
@@ -74,15 +75,25 @@ def load_socialnet_data(data_name: str):
             ego_features = [int(x) for x in egofeat_file.readline().split(' ')]
 
             for index, ego_feature in enumerate(ego_features):
+                # label name: gender
+                label_n = ego_feature_map[index][0]
+                # label value name: male
+                label_vn = ego_feature_map[index][1]
                 if ego_feature == 1:
                     # print(ego_feature_map[index])
-                    if not ego_feature_map[index][0] in labels:
-                        labels[ego_feature_map[index][0]] = {}
-                        labels[ego_feature_map[index][0]]["feature_type"] = "category"
-                        labels[ego_feature_map[index][0]]["map"] = {}
+                    if not label_n in labels:
+                        labels[label_n] = {}
+                        labels[label_n]["feature_type"] = "category"
+                        labels[label_n]["map"] = {}
 
-                    labels[ego_feature_map[index][0]]["map"][ego_feature_map[index][1]] = ego_feature_map[index][1]
-                    network.nodes[node_id][ego_feature_map[index][0]] = ego_feature_map[index][1]
+                    if label_n not in temp_label_map:
+                        temp_label_map[label_n][label_vn] = 0
+                    else:
+                        if label_vn not in temp_label_map[label_n]:
+                            temp_label_map[label_n][label_vn] = len(temp_label_map[label_n].keys())
+
+                    labels[label_n]["map"][temp_label_map[label_n][label_vn]] = label_vn
+                    network.nodes[node_id][label_n] = temp_label_map[label_n][label_vn]
 
             feat_file = open("%s/%s.feat" % (path, node_id), 'r')
             # parse neighboring nodes
@@ -94,14 +105,24 @@ def load_socialnet_data(data_name: str):
                 # print(len(features))
                 network.add_node(node_id)
                 for index, feature in enumerate(features):
+                    # label name: gender
+                    label_n = ego_feature_map[index][0]
+                    # label value name: male
+                    label_vn = ego_feature_map[index][1]
                     if feature == 1:
-                        if not ego_feature_map[index][0] in labels:
-                            labels[ego_feature_map[index][0]] = {}
-                            labels[ego_feature_map[index][0]]["feature_type"] = "category"
-                            labels[ego_feature_map[index][0]]["map"] = {}
+                        if not label_n in labels:
+                            labels[label_n] = {}
+                            labels[label_n]["feature_type"] = "category"
+                            labels[label_n]["map"] = {}
 
-                        labels[ego_feature_map[index][0]]["map"][ego_feature_map[index][1]] = ego_feature_map[index][1]
-                        network.nodes[node_id][ego_feature_map[index][0]] = ego_feature_map[index][1]
+                        if label_n not in temp_label_map:
+                            temp_label_map[label_n][label_vn] = 0
+                        else:
+                            if label_vn not in temp_label_map[label_n]:
+                                temp_label_map[label_n][label_vn] = len(temp_label_map[label_n].keys())
+
+                        labels[label_n]["map"][temp_label_map[label_n][label_vn]] = label_vn
+                        network.nodes[node_id][label_n] = temp_label_map[label_n][label_vn]
 
         except ValueError as verr:
             print("%s", (verr,))
@@ -119,25 +140,22 @@ def load_socialnet_data(data_name: str):
     # print(network)
     network = network.to_directed()
     components = sorted(nx.weakly_connected_components(network), key=len)
-    print("component")
-    for component in components:
-        print(len(component))
     # giant_component = max(nx.weakly_connected_components(network), key=len)
-    threshold = 150
-    node_list = list(network.nodes())
-    for node in node_list:
-        if node not in components[1] or network.degree(node) >= 150:
-            network.remove_node(node)
+    giant = network.subgraph(components[-1])
+    threshold = 1000
+    sampled_nodes = random.sample(giant.nodes, threshold)
+    sampled_graph = giant.subgraph(sampled_nodes)
 
-    print("node size: %d", (len(list(network.nodes()))),)
-    print("edge size: %d", (len(list(network.edges()))),)
-    return network, labels
+    print("node size: %d", (len(list(sampled_graph.nodes()))),)
+    print("edge size: %d", (len(list(sampled_graph.edges()))),)
+    return sampled_graph, labels
 
 
 if __name__ == '__main__':
     print("Running tests.")
     print("Loading network...")
     graph, labels = load_socialnet_data("gplus")
+    print(graph)
     print("done.")
 
     # failures = 0

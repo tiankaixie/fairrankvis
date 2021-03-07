@@ -9,7 +9,7 @@ from core import Core, load_polblogs
 
 if __name__ == '__main__':
     config = {
-        "data_name" : "facebook",
+        "data_name" : "gplus",
         "model_name": "attrirank",
         "individual_sim": "pagerank"
     }

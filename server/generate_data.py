@@ -32,9 +32,12 @@ def generate_cache_data(config):
     nodes = {}
     for index, node in enumerate(list(core.data.nodes())):
         # nodes[node] = {"id": node, "x": overview_m(layout[node][0]), "y": overview_m(layout[node][1]), "sim_x": scatter_m(core.input_similarity[index][0]), "sim_y": scatter_m(core.input_similarity[index][1])}
-        nodes[node] = {"id": node}
+        nodes[node] = {"id": str(node)}
         for key in core.labels.keys():
-            nodes[node][key] = core.data.nodes[node][key]
+            if key not in core.data.nodes[node]:
+                nodes[node][key] = -1
+            else:
+                nodes[node][key] = core.data.nodes[node][key]
     edges = {}
     for edge in list(core.data.edges()):
         edge_id = str(edge[0]) + "~" + str(edge[1])
@@ -85,7 +88,7 @@ def generate_attrirank_input(data_name):
 
 if __name__ == "__main__":
     config = {
-        "data_name" : "facebook",
+        "data_name" : "gplus",
         "model_name": "attrirank",
         "individual_sim": "pagerank"
     }

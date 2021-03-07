@@ -292,7 +292,10 @@ def graph_mining(model_name: str, data: type(nx), labels: dict) -> dict:
         for index, node in enumerate(list(data.nodes())):
             temp_array = []
             for key in labels.keys():
-                temp_array.append(data.nodes[node][key])
+                if key not in data.nodes[node]:
+                    temp_array.append(-1)
+                else:
+                    temp_array.append(data.nodes[node][key])
             feat.append(temp_array)
 
         graph = np.array(graph)
@@ -457,6 +460,7 @@ class Core:
         """
         print("[1/4] load_data")
         self.data, self.labels = load_data(data_name=config["data_name"])
+        print(self.data)
         print("[2/4] graph_mining")
         self.mining_res = graph_mining(
             model_name=config["model_name"], data=self.data, labels=self.labels)
