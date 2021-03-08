@@ -24,11 +24,14 @@ const initialStateConfig = {
             //"political"
         ])
     },
-    synthesis: {}
+    synthesis: {},
+    weibo: {
+
+    }
 };
 
 const initialState = {
-    dataName: "facebook",
+    dataName: "weibo",
     modelName: "attrirank",
     individualSim: "pagerank",
     pairwiseAttribute: "pagerank",

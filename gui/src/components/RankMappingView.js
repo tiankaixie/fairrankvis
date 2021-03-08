@@ -235,6 +235,7 @@ class rankMappingView extends React.Component {
             .attr("y", d => inputYScale(d))
             .attr("width", rectLength)
             .attr("height", inputYScale.bandwidth() - 1)
+            .attr("stroke", "#fff")
             .attr("fill", d => nodeColor(inputNodesGroupMap[d]))
             .on("mouseover", function(d, i) {
                 d3.select(this)
@@ -300,6 +301,7 @@ class rankMappingView extends React.Component {
             .attr("y", d => outputYScale(d))
             .attr("width", rectLength)
             .attr("height", outputYScale.bandwidth() - 1)
+            .attr("stroke", "#fff")
             .attr("fill", d => nodeColor(outputNodesGroupMap[d]))
             .on("mouseover", function(d, i) {
                 d3.select(this)
@@ -794,11 +796,11 @@ class rankMappingView extends React.Component {
 
         const textGroup = linkArea.append("g");
         const textTop = 30;
-        textGroup
-            .append("text")
-            .attr("x", inputGroupNodesX)
-            .attr("y", textTop)
-            .text("Input Similar Instances");
+        // textGroup
+        //     .append("text")
+        //     .attr("x", inputGroupNodesX)
+        //     .attr("y", textTop)
+        //     .text("Input Similar Instances");
 
         textGroup
             .append("text")
@@ -812,11 +814,11 @@ class rankMappingView extends React.Component {
             .attr("y", textTop)
             .text(modelName);
 
-        textGroup
-            .append("text")
-            .attr("x", outputGroupNodesX)
-            .attr("y", textTop)
-            .text("Output Similar Instances");
+        // textGroup
+        //     .append("text")
+        //     .attr("x", outputGroupNodesX)
+        //     .attr("y", textTop)
+        //     .text("Output Similar Instances");
     }
 
     initializeCanvas() {

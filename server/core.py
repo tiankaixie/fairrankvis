@@ -244,26 +244,71 @@ def load_weibo() -> (type(nx), dict):
     edge_path = os.path.join(BASE_PATH, "data/weibo", "train_links.txt")
     # print(edge_path)
     node_file = open(node_path, "r")
-    node_set = set()
-    for line in node_file:
-        node_id = line.split("||")[0]
-        node_set.add(node_id)
+    node_map = {}
+    labels = {
+        "gender": {
+            "feature_type": "category",
+            "map": {}
+        },
+        "age": {
+            "feature_type": "category",
+            "map": {}
+        }
 
-    print(len(node_set))
+    }
+    temp_label_map = {
+        "gender": {},
+        "age": {}
+    }
+    for line in node_file:
+        node_info = line.split("||")
+        node_id = node_info[0]
+        gender = node_info[1]
+        age = int(node_info[2])
+        if age <= 1959:
+            age = "before 1960"
+        elif 1960 <= age <= 1969:
+            age = "60s"
+        elif 1970 <= age <= 1979:
+            age = "70s"
+        elif 1980 <= age <= 1989:
+            age ="80s"
+        elif 1990 <= age <= 1999:
+            age = "90s"
+        else:
+            age = "00s"
+        node_map[node_id] = {
+            "gender": gender,
+            "age": age
+        }
+
     edge_file = open(edge_path, "r")
     count = 0
     for line in edge_file:
         friend_ids = line.split(" ")
         node_id = friend_ids[0]
         # print(len(friend_ids))
-        if node_id not in node_set:
+        if node_id not in node_map:
             continue
+        # print(len(friend_ids))
         for i in range(1, len(friend_ids)):
             graph.add_edge(friend_ids[i], node_id)
 
-    print(len(list(graph.nodes())))
+    for node in node_map.keys():
+        for feature in ["gender", "age"]:
+            if node_map[node][feature] not in temp_label_map[feature]:
+                temp_label_map[feature][node_map[node][feature]] = len(temp_label_map[feature].keys())
+            labels[feature]["map"][temp_label_map[feature][node_map[node][feature]]] = node_map[node][feature]
+            graph.add_node(node)
+            graph.nodes[node][feature] = temp_label_map[feature][node_map[node][feature]]
 
-    return graph, {}
+    print(labels)
+
+    threshold = 300
+    sampled_nodes = random.sample(node_map.keys(), threshold)
+    sampled_graph = graph.subgraph(sampled_nodes)
+
+    return sampled_graph, labels
 
 
 
@@ -492,11 +537,11 @@ class Core:
         print("[1/4] load_data")
         self.data, self.labels = load_data(data_name=config["data_name"])
         print(self.data)
-        # print("[2/4] graph_mining")
-        # self.mining_res = graph_mining(
-        #     model_name=config["model_name"], data=self.data, labels=self.labels)
-        # print("[3/4] output sim")
-        # self.clusters = output_similarity(res=self.mining_res)
-        # print("[4/4] topological features")
-        # self.topological_feature = topological_feature(data=self.data)
+        print("[2/4] graph_mining")
+        self.mining_res = graph_mining(
+            model_name=config["model_name"], data=self.data, labels=self.labels)
+        print("[3/4] output sim")
+        self.clusters = output_similarity(res=self.mining_res)
+        print("[4/4] topological features")
+        self.topological_feature = topological_feature(data=self.data)
         print("core initialization finished")

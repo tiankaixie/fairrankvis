@@ -230,7 +230,7 @@ class GroupShiftingView extends React.Component {
         return (
             <List
                 size="small"
-                style={{ height: canvasHeight, overflow: "auto" }}
+                style={{ height: canvasHeight, overflowY: "scroll" }}
                 dataSource={Object.keys(data)}
                 header={
                     <Space>

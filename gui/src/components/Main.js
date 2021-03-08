@@ -1,7 +1,11 @@
 import React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { getData, updateHighlightedAttribute } from "../actions";
+import {
+    getData,
+    updateClusterSliderValue,
+    updateHighlightedAttribute
+} from "../actions";
 import {
     Layout,
     Row,
@@ -26,8 +30,10 @@ import ParallelSetView from "./ParallelSetView";
 import KLDivergenceView from "./KLDivergenceView";
 import MultipleSelect from "./MultipleSelect";
 import SubgroupTable from "./SubgroupTable";
-import ProportionView from "./ProportionView";
-
+import {
+    updatePairwiseCommonAttributes,
+    updateSelectedCluster
+} from "../actions";
 import GroupShiftingViewNew from "./GroupShiftingViewNew";
 import ProportionViewNew from "./ProportionViewNew";
 const { Title, Text } = Typography;
@@ -51,7 +57,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         updateHighlightedAttribute: value =>
-            dispatch(updateHighlightedAttribute(value))
+            dispatch(updateHighlightedAttribute(value)),
+        updateSelectedCluster: newValue =>
+            dispatch(updateSelectedCluster(newValue)),
+        updateClusterSliderValue: newValue =>
+            dispatch(updateClusterSliderValue(newValue))
     };
 };
 
@@ -64,8 +74,9 @@ class Main extends React.Component {
             tabIndex: 0,
             miningResultControl: "zoom",
             openRankingDensitySettings: false,
-            comparisonMode: true,
+            comparisonMode: false,
             showDisadvantagedNode: false,
+            showAdvantagedNode: false,
             highlightAttribute: true
         };
     }
@@ -126,9 +137,17 @@ class Main extends React.Component {
 
         let rankMap = {};
         rank.forEach((r, i) => {
-            rankMap[output["res"][r]["res"]] = i + 1;
+            const rankScore = output["res"][r]["res"];
+            if (!rankMap.hasOwnProperty(rankScore)) {
+                rankMap[rankScore] = {
+                    minRank: i + 1,
+                    maxRank: i + 1
+                };
+            } else {
+                rankMap[rankScore].maxRank = i + 1;
+            }
         });
-        // console.log(rankMap);
+        console.log(rankMap);
 
         let miningResultDensity;
         if (Object.keys(output.res).length !== 0) {
@@ -149,7 +168,7 @@ class Main extends React.Component {
                                             ? Number(
                                                   rankMap[
                                                       selectedMiningResult[1]
-                                                  ]
+                                                  ].minRank
                                               )
                                             : -1
                                     }
@@ -161,10 +180,18 @@ class Main extends React.Component {
                                     min={0}
                                     max={Object.keys(output.res).length}
                                     onChange={() => {}}
-                                    value={[
-                                        rankMap[selectedMiningResult[0]],
-                                        rankMap[selectedMiningResult[1]]
-                                    ]}
+                                    value={
+                                        selectedMiningResult[0] !== undefined
+                                            ? [
+                                                  rankMap[
+                                                      selectedMiningResult[1]
+                                                  ].minRank,
+                                                  rankMap[
+                                                      selectedMiningResult[0]
+                                                  ].maxRank
+                                              ]
+                                            : [0, 0]
+                                    }
                                     // range={{ draggableTrack: true }}
                                     range
                                 />
@@ -179,7 +206,7 @@ class Main extends React.Component {
                                             ? Number(
                                                   rankMap[
                                                       selectedMiningResult[0]
-                                                  ]
+                                                  ].maxRank
                                               )
                                             : -1
                                     }
@@ -195,31 +222,28 @@ class Main extends React.Component {
         const setting = (
             <Menu>
                 <Menu.Item>
-                    <Row justify="space-around">
-                        <Col span={5}>
-                            <Text># of bins</Text>
-                        </Col>
-                        <Col span={11}>
-                            <Slider
-                                min={clusterSliderUI.minValue}
-                                max={clusterSliderUI.maxValue}
-                                onChange={updateClusterSliderValue}
-                                value={clusterSliderUI.value}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <InputNumber
-                                min={clusterSliderUI.minValue}
-                                max={clusterSliderUI.maxValue}
-                                value={
-                                    clusterSliderUI.value !== undefined
-                                        ? clusterSliderUI.value
-                                        : -1
-                                }
-                                onChange={updateClusterSliderValue}
-                            />
-                        </Col>
-                    </Row>
+                    <Space>
+                        <Text># of bins</Text>
+
+                        <Slider
+                            style={{ width: "100px" }}
+                            min={clusterSliderUI.minValue}
+                            max={clusterSliderUI.maxValue}
+                            onChange={updateClusterSliderValue}
+                            value={clusterSliderUI.value}
+                        />
+
+                        <InputNumber
+                            min={clusterSliderUI.minValue}
+                            max={clusterSliderUI.maxValue}
+                            value={
+                                clusterSliderUI.value !== undefined
+                                    ? clusterSliderUI.value
+                                    : -1
+                            }
+                            onChange={updateClusterSliderValue}
+                        />
+                    </Space>
                 </Menu.Item>
             </Menu>
         );
@@ -465,6 +489,20 @@ class Main extends React.Component {
                                         extra={
                                             <Space>
                                                 <Text>
+                                                    Show advantaged nodes
+                                                </Text>
+                                                <Switch
+                                                    checked={
+                                                        this.state
+                                                            .showAdvantagedNode
+                                                    }
+                                                    onChange={checked => {
+                                                        this.setState({
+                                                            showAdvantagedNode: checked
+                                                        });
+                                                    }}
+                                                />
+                                                <Text>
                                                     Show disadvantaged nodes
                                                 </Text>
                                                 <Switch
@@ -495,30 +533,46 @@ class Main extends React.Component {
                                     >
                                         <Row>
                                             <Col span={16}>
-                                                <RankMappingView
-                                                    svgID={"rank-mapping"}
-                                                    canvasHeight={
-                                                        globalHeight * 0.45
-                                                    }
-                                                />
+                                                <div
+                                                    style={{
+                                                        height:
+                                                            globalHeight * 0.45,
+                                                        overflowY: "scroll"
+                                                    }}
+                                                >
+                                                    <RankMappingView
+                                                        svgID={"rank-mapping"}
+                                                        canvasHeight={
+                                                            //
+                                                            globalHeight
+                                                        }
+                                                    />
+                                                </div>
                                             </Col>
                                             <Col span={8}>
                                                 {/*<ProportionView*/}
                                                 {/*    svgID={"proportion"}*/}
                                                 {/*    canvasHeight={globalHeight * 0.1}*/}
                                                 {/*/>*/}
-                                                <ProportionViewNew
-                                                    comparisonMode={
-                                                        this.state
-                                                            .comparisonMode
-                                                    }
-                                                />
-                                                <br />
-                                                <GroupShiftingViewNew
-                                                    canvasHeight={
-                                                        globalHeight * 0.38
-                                                    }
-                                                />
+                                                <div
+                                                    style={{
+                                                        paddingTop: 16,
+                                                        paddingLeft: 16
+                                                    }}
+                                                >
+                                                    <ProportionViewNew
+                                                        comparisonMode={
+                                                            this.state
+                                                                .comparisonMode
+                                                        }
+                                                    />
+                                                    <br />
+                                                    <GroupShiftingViewNew
+                                                        canvasHeight={
+                                                            globalHeight * 0.37
+                                                        }
+                                                    />
+                                                </div>
                                             </Col>
                                         </Row>
                                     </Card>
