@@ -238,6 +238,35 @@ def load_labels(data_name: str) -> dict:
         raise NameError("not supported data: %s", (data_name,))
 
 
+def load_weibo() -> (type(nx), dict):
+    graph = nx.DiGraph()
+    node_path = os.path.join(BASE_PATH, "data/weibo", "train_labels.txt")
+    edge_path = os.path.join(BASE_PATH, "data/weibo", "train_links.txt")
+    # print(edge_path)
+    node_file = open(node_path, "r")
+    node_set = set()
+    for line in node_file:
+        node_id = line.split("||")[0]
+        node_set.add(node_id)
+
+    print(len(node_set))
+    edge_file = open(edge_path, "r")
+    count = 0
+    for line in edge_file:
+        friend_ids = line.split(" ")
+        node_id = friend_ids[0]
+        # print(len(friend_ids))
+        if node_id not in node_set:
+            continue
+        for i in range(1, len(friend_ids)):
+            graph.add_edge(friend_ids[i], node_id)
+
+    print(len(list(graph.nodes())))
+
+    return graph, {}
+
+
+
 def load_data(data_name: str) -> (type(nx), dict):
     """
     Load data based on data name.
@@ -259,6 +288,8 @@ def load_data(data_name: str) -> (type(nx), dict):
         return load_facebook_data()
     elif data_name == "gplus":
         return load_socialnet_data("gplus")
+    elif data_name == "weibo":
+        return load_weibo()
     else:
         raise NameError("Cannot find data: s%", (data_name,))
 
@@ -461,16 +492,11 @@ class Core:
         print("[1/4] load_data")
         self.data, self.labels = load_data(data_name=config["data_name"])
         print(self.data)
-        print("[2/4] graph_mining")
-        self.mining_res = graph_mining(
-            model_name=config["model_name"], data=self.data, labels=self.labels)
-        print("[3/4] output sim")
-        self.clusters = output_similarity(res=self.mining_res)
-        print("[4/4] topological features")
-        self.topological_feature = topological_feature(data=self.data)
-        # print("input sim")
-        # self.input_similarity = input_similarity(
-        #     individual_sim=config["individual_sim"], data=self.data)
-        # print("common_matrix")
-        # self.common_matrix = common_matrix(data=self.data)
+        # print("[2/4] graph_mining")
+        # self.mining_res = graph_mining(
+        #     model_name=config["model_name"], data=self.data, labels=self.labels)
+        # print("[3/4] output sim")
+        # self.clusters = output_similarity(res=self.mining_res)
+        # print("[4/4] topological features")
+        # self.topological_feature = topological_feature(data=self.data)
         print("core initialization finished")
