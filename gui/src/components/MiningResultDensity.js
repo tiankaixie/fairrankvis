@@ -2,6 +2,7 @@ import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
 import { updateBrushClusterSelected, updateLassoSelected } from "../actions";
+import { regularGrey } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -118,7 +119,7 @@ class MiningResultDensity extends React.Component {
             .attr("height", function(d) {
                 return height - yScale(d) - margin.bottom;
             })
-            .attr("fill", "#d0d0d0")
+            .attr("fill", regularGrey)
             .attr("opacity", 1);
 
         let brush = d3

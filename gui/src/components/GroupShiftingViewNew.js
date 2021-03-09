@@ -215,7 +215,7 @@ class GroupShiftingView extends React.Component {
             data[itemSetID]["count"]++;
         });
 
-        console.log(data);
+        // console.log(data);
         const statData = Object.values(data);
         let subgroupIDs = Object.keys(data);
 

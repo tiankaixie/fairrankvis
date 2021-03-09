@@ -2,6 +2,7 @@ import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
 import { kldivergence } from "mathjs";
+import { regularGrey } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -142,7 +143,7 @@ class KLDivergenceView extends React.Component {
             })
             .attr("y", d => margin.top + klY(d))
             .attr("height", klY.bandwidth())
-            .attr("fill", "#d0d0d0")
+            .attr("fill", regularGrey)
             .attr("opacity", 1);
 
         if (Object.keys(klchartData).length > 0) {

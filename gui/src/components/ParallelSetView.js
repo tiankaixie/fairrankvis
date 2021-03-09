@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import { updateTableData } from "../actions";
 import {
     attributeColor,
-    regularGreyDark, subGroupColor,
+    regularGreyDark,
+    subGroupColor,
     textGrey
 } from "../constants/colorScheme";
 
@@ -298,6 +299,21 @@ class ParallelSetView extends React.Component {
                 }
             });
 
+            console.log(itemSetCount);
+            let prefix = 0;
+            const totalLen = Object.values(itemSetCount).reduce(
+                (accumulator, currentValue) => accumulator + currentValue
+            );
+            const oneDimScale = {};
+            Object.keys(itemSetCount).forEach(key => {
+                const y = prefix;
+                prefix += (itemSetCount[key] / totalLen) * height + 5;
+                oneDimScale[key] = {
+                    y: y,
+                    height: (itemSetCount[key] / totalLen) * height
+                };
+            });
+            console.log(oneDimScale);
             let index = -1;
             const nodes = [];
             const nodeByKey = new Map();
@@ -308,7 +324,10 @@ class ParallelSetView extends React.Component {
                 for (const d of data) {
                     const key = JSON.stringify([k, d[k]]);
                     if (nodeByKey.has(key)) continue;
-                    const node = { name: d[k] };
+                    const node = {
+                        name: d[k],
+                        title: input.labels[k]["map"][d[k]]
+                    };
                     nodes.push(node);
                     nodeByKey.set(key, node);
                     indexByKey.set(key, ++index);
@@ -339,8 +358,8 @@ class ParallelSetView extends React.Component {
                     linkByKey.set(key, link);
                 }
             }
-            // console.log(nodes);
-            // console.log(links);
+            console.log(nodes);
+            console.log(links);
 
             let sankey = d3
                 .sankey()
@@ -355,16 +374,33 @@ class ParallelSetView extends React.Component {
                 nodes: nodes.map(d => Object.assign({}, d)),
                 links: links.map(d => Object.assign({}, d))
             });
-            //console.log(graph.nodes);
+            console.log(graph.nodes);
             // console.log(graph)
             // console.log(linksData)
             svg.append("g")
                 .selectAll("rect")
                 .data(graph.nodes)
                 .join("rect")
-                .attr("x", d => d.x0)
-                .attr("y", d => d.y0)
-                .attr("height", d => d.y1 - d.y0)
+                .attr("rx", "5")
+                .attr("ry", "5")
+                .attr("x", d => {
+                    if (isNaN(d.x0)) {
+                        return width / 2;
+                    }
+                    return d.x0;
+                })
+                .attr("y", d => {
+                    if (isNaN(d.x0)) {
+                        return oneDimScale[d.name].y;
+                    }
+                    return d.y0;
+                })
+                .attr("height", d => {
+                    if (isNaN(d.x0)) {
+                        return oneDimScale[d.name].height;
+                    }
+                    return d.y1 - d.y0;
+                })
                 .attr("width", d => 3)
                 .attr("fill", "black");
             // .append("title")
@@ -412,11 +448,24 @@ class ParallelSetView extends React.Component {
                 .data(graph.nodes)
                 .join("text")
                 .attr("font-size", "0.8rem")
-                .attr("x", d => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-                .attr("y", d => (d.y1 + d.y0) / 2)
+                .attr("x", d => {
+                    if (isNaN(d.x0)) {
+                        return width / 2 - 6;
+                    }
+                    return d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6;
+                })
+                .attr("y", d => {
+                    if (isNaN(d.x0)) {
+                        return (
+                            oneDimScale[d.name].y +
+                            oneDimScale[d.name].height / 2
+                        );
+                    }
+                    return (d.y1 + d.y0) / 2;
+                })
                 .attr("dy", "0.35em")
                 .attr("text-anchor", d => (d.x0 < width / 2 ? "start" : "end"))
-                .text(d => "feature" + d.name)
+                .text(d => d.title)
                 .append("tspan")
                 .attr("fill-opacity", 0.7);
             // .text(d => ` ${d.value.toLocaleString()}`);

@@ -7,6 +7,7 @@ export const regularGreyStroke = "#f0f0f0";
 export const regularGreyDark = "#cccccc";
 // export const regularGreyDark = "#D6D6D6";
 
+export const regularGrey = "#e6e6e6";
 export const textGrey = "#333";
 
 export const subGroupColor = [

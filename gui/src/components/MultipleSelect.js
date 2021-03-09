@@ -41,7 +41,7 @@ function MultipleSelect(props) {
             );
         });
     }
-    console.log([...attributeList.selectedAttributes]);
+    // console.log([...attributeList.selectedAttributes]);
     return (
         <Select
             mode="multiple"
