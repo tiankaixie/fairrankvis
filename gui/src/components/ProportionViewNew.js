@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { connect } from "react-redux";
 import { Row, Col, Space, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
+import { subGroupColor } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -67,6 +68,14 @@ class ProportionViewNew extends React.Component {
         selectedNodes.sort(
             (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
         );
+        let itemSetIDLists = new Set();
+        Object.keys(input.nodes).forEach(node => {
+            let itemSetID = "";
+            dimensions.forEach((d, i) => {
+                itemSetID += input["nodes"][node][d];
+            });
+            itemSetIDLists.add(itemSetID);
+        });
         let total = 0;
         selectedNodes.forEach(node => {
             let itemSetID = "";
@@ -83,11 +92,11 @@ class ProportionViewNew extends React.Component {
 
         let subgroupIDs = Object.keys(resultTopK);
         subgroupIDs.sort((a, b) => resultTopK[b] - resultTopK[a]);
-
+        itemSetIDLists = [...itemSetIDLists].sort();
         const nodeColor = d3
             .scaleOrdinal()
-            .domain(subgroupIDs)
-            .range(d3.schemeTableau10);
+            .domain(itemSetIDLists)
+            .range(subGroupColor);
 
         let inputNodes = Object.keys(input["topological_feature"]["pagerank"]);
         inputNodes.sort(
@@ -169,7 +178,6 @@ class ProportionViewNew extends React.Component {
                                     totalWidth,
                                 backgroundColor: nodeColor(key),
                                 height: 20,
-                                opacity: 0.5
                             }}
                         />
                     </Tooltip>
@@ -198,7 +206,6 @@ class ProportionViewNew extends React.Component {
                                     totalWidth,
                                 backgroundColor: nodeColor(key),
                                 height: 20,
-                                opacity: 0.5
                             }}
                         />
                     </Tooltip>

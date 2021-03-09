@@ -78,7 +78,14 @@ class rankMappingView extends React.Component {
         svgRoot.style("height", height);
         const numberOfBins = clusterSliderUI.value;
         const dimensions = [...attributeList.selectedAttributes];
-
+        let itemSetIDLists = new Set();
+        Object.keys(input.nodes).forEach(node => {
+            let itemSetID = "";
+            dimensions.forEach((d, i) => {
+                itemSetID += input["nodes"][node][d];
+            });
+            itemSetIDLists.add(itemSetID)
+        });
         selectedNodes.sort(
             (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
         );
@@ -109,6 +116,7 @@ class rankMappingView extends React.Component {
         const inputNodesGroupMap = {};
         const inputNodesBinMap = {};
         let maxInstanceSizeOfBins = 0;
+
         inputNodes.forEach(node => {
             let itemSetID = "";
             dimensions.forEach((d, i) => {
@@ -207,16 +215,16 @@ class rankMappingView extends React.Component {
 
         let subgroupIDs = Object.keys(subgroups);
         subgroupIDs.sort((a, b) => subgroups[b] - subgroups[a]);
-        console.log(subgroups);
+        itemSetIDLists = [...itemSetIDLists].sort();
         const nodeColor = d3
             .scaleOrdinal()
-            .domain(subgroupIDs)
+            .domain(itemSetIDLists)
             .range(subGroupColor);
 
         const hightlightNodeColor = d3
             .scaleOrdinal()
-            .domain(subgroupIDs)
-            .range(d3.schemeTableau10);
+            .domain(itemSetIDLists)
+            .range(subGroupColor);
         //////////////////////////////////////////////////////////////////////////////
         // Input Nodes
         linkArea

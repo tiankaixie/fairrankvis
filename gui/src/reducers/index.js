@@ -26,7 +26,13 @@ const initialStateConfig = {
     },
     synthesis: {},
     weibo: {
-
+        initialAttributes: new Set([
+            //"birthday",
+            "gender",
+            "fans"
+            //"middle_name",
+            //"political"
+        ])
     }
 };
 

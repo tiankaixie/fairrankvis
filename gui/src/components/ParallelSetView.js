@@ -210,6 +210,14 @@ class ParallelSetView extends React.Component {
             return brushSelectedCluster.has(String(item.id));
         });
         const tempDimensions = [...attributeList.selectedAttributes];
+        let itemSetIDLists = new Set();
+        Object.keys(input.nodes).forEach(node => {
+            let itemSetID = "";
+            tempDimensions.forEach((d, i) => {
+                itemSetID += input["nodes"][node][d];
+            });
+            itemSetIDLists.add(itemSetID);
+        });
         groupData.forEach(value => {
             let itemSetID = "";
             let itemSetList = [];
@@ -237,10 +245,10 @@ class ParallelSetView extends React.Component {
         similarGroup.sort((a, b) => {
             return b.groupCount - a.groupCount;
         });
-
+        itemSetIDLists = [...itemSetIDLists].sort();
         const subgroupColor = d3
             .scaleOrdinal()
-            .domain(similarGroup.map(item => item["id"]))
+            .domain(itemSetIDLists)
             .range(subGroupColor);
 
         data = wholeData.filter(item => {
@@ -278,9 +286,7 @@ class ParallelSetView extends React.Component {
             let itemSetCount = {};
             const omitSet = new Set(["x", "y", "sim_x", "sim_y", "id"]);
             // console.log(Object.keys(data[0]))
-            const dimensions = Object.keys(data[0]).filter(
-                d => !omitSet.has(d) && attributeList.selectedAttributes.has(d)
-            );
+            const dimensions = tempDimensions;
             // console.log(dimensions);
 
             data.forEach(dataItem => {
@@ -374,7 +380,7 @@ class ParallelSetView extends React.Component {
                 nodes: nodes.map(d => Object.assign({}, d)),
                 links: links.map(d => Object.assign({}, d))
             });
-            console.log(graph.nodes);
+            console.log(graph);
             // console.log(graph)
             // console.log(linksData)
             svg.append("g")

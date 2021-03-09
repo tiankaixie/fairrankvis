@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import * as d3 from "d3";
 import { Table, Tag } from "antd";
+import {subGroupColor} from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -44,12 +45,13 @@ class SubgroupTable extends React.Component {
             return brushSelectedCluster.has(String(item.id));
         });
         const dimensions = [...attributeList.selectedAttributes];
+        let itemSetIDLists = new Set()
         wholeData.forEach(value => {
             let itemSetID = "";
             dimensions.forEach((d, i) => {
                 itemSetID += value[d];
             });
-
+            itemSetIDLists.add(itemSetID)
             if (wholeGroup.hasOwnProperty(itemSetID)) {
                 wholeGroup[itemSetID].value += 1;
                 maxLen = Math.max(maxLen, wholeGroup[itemSetID].value);
@@ -89,11 +91,11 @@ class SubgroupTable extends React.Component {
             return b.groupCount - a.groupCount;
         });
 
-        console.log(similarGroup);
+        itemSetIDLists = [...itemSetIDLists].sort()
         const subgroupColor = d3
             .scaleOrdinal()
-            .domain(similarGroup.map(item => item["id"]))
-            .range(d3.schemeTableau10);
+            .domain(itemSetIDLists)
+            .range(subGroupColor);
 
         columns.push({
             title: "color",
@@ -104,9 +106,6 @@ class SubgroupTable extends React.Component {
             render: rowData => {
                 return (
                     <Tag
-                        style={{
-                            opacity: 0.5
-                        }}
                         color={subgroupColor(rowData["id"])}
                         key={rowData["id"]}
                     >

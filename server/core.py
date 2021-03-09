@@ -327,11 +327,17 @@ def load_weibo2() -> (type(nx), dict):
             "feature_type": "category",
             "map": {}
         }
+        ,
+        "fans": {
+            "feature_type": "category",
+            "map": {}
+        }
 
     }
     temp_label_map = {
         "gender": {},
-        "level": {}
+        "level": {},
+        "fans": {}
     }
     with open(node_path, newline='') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
@@ -340,9 +346,22 @@ def load_weibo2() -> (type(nx), dict):
             node_id = row[0]
             gender = row[3]
             level = row[4]
+            message = row[5]
+            fans = str(row[7])
+
+            if len(fans) < 4:
+                fans = "under 10k"
+            elif len(fans) < 7:
+                fans = "10k to 1M"
+            elif len(fans) < 8:
+                fans = "1M to 10M"
+            else:
+                fans = "above 10M"
+
             node_map[node_id] = {
                 "gender": gender,
-                "level": level
+                "level": level,
+                "fans": fans
             }
     count = 0
     with open(edge_path) as csvfile:
@@ -355,7 +374,7 @@ def load_weibo2() -> (type(nx), dict):
                 graph.add_edge(follower_id, followee_id)
 
     for node in node_map.keys():
-        for feature in ["gender", "level"]:
+        for feature in ["gender", "level", "fans"]:
             if node_map[node][feature] not in temp_label_map[feature]:
                 temp_label_map[feature][node_map[node][feature]] = len(temp_label_map[feature].keys())
             labels[feature]["map"][temp_label_map[feature][node_map[node][feature]]] = node_map[node][feature]

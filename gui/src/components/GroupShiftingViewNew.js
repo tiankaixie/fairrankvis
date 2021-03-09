@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { regularGreyDark } from "../constants/colorScheme";
+import { regularGreyDark, subGroupColor } from "../constants/colorScheme";
 import { Row, Col, List, Space } from "antd";
 import IndividualGroupShift from "./IndividualGroupShift";
 import IndividualGroupDistribution from "./IndividualGroupDistribution";
@@ -183,22 +183,39 @@ class GroupShiftingView extends React.Component {
             attributeList
         } = this.props;
 
-        // return (
-        //     <div ref={this.container}>
-        //         <svg id={svgID} height={canvasHeight}>
-        //             <g id={svgID + "-base"} height="100%" width="100%" />
-        //         </svg>
-        //     </div>
-        // );
         const data = {};
         const nodeResKey = Object.keys(output["res"]);
         const selectedNodes = nodeResKey.filter(item => {
             return brushSelectedCluster.has(String(item));
         });
         const dimensions = [...attributeList.selectedAttributes];
-        selectedNodes.forEach(node => {
+        let itemSetIDLists = new Set();
+
+        const rankBound = d3.extent(
+            selectedNodes.map(node => output["res"][node]["rank"])
+        );
+
+        const inputSelectedNodes = [];
+        Object.keys(input.nodes).forEach(node => {
             let itemSetID = "";
-            dimensions.forEach(d => {
+            dimensions.forEach((d, i) => {
+                itemSetID += input["nodes"][node][d];
+            });
+            itemSetIDLists.add(itemSetID);
+            const rank = input["topological_feature"]["pagerank"][node]["rank"];
+            if (rank >= rankBound[0] && rank <= rankBound[1]) {
+                inputSelectedNodes.push(node);
+            }
+        });
+
+        const commonNodes = [
+            ...new Set([...inputSelectedNodes, ...selectedNodes])
+        ];
+        // console.log(commonNodes);
+
+        commonNodes.forEach(node => {
+            let itemSetID = "";
+           dimensions.forEach(d => {
                 itemSetID += input["nodes"][node][d];
             });
             if (!data.hasOwnProperty(itemSetID)) {
@@ -220,10 +237,11 @@ class GroupShiftingView extends React.Component {
         let subgroupIDs = Object.keys(data);
 
         subgroupIDs.sort((a, b) => data[b]["count"] - data[a]["count"]);
+        itemSetIDLists = [...itemSetIDLists].sort();
         const nodeColor = d3
             .scaleOrdinal()
-            .domain(subgroupIDs)
-            .range(d3.schemeTableau10);
+            .domain(itemSetIDLists)
+            .range(subGroupColor);
 
         const extent = d3.extent(statData.map(x => x.value / x.count));
 
