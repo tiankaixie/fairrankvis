@@ -179,6 +179,7 @@ class SubgroupTable extends React.Component {
                 size={"small"}
                 columns={columns}
                 dataSource={similarGroup}
+                scroll={{ y: canvasHeight * 0.8 }}
             />
         );
     }

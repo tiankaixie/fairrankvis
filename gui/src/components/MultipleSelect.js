@@ -25,8 +25,7 @@ function MultipleSelect(props) {
     const { input, attributeList, updateSelectedAttributes } = props;
 
     const handleChange = value => {
-        console.log(value);
-        updateSelectedAttributes(value);
+        updateSelectedAttributes(new Set(value));
     };
 
     let attributes = [];
@@ -42,7 +41,7 @@ function MultipleSelect(props) {
             );
         });
     }
-    console.log([...attributeList.selectedAttributes])
+    console.log([...attributeList.selectedAttributes]);
     return (
         <Select
             mode="multiple"
@@ -52,7 +51,9 @@ function MultipleSelect(props) {
             value={[...attributeList.selectedAttributes]}
         >
             {attributes.map(name => (
-                <Option key={name} value={name}>{name}</Option>
+                <Option key={name} value={name}>
+                    {name}
+                </Option>
             ))}
         </Select>
     );

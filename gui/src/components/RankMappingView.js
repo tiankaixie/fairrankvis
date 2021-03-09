@@ -59,7 +59,7 @@ class rankMappingView extends React.Component {
         /***
          * Canvas setup
          */
-        const height = canvasHeight;
+
         const width = this.container.current.getBoundingClientRect().width;
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
@@ -74,6 +74,8 @@ class rankMappingView extends React.Component {
             return brushSelectedCluster.has(String(item));
         });
 
+        const height = Math.max(selectedNodes.length * 15, canvasHeight);
+        svgRoot.style("height", height);
         const numberOfBins = clusterSliderUI.value;
         const dimensions = [...attributeList.selectedAttributes];
 
@@ -137,7 +139,7 @@ class rankMappingView extends React.Component {
                 inputBins[index]["instances"].length
             );
         });
-        // console.log(inputBins);
+        console.log(inputBins);
 
         const inputYScale = d3
             .scaleBand()

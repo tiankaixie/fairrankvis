@@ -304,12 +304,68 @@ def load_weibo() -> (type(nx), dict):
 
     print(labels)
 
-    threshold = 300
-    sampled_nodes = random.sample(node_map.keys(), threshold)
+    threshold = 500
+    sampled_nodes1 = random.sample(graph.nodes(), threshold)
+    sampled_nodes2 = random.sample(node_map.keys(), threshold)
+    sampled_nodes = list(set(sampled_nodes1 + sampled_nodes2))
     sampled_graph = graph.subgraph(sampled_nodes)
 
     return sampled_graph, labels
 
+
+def load_weibo2() -> (type(nx), dict):
+    graph = nx.DiGraph()
+    node_path = os.path.join(BASE_PATH, "data/weibo", "weibo_user.csv")
+    edge_path = os.path.join(BASE_PATH, "data/weibo", "follower_followee.csv")
+    node_map = {}
+    labels = {
+        "gender": {
+            "feature_type": "category",
+            "map": {}
+        },
+        "level": {
+            "feature_type": "category",
+            "map": {}
+        }
+
+    }
+    temp_label_map = {
+        "gender": {},
+        "level": {}
+    }
+    with open(node_path, newline='') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=',')
+        for i, row in enumerate(csvreader):
+            if i == 0: continue
+            node_id = row[0]
+            gender = row[3]
+            level = row[4]
+            node_map[node_id] = {
+                "gender": gender,
+                "level": level
+            }
+    count = 0
+    with open(edge_path) as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=',')
+        for i, row in enumerate(csvreader):
+            if i == 0: continue
+            follower_id = row[2]
+            followee_id = row[4]
+            if followee_id in node_map and follower_id in node_map:
+                graph.add_edge(follower_id, followee_id)
+
+    for node in node_map.keys():
+        for feature in ["gender", "level"]:
+            if node_map[node][feature] not in temp_label_map[feature]:
+                temp_label_map[feature][node_map[node][feature]] = len(temp_label_map[feature].keys())
+            labels[feature]["map"][temp_label_map[feature][node_map[node][feature]]] = node_map[node][feature]
+            graph.add_node(node)
+            graph.nodes[node][feature] = temp_label_map[feature][node_map[node][feature]]
+
+    print(len(list(graph.nodes())))
+    print(len(list(graph.edges())))
+
+    return graph, labels
 
 
 def load_data(data_name: str) -> (type(nx), dict):
@@ -334,7 +390,7 @@ def load_data(data_name: str) -> (type(nx), dict):
     elif data_name == "gplus":
         return load_socialnet_data("gplus")
     elif data_name == "weibo":
-        return load_weibo()
+        return load_weibo2()
     else:
         raise NameError("Cannot find data: s%", (data_name,))
 

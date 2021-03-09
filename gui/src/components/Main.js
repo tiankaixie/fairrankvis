@@ -543,8 +543,7 @@ class Main extends React.Component {
                                                     <RankMappingView
                                                         svgID={"rank-mapping"}
                                                         canvasHeight={
-                                                            //
-                                                            globalHeight
+                                                            globalHeight * 0.45
                                                         }
                                                     />
                                                 </div>

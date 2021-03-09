@@ -168,12 +168,6 @@ function rootReducer(state = initialState, action) {
 
     if (action.type === UPDATE_SELECTED_ATTRIBUTES) {
         console.log("UPDATE_SELECTED_ATTRIBUTES");
-        let tempSet = state.ui.attributeList.selectedAttributes;
-        if (tempSet.has(action.payload)) {
-            tempSet.delete(action.payload);
-        } else {
-            tempSet.add(action.payload);
-        }
         const temp = Object.assign({}, state, {
             ui: {
                 clusterSliderUI: state.ui.clusterSliderUI,
@@ -181,7 +175,7 @@ function rootReducer(state = initialState, action) {
                 attributeList: {
                     highlightedAttribute:
                         state.ui.attributeList.highlightedAttribute,
-                    selectedAttributes: tempSet
+                    selectedAttributes: action.payload
                 }
             }
         });
