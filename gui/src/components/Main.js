@@ -32,7 +32,8 @@ import MultipleSelect from "./MultipleSelect";
 import SubgroupTable from "./SubgroupTable";
 import {
     updatePairwiseCommonAttributes,
-    updateSelectedCluster
+    updateSelectedCluster,
+    updateBrushClusterSelected
 } from "../actions";
 import GroupShiftingViewNew from "./GroupShiftingViewNew";
 import ProportionViewNew from "./ProportionViewNew";
@@ -58,8 +59,8 @@ const mapDispatchToProps = dispatch => {
     return {
         updateHighlightedAttribute: value =>
             dispatch(updateHighlightedAttribute(value)),
-        updateSelectedCluster: newValue =>
-            dispatch(updateSelectedCluster(newValue)),
+        updateBrushClusterSelected: newValue =>
+            dispatch(updateBrushClusterSelected(newValue)),
         updateClusterSliderValue: newValue =>
             dispatch(updateClusterSliderValue(newValue))
     };
@@ -93,7 +94,7 @@ class Main extends React.Component {
             dataName,
             modelName,
             brushSelectedCluster,
-            attributeList
+            updateBrushClusterSelected
         } = this.props;
 
         let attributes = [];
@@ -131,24 +132,26 @@ class Main extends React.Component {
             selectedNodes.map(key => output.res[key].res)
         );
 
-        //TODO: remove this
-        let rank = Object.keys(output["res"]);
-        rank.sort((a, b) => output["res"][b]["res"] - output["res"][a]["res"]);
+        selectedNodes.sort(
+            (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
+        );
 
-        let rankMap = {};
-        rank.forEach((r, i) => {
-            const rankScore = output["res"][r]["res"];
-            if (!rankMap.hasOwnProperty(rankScore)) {
-                rankMap[rankScore] = {
-                    minRank: i + 1,
-                    maxRank: i + 1
-                };
-            } else {
-                rankMap[rankScore].maxRank = i + 1;
-            }
-        });
-        console.log(rankMap);
-
+        const leftRank =
+            selectedNodes.length > 0
+                ? output["res"][selectedNodes[0]]["rank"]
+                : 0;
+        const rightRank =
+            selectedNodes.length > 0
+                ? output["res"][selectedNodes[selectedNodes.length - 1]]["rank"]
+                : 0;
+        const updateSelectedClusterHelper = (left, right) => {
+            const filteredNodes = Object.keys(input.nodes).filter(
+                key =>
+                    output["res"][key]["rank"] >= left &&
+                    output["res"][key]["rank"] <= right
+            );
+            updateBrushClusterSelected(new Set(filteredNodes));
+        };
         let miningResultDensity;
         if (Object.keys(output.res).length !== 0) {
             miningResultDensity = (
@@ -163,16 +166,13 @@ class Main extends React.Component {
                                     min={0}
                                     max={Object.keys(output.res).length}
                                     style={{ width: "60px" }}
-                                    value={
-                                        selectedMiningResult[0] !== undefined
-                                            ? Number(
-                                                  rankMap[
-                                                      selectedMiningResult[1]
-                                                  ].minRank
-                                              )
-                                            : -1
-                                    }
-                                    onChange={() => {}}
+                                    value={leftRank}
+                                    onChange={newValue => {
+                                        updateSelectedClusterHelper(
+                                            newValue,
+                                            rightRank
+                                        );
+                                    }}
                                 />
                             </Col>
                             <Col span={12}>
@@ -182,14 +182,7 @@ class Main extends React.Component {
                                     onChange={() => {}}
                                     value={
                                         selectedMiningResult[0] !== undefined
-                                            ? [
-                                                  rankMap[
-                                                      selectedMiningResult[1]
-                                                  ].minRank,
-                                                  rankMap[
-                                                      selectedMiningResult[0]
-                                                  ].maxRank
-                                              ]
+                                            ? [leftRank, rightRank]
                                             : [0, 0]
                                     }
                                     // range={{ draggableTrack: true }}
@@ -201,16 +194,13 @@ class Main extends React.Component {
                                     min={0}
                                     max={Object.keys(output.res).length}
                                     style={{ width: "60px" }}
-                                    value={
-                                        selectedMiningResult[0] !== undefined
-                                            ? Number(
-                                                  rankMap[
-                                                      selectedMiningResult[0]
-                                                  ].maxRank
-                                              )
-                                            : -1
-                                    }
-                                    onChange={() => {}}
+                                    value={rightRank}
+                                    onChange={newValue => {
+                                        updateSelectedClusterHelper(
+                                            leftRank,
+                                            newValue
+                                        );
+                                    }}
                                 />
                             </Col>
                         </Row>
@@ -277,6 +267,12 @@ class Main extends React.Component {
                                                     value="facebook"
                                                 >
                                                     Facebook
+                                                </Option>
+                                                <Option
+                                                    key="weibo"
+                                                    value="weibo"
+                                                >
+                                                    Weibo
                                                 </Option>
                                             </Select>
                                         </Col>
@@ -349,12 +345,7 @@ class Main extends React.Component {
                                                     "/" +
                                                     Object.keys(input.nodes)
                                                         .length +
-                                                    " nodes, " +
-                                                    selectedEdges.length +
-                                                    "/" +
-                                                    Object.keys(input.edges)
-                                                        .length +
-                                                    " edges"}
+                                                    " nodes"}
                                             </Text>
                                         </Col>
                                     </Row>
@@ -366,7 +357,6 @@ class Main extends React.Component {
                                             </Text>
                                         </Col>
                                         <Col span={13}>
-                                            {" "}
                                             <Text>
                                                 {" " +
                                                     (selectedMiningResult[0] !==
