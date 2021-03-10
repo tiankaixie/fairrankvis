@@ -232,7 +232,7 @@ class GroupShiftingView extends React.Component {
             data[itemSetID]["count"]++;
         });
 
-        // console.log(data);
+        console.log(data);
         const statData = Object.values(data);
         let subgroupIDs = Object.keys(data);
 
@@ -244,7 +244,7 @@ class GroupShiftingView extends React.Component {
             .range(subGroupColor);
 
         const extent = d3.extent(statData.map(x => x.value / x.count));
-
+        // console.log(extent)
         return (
             <List
                 size="small"

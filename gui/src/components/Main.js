@@ -422,12 +422,12 @@ class Main extends React.Component {
                                     >
                                         <div style={{ padding: 16 }}>
                                             <Row>
-                                                <Col span={11}>
+                                                <Col span={10}>
                                                     <Text strong>
                                                         Attributes
                                                     </Text>
                                                 </Col>
-                                                <Col span={13}>
+                                                <Col span={14}>
                                                     <MultipleSelect />
                                                 </Col>
                                             </Row>
@@ -439,12 +439,12 @@ class Main extends React.Component {
                                                 }}
                                             />
                                             <Row>
-                                                <Col span={11}>
+                                                <Col span={10}>
                                                     <Text strong>
                                                         Distribution Similarity
                                                     </Text>
                                                 </Col>
-                                                <Col span={13}>
+                                                <Col span={14}>
                                                     <Select
                                                         onChange={() => {}}
                                                         style={{

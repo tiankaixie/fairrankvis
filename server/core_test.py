@@ -10,7 +10,7 @@ from core import Core, load_polblogs
 if __name__ == '__main__':
     config = {
         "data_name" : "weibo",
-        "model_name": "attrirank",
+        "model_name": "inform",
         "individual_sim": "pagerank"
     }
     core = Core(config=config)

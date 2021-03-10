@@ -83,7 +83,7 @@ class IndividualGroupShift extends React.Component {
                 if (d.value >= 0) {
                     return statXScale(0);
                 } else {
-                    return statXScale(d.value);
+                    return statXScale(d.value / d.count);
                 }
             })
             .attr("y", margin.top)

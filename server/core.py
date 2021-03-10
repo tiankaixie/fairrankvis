@@ -7,12 +7,13 @@ from math import sqrt
 from os.path import dirname
 from typing import List
 from uuid import UUID
-
+import re
+from inform import debias_result as pagerank
 import networkx as nx
 import numpy as np
 from node2vec import Node2Vec
 from sklearn.manifold import MDS, TSNE
-
+from scipy import sparse
 import utils
 from AttriRank import AttriRank
 from facebook_util import load_facebook_data
@@ -332,23 +333,92 @@ def load_weibo2() -> (type(nx), dict):
             "feature_type": "category",
             "map": {}
         }
+        ,
+        "location": {
+            "feature_type": "category",
+            "map": {}
+        }
 
     }
     temp_label_map = {
         "gender": {},
         "level": {},
-        "fans": {}
+        "fans": {},
+        "location": {}
     }
+    locations = {"河北": "Hebei", "山西": "Shanxi", "辽宁": "Liaoning", "吉林":"Jilin", "黑龙江":"Helongjiang", "江苏": "Jiangsu", "浙江":"Zhejiang", "安徽":"Anhui", "福建": "Fujian", "江西": "Jiangxi", "山东": "Shandong", "河南": "Henan", "湖北": "Hubei", "湖南": "Hunan", "广东": "Guangdong", "海南": "Hainan" , "四川": "Sichuan",
+                 "贵州": "Guizhou", "云南": "Yunnan", "陕西": "Shanxi", "甘肃": "Gansu", "青海": "Qinghai", "台湾,": "Taiwan", "内蒙古": "Neimenggu", "广西": "Guangxi", "西藏": "Xizang", "宁夏": "Ningxia", "新疆": "Xinjiang", "北京": "Beijing", "天津": "Tianjin", "上海": "Shanghai", "重庆":"Chongqing", "其他": "Other", "海外": "Oversea"}
+    count = 0
     with open(node_path, newline='') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
         for i, row in enumerate(csvreader):
             if i == 0: continue
+            marked_place = False
             node_id = row[0]
             gender = row[3]
             level = row[4]
             message = row[5]
+            message.strip()
+            location = "other"
+            message = re.split(r'\s{1,}', message)
+            if len(message) == 0:
+                pass
+            else:
+                if message[0] in locations:
+                    location = locations[message[0]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+                if message[0][:2] in locations:
+                    location = locations[message[0][:2]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+                if message[0][:3] in locations:
+                    location = locations[message[0][:3]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+            if len(message) <= 1:
+                pass
+            else:
+                if message[1] in locations:
+                    location = locations[message[1]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+                if message[1][:2] in locations:
+                    location = locations[message[1][:2]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+                if message[1][:3] in locations:
+                    location = locations[message[1][:3]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+            if len(message) <= 2:
+                pass
+            else:
+                if message[2] in locations:
+                    location = locations[message[2]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+                if message[2][:2] in locations:
+                    location = locations[message[2][:2]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+                if message[2][:3] in locations:
+                    location = locations[message[2][:3]]
+                    count += 1
+                    marked_place = True
+                    print(location)
+            if not marked_place:
+                print(node_id + "@@@")
+                print(message)
             fans = str(row[7])
-
             if len(fans) < 4:
                 fans = "under 10k"
             elif len(fans) < 7:
@@ -361,9 +431,10 @@ def load_weibo2() -> (type(nx), dict):
             node_map[node_id] = {
                 "gender": gender,
                 "level": level,
-                "fans": fans
+                "fans": fans,
+                "location": location
             }
-    count = 0
+    print(count)
     with open(edge_path) as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
         for i, row in enumerate(csvreader):
@@ -374,7 +445,7 @@ def load_weibo2() -> (type(nx), dict):
                 graph.add_edge(follower_id, followee_id)
 
     for node in node_map.keys():
-        for feature in ["gender", "level", "fans"]:
+        for feature in ["gender", "level", "fans", "location"]:
             if node_map[node][feature] not in temp_label_map[feature]:
                 temp_label_map[feature][node_map[node][feature]] = len(temp_label_map[feature].keys())
             labels[feature]["map"][temp_label_map[feature][node_map[node][feature]]] = node_map[node][feature]
@@ -471,7 +542,28 @@ def graph_mining(model_name: str, data: type(nx), labels: dict) -> dict:
 
         for rank, i in enumerate(rank_index):
             res[graph_nodes[i]]["rank"] = rank + 1
-
+    elif model_name == "inform":
+        r = nx.pagerank(data)
+        # print(np.array(list(r.values())))
+        print(sparse.csr_matrix(np.array(list(r.values()))))
+        # load dataset
+        A = utils.symmetric_normalize(nx.to_scipy_sparse_matrix(data, dtype='float', format='csc'))
+        pre_r = sparse.csr_matrix(np.array(list(r.values())))
+        print(pre_r)
+        # build similarity matrix
+        S = utils.filter_similarity_matrix(utils.get_similarity_matrix(A, metric="cosine"), sigma=0.75)
+        S = utils.symmetric_normalize(S)
+        print(S.shape)
+        print(pre_r.shape)
+        r = pagerank.debias_result(pre_r.transpose(), S, 0.5)
+        graph_nodes = list(data.nodes)
+        r = r.toarray().reshape(-1)
+        print(r[0])
+        for index, node in enumerate(graph_nodes):
+            res[node] = {"res": r[index]}
+        rank_index = sorted(range(len(r)), key=lambda k: r[k], reverse=True)
+        for rank, i in enumerate(rank_index):
+            res[graph_nodes[i]]["rank"] = rank + 1
     elif model_name == "other":
         pass
     else:

@@ -1,0 +1,49 @@
+InFoRM: Individual Fairness on Graph Mining
+# Overview
+This is a Python implementation for InFoRM. The package contains the following files:
+-- data: data folder
+-- result: folder that saves experimental results
+-- graph.py: Python code file for loading dataset
+-- utils.py: Python code file for helper functions
+-- debias_*.py: Python code file of debiasing methods
+-- debias_result.py: Python code file of model-agnostic 'debiasing the mining result' method
+-- *_vanilla.py: Python code file of running vanilla graph mining results without fairness constraint
+-- *_graph.py: Python code file of experiments for 'debiasing the input graph' method
+-- *_alg.py: Python code file of experiments for 'debiasing the mining model' method
+-- *_result.py: Python code file of experiments for 'debiasing the mining result' method
+-- *_evaluate.py: Python code file for evaluating the effectiveness of debiasing methods
+Remarks: * can be one of {pagerank, spectral, line}
+
+# Prerequisites
+- python 3
+- numpy
+- scipy
+- sklearn
+- networkx
+
+
+# How to Run:
+1. You need to first get vanilla biased results by running
+       python {#1}_vanilla.py
+   {#1} can be one of {pagerank, spectral, line}
+
+2. Then you can debias input graph/mining model/mining result by running
+       python {#1}_{#2}.py
+   {#1} can be one of {pagerank, spectral, line}
+   {#2} can be one of {graph, alg, result}
+
+3. To evaluate, you can do it by simply running
+       python {#1}_evaluate.py
+   {#1} can be one of {pagerank, spectral, line}
+
+
+# Reference
+Kang, Jian, Jingrui He, Ross Maciejewski, and Hanghang Tong. "InFoRM: Individual Fairness on Graph Mining" In Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, pp. 379-389. 2020.
+@inproceedings{kang2020inform,
+  title={InFoRM: Individual Fairness on Graph Mining},
+  author={Kang, Jian and He, Jingrui and Maciejewski, Ross and Tong, Hanghang},
+  booktitle={Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  pages={379–389},
+  year={2020},
+  organization={ACM}
+}

@@ -29,7 +29,7 @@ const initialStateConfig = {
         initialAttributes: new Set([
             //"birthday",
             "gender",
-            "fans"
+            "location"
             //"middle_name",
             //"political"
         ])
@@ -38,7 +38,7 @@ const initialStateConfig = {
 
 const initialState = {
     dataName: "weibo",
-    modelName: "attrirank",
+    modelName: "inform",
     individualSim: "pagerank",
     pairwiseAttribute: "pagerank",
     input: {
