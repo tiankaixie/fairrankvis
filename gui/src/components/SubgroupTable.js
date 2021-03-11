@@ -98,7 +98,7 @@ class SubgroupTable extends React.Component {
             .range(subGroupColor);
 
         columns.push({
-            title: "color",
+            title: "Color",
             field: "id",
             cellStyle: {
                 fontSize: "0.8rem"
@@ -141,7 +141,7 @@ class SubgroupTable extends React.Component {
         });
 
         columns.push({
-            title: "Count/Total",
+            title: "cnt./ttl.",
             field: "groupCount",
             cellStyle: {
                 fontSize: "0.8rem"
@@ -154,7 +154,7 @@ class SubgroupTable extends React.Component {
         });
 
         columns.push({
-            title: "Percentage",
+            title: "percent.",
             field: "totalCount",
             cellStyle: {
                 fontSize: "0.8rem"

@@ -19,10 +19,17 @@ import {
     Select,
     Card,
     Switch,
-    Space
+    Space,
+    List,
+    Alert,
+    Tag
 } from "antd";
 import { Typography } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
+import {
+    CheckCircleOutlined,
+    QuestionCircleOutlined,
+    SettingOutlined
+} from "@ant-design/icons";
 import "antd/dist/antd.css";
 import MiningResultDensity from "./MiningResultDensity";
 import RankMappingView from "./RankMappingView";
@@ -37,6 +44,8 @@ import {
 } from "../actions";
 import GroupShiftingViewNew from "./GroupShiftingViewNew";
 import ProportionViewNew from "./ProportionViewNew";
+import Avatar from "antd/es/avatar/avatar";
+import Search from "antd/es/input/Search";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -90,7 +99,7 @@ class Main extends React.Component {
             updateClusterSliderValue,
             output,
             input,
-            updateHighlightedAttribute,
+            attributeList,
             dataName,
             modelName,
             brushSelectedCluster,
@@ -156,55 +165,49 @@ class Main extends React.Component {
         if (Object.keys(output.res).length !== 0) {
             miningResultDensity = (
                 <React.Fragment>
-                    <Text strong>Ranking range:</Text>
-                    <br />
-                    <br />
-                    <div>
-                        <Row justify="space-between">
-                            <Col span={5}>
-                                <InputNumber
-                                    min={0}
-                                    max={Object.keys(output.res).length}
-                                    style={{ width: "60px" }}
-                                    value={leftRank}
-                                    onChange={newValue => {
-                                        updateSelectedClusterHelper(
-                                            newValue,
-                                            rightRank
-                                        );
-                                    }}
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <Slider
-                                    min={0}
-                                    max={Object.keys(output.res).length}
-                                    onChange={() => {}}
-                                    value={
-                                        selectedMiningResult[0] !== undefined
-                                            ? [leftRank, rightRank]
-                                            : [0, 0]
-                                    }
-                                    // range={{ draggableTrack: true }}
-                                    range
-                                />
-                            </Col>
-                            <Col span={5}>
-                                <InputNumber
-                                    min={0}
-                                    max={Object.keys(output.res).length}
-                                    style={{ width: "60px" }}
-                                    value={rightRank}
-                                    onChange={newValue => {
-                                        updateSelectedClusterHelper(
-                                            leftRank,
-                                            newValue
-                                        );
-                                    }}
-                                />
-                            </Col>
-                        </Row>
-                    </div>
+                    <p>
+                        <Text strong>Ranking range:</Text>
+                    </p>
+                    <Space>
+                        <InputNumber
+                            min={0}
+                            size={"small"}
+                            max={Object.keys(output.res).length}
+                            style={{ width: "50px" }}
+                            value={leftRank}
+                            onChange={newValue => {
+                                updateSelectedClusterHelper(
+                                    newValue,
+                                    rightRank
+                                );
+                            }}
+                        />
+
+                        <Slider
+                            min={0}
+                            style={{ width: "270px" }}
+                            max={Object.keys(output.res).length}
+                            onChange={() => {}}
+                            value={
+                                selectedMiningResult[0] !== undefined
+                                    ? [leftRank, rightRank]
+                                    : [0, 0]
+                            }
+                            // range={{ draggableTrack: true }}
+                            range
+                        />
+
+                        <InputNumber
+                            min={0}
+                            size={"small"}
+                            max={Object.keys(output.res).length}
+                            style={{ width: "50px" }}
+                            value={rightRank}
+                            onChange={newValue => {
+                                updateSelectedClusterHelper(leftRank, newValue);
+                            }}
+                        />
+                    </Space>
                 </React.Fragment>
             );
         }
@@ -243,7 +246,11 @@ class Main extends React.Component {
                 <Layout style={{ padding: 16 }}>
                     <Row gutter={16} justify="space-around">
                         <Col span={6}>
-                            <Card size="small" title="Data Setting">
+                            <Card
+                                size="small"
+                                title="DATA"
+                                extra={<QuestionCircleOutlined />}
+                            >
                                 <div
                                     style={{
                                         paddingLeft: 16,
@@ -251,11 +258,12 @@ class Main extends React.Component {
                                     }}
                                 >
                                     <Row>
-                                        <Col span={11}>
+                                        <Col span={14}>
                                             <Text strong>Dataset</Text>
                                         </Col>
-                                        <Col span={13}>
+                                        <Col span={10}>
                                             <Select
+                                                size={"small"}
                                                 onChange={() => {}}
                                                 style={{
                                                     width: "100%"
@@ -279,13 +287,14 @@ class Main extends React.Component {
                                     </Row>
                                     <br />
                                     <Row>
-                                        <Col span={11}>
+                                        <Col span={14}>
                                             <Text strong>
                                                 {"Ranking Model"}
                                             </Text>
                                         </Col>
-                                        <Col span={13}>
+                                        <Col span={10}>
                                             <Select
+                                                size={"small"}
                                                 onChange={() => {}}
                                                 style={{
                                                     width: "100%"
@@ -336,10 +345,10 @@ class Main extends React.Component {
                                         }}
                                     />
                                     <Row>
-                                        <Col span={11}>
+                                        <Col span={14}>
                                             <Text strong> Selected Data </Text>
                                         </Col>
-                                        <Col span={13}>
+                                        <Col span={10}>
                                             <Text>
                                                 {selectedNodes.length +
                                                     "/" +
@@ -351,12 +360,12 @@ class Main extends React.Component {
                                     </Row>
                                     <br />
                                     <Row>
-                                        <Col span={11}>
+                                        <Col span={14}>
                                             <Text strong>
                                                 Mining Result Range:
                                             </Text>
                                         </Col>
-                                        <Col span={13}>
+                                        <Col span={10}>
                                             <Text>
                                                 {" " +
                                                     (selectedMiningResult[0] !==
@@ -377,7 +386,21 @@ class Main extends React.Component {
                                 </div>
                             </Card>
                             <br />
-                            <Card size="small" title="Subgroup Table">
+                            <Card
+                                size="small"
+                                title="SUBGROUPS"
+                                extra={
+                                    <Space>
+                                        <Search
+                                            placeholder="search"
+                                            allowClear
+                                            size="small"
+                                            onSearch={() => {}}
+                                        />
+                                        <QuestionCircleOutlined />
+                                    </Space>
+                                }
+                            >
                                 <SubgroupTable
                                     canvasHeight={globalHeight * 0.32}
                                 />
@@ -392,11 +415,12 @@ class Main extends React.Component {
                                 <Col span={17}>
                                     <Card
                                         size="small"
-                                        title="Attributes View"
+                                        title="ATTRIBUTES VIEW"
                                         extra={
                                             <Space>
                                                 <Text>Highlight Attribute</Text>
                                                 <Switch
+                                                    size="small"
                                                     checked={
                                                         this.state
                                                             .highlightAttribute
@@ -407,6 +431,7 @@ class Main extends React.Component {
                                                         });
                                                     }}
                                                 />
+                                                <QuestionCircleOutlined />
                                             </Space>
                                         }
                                     >
@@ -428,20 +453,82 @@ class Main extends React.Component {
                                 <Col span={7}>
                                     <Card
                                         size="small"
-                                        title="Attributes Setting"
+                                        title="ATTRIBUTES SETTING"
+                                        extra={<QuestionCircleOutlined />}
                                     >
                                         <div style={{ padding: 16 }}>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <Text strong>
-                                                        Attributes
+                                                        Selected Attributes
                                                     </Text>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <MultipleSelect />
                                                 </Col>
                                             </Row>
-
+                                            <br />
+                                            <List
+                                                itemLayout="horizontal"
+                                                dataSource={[
+                                                    ...attributeList.selectedAttributes
+                                                ].map(item => {
+                                                    return { title: item };
+                                                })}
+                                                style={{
+                                                    height: globalHeight * 0.09,
+                                                    overflowY: "scroll",
+                                                    overflowX: "hidden"
+                                                }}
+                                                size="small"
+                                                renderItem={item => (
+                                                    <List.Item
+                                                        style={{
+                                                            paddingLeft: 0,
+                                                            paddingRight: 0
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                width: "100%"
+                                                            }}
+                                                        >
+                                                            <Row justify="space-between">
+                                                                <Col span={8}>
+                                                                    <Text
+                                                                        strong
+                                                                    >
+                                                                        {
+                                                                            item.title
+                                                                        }
+                                                                    </Text>
+                                                                </Col>
+                                                                <Col>
+                                                                    <Tag
+                                                                        icon={
+                                                                            <CheckCircleOutlined />
+                                                                        }
+                                                                        color="success"
+                                                                    >
+                                                                        Categorical
+                                                                        Attribute
+                                                                    </Tag>
+                                                                </Col>
+                                                                <Col>
+                                                                    <Button
+                                                                        disabled
+                                                                        size={
+                                                                            "small"
+                                                                        }
+                                                                    >
+                                                                        Settings
+                                                                    </Button>
+                                                                </Col>
+                                                            </Row>
+                                                        </div>
+                                                    </List.Item>
+                                                )}
+                                            />
                                             <Divider
                                                 style={{
                                                     marginTop: "12px",
@@ -449,14 +536,15 @@ class Main extends React.Component {
                                                 }}
                                             />
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <Text strong>
                                                         Distribution Similarity
                                                     </Text>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <Select
                                                         onChange={() => {}}
+                                                        size={"small"}
                                                         style={{
                                                             width: "100%"
                                                         }}
@@ -473,7 +561,7 @@ class Main extends React.Component {
                                             </Row>
                                             <KLDivergenceView
                                                 canvasHeight={
-                                                    globalHeight * 0.26
+                                                    globalHeight * 0.16
                                                 }
                                                 canvasWidth={300}
                                             />
@@ -485,13 +573,12 @@ class Main extends React.Component {
                                 <Col span={24}>
                                     <Card
                                         size="small"
-                                        title="Rank Mapping View"
+                                        title="RANK MAPPING"
                                         extra={
                                             <Space>
-                                                <Text>
-                                                    Show advantaged nodes
-                                                </Text>
+                                                <Text>Advantaged nodes</Text>
                                                 <Switch
+                                                    size="small"
                                                     checked={
                                                         this.state
                                                             .showAdvantagedNode
@@ -502,10 +589,9 @@ class Main extends React.Component {
                                                         });
                                                     }}
                                                 />
-                                                <Text>
-                                                    Show disadvantaged nodes
-                                                </Text>
+                                                <Text>Disadvantaged nodes</Text>
                                                 <Switch
+                                                    size="small"
                                                     checked={
                                                         this.state
                                                             .showDisadvantagedNode
@@ -518,6 +604,7 @@ class Main extends React.Component {
                                                 />
                                                 <Text>Comparison</Text>
                                                 <Switch
+                                                    size="small"
                                                     checked={
                                                         this.state
                                                             .comparisonMode
@@ -528,6 +615,7 @@ class Main extends React.Component {
                                                         });
                                                     }}
                                                 />
+                                                <QuestionCircleOutlined />
                                             </Space>
                                         }
                                     >

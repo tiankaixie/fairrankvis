@@ -29,6 +29,10 @@ class IndividualGroupDistribution extends React.Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
+        let {svgID} = this.props;
+        const svgRoot = d3.select("#" + svgID);
+        svgRoot.select("g").remove();
+        svgRoot.attr("id", nextProps.svgID)
         this.updateCanvas(nextProps);
     }
 
@@ -183,8 +187,10 @@ class IndividualGroupDistribution extends React.Component {
     updateCanvas(props) {
         const { svgID } = props;
         const svgRoot = d3.select("#" + svgID);
-        svgRoot.select("g").remove();
-        svgRoot.append("g").attr("id", svgID + "-base");
+        svgRoot
+            .append("g")
+            .attr("id", svgID + "-base")
+            .attr("class", "gsv");
         this.renderSvg(props);
     }
 
@@ -193,7 +199,12 @@ class IndividualGroupDistribution extends React.Component {
         return (
             <div ref={this.container}>
                 <svg id={svgID} height={canvasHeight}>
-                    <g id={svgID + "-base"} height="100%" width="100%" />
+                    <g
+                        id={svgID + "-base"}
+                        className={"gsv"}
+                        height="100%"
+                        width="100%"
+                    />
                 </svg>
             </div>
         );

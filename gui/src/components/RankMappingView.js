@@ -363,7 +363,6 @@ class rankMappingView extends React.Component {
         // input group links
         const inputGroupXOffset = 120;
 
-
         const blockWidth = 20;
         const inputGroupLinkData = sortedInputBinKeys.map((d, i) => {
             if (i % 2 === 0) {
@@ -498,7 +497,7 @@ class rankMappingView extends React.Component {
                     baseRadius
             );
 
-        linkArea
+        const circleInputSummaryGroup = linkArea
             .selectAll(".circleInputSummaryGroup")
             .data(sortedInputBinKeys)
             .enter()
@@ -536,7 +535,22 @@ class rankMappingView extends React.Component {
                         ")"
                     );
                 }
-            })
+            });
+
+        circleInputSummaryGroup
+            .append("text")
+            .attr("dx", "-1em")
+            .attr(
+                "dy",
+                d =>
+                    (inputBins[d]["instances"].length / maxInstanceSizeOfBins) *
+                        generalRadius +
+                    baseRadius +
+                    20
+            )
+            .text(d => "Size: " + inputBins[d]["instances"].length);
+
+        circleInputSummaryGroup
             .selectAll(".circleInputSummary")
             .data(d => {
                 const statGroupIDs = Object.keys(inputBins[d]["stat"]);
@@ -620,7 +634,6 @@ class rankMappingView extends React.Component {
                     ).toFixed(2) +
                     "%"
             );
-
         //////////////////////////////////////////////////////////////////////////////////////////
         // output group links
         const outputGroupXOffset = 150;
@@ -738,7 +751,7 @@ class rankMappingView extends React.Component {
             .attr("stroke", "black")
             .attr(
                 "stroke-dasharray",
-                d => blockWidth + ",0,"  + (blockWidth + d.h) + ", " + d.h
+                d => blockWidth + ",0," + (blockWidth + d.h) + ", " + d.h
             )
             .attr("fill", "none");
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -756,14 +769,14 @@ class rankMappingView extends React.Component {
                         "translate(" +
                         (outputGroupNodesX + outputGroupXOffset) +
                         "," +
-                        ((outputYScale(
+                        (outputYScale(
                             outputBins[d]["instances"][
                                 outputBins[d]["instances"].length - 1
                             ]
                         ) +
                             outputYScale.bandwidth() +
                             outputYScale(outputBins[d]["instances"][0])) /
-                        2) +
+                            2 +
                         ")"
                     );
                 } else {
@@ -771,14 +784,14 @@ class rankMappingView extends React.Component {
                         "translate(" +
                         outputGroupNodesX +
                         "," +
-                        ((outputYScale(
+                        (outputYScale(
                             outputBins[d]["instances"][
                                 outputBins[d]["instances"].length - 1
                             ]
                         ) +
                             outputYScale.bandwidth() +
                             outputYScale(outputBins[d]["instances"][0])) /
-                        2) +
+                            2 +
                         ")"
                     );
                 }

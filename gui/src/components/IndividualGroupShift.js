@@ -29,6 +29,10 @@ class IndividualGroupShift extends React.Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
+        let { svgID } = this.props;
+        const svgRoot = d3.select("#" + svgID);
+        svgRoot.select("g").remove();
+        svgRoot.attr("id", nextProps.svgID);
         this.updateCanvas(nextProps);
     }
 
@@ -121,7 +125,6 @@ class IndividualGroupShift extends React.Component {
     updateCanvas(props) {
         const { svgID } = props;
         const svgRoot = d3.select("#" + svgID);
-        svgRoot.select("g").remove();
         svgRoot.append("g").attr("id", svgID + "-base");
         this.renderSvg(props);
     }

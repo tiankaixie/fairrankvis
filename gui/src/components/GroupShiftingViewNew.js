@@ -24,6 +24,10 @@ class GroupShiftingView extends React.Component {
         this.container = React.createRef();
     }
 
+    componentWillReceiveProps(nextProps, nextContext) {
+
+    }
+
     // componentDidMount() {
     //     // this.initializeCanvas();
     // }
@@ -215,7 +219,7 @@ class GroupShiftingView extends React.Component {
 
         commonNodes.forEach(node => {
             let itemSetID = "";
-           dimensions.forEach(d => {
+            dimensions.forEach(d => {
                 itemSetID += input["nodes"][node][d];
             });
             if (!data.hasOwnProperty(itemSetID)) {

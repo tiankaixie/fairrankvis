@@ -46,12 +46,13 @@ function MultipleSelect(props) {
         <Select
             mode="multiple"
             allowClear
+            size={"small"}
             style={{ width: "100%" }}
             onChange={handleChange}
             value={[...attributeList.selectedAttributes]}
         >
             {attributes.map(name => (
-                <Option key={name} value={name}>
+                <Option size={"small"} color="blue" key={name} value={name}>
                     {name}
                 </Option>
             ))}

@@ -190,8 +190,8 @@ class ParallelSetView extends React.Component {
         const adjustHeight = tempDimensions.map(
             d => Object.keys(input.labels[d]["map"]).length
         );
-        console.log(adjustHeight);
-        let h = Math.max(d3.max(adjustHeight) * 25, canvasHeight);
+
+        let h = d3.max(adjustHeight) > 6 ? canvasHeight * 1.5 : canvasHeight;
         const svgRoot = d3.select("#parallel-coordinates");
         svgRoot.style("height", h);
         let margin = { top: 130, right: 110, bottom: 10, left: 80 },
@@ -478,7 +478,13 @@ class ParallelSetView extends React.Component {
                 })
                 .attr("dy", "0.35em")
                 .attr("text-anchor", d => (d.x0 < width / 2 ? "start" : "end"))
-                .text(d => d.title)
+                .text(
+                    d =>
+                        d.title +
+                        " (" +
+                        ((d.value * 100) / groupData.length).toFixed(2) +
+                        "%)"
+                )
                 .append("tspan")
                 .attr("fill-opacity", 0.7);
             // .text(d => ` ${d.value.toLocaleString()}`);
