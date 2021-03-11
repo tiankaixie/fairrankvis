@@ -29,7 +29,7 @@ const initialStateConfig = {
         initialAttributes: new Set([
             //"birthday",
             "gender",
-            "location"
+            "fans"
             //"middle_name",
             //"political"
         ])

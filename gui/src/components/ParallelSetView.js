@@ -186,9 +186,16 @@ class ParallelSetView extends React.Component {
             brushSelectedCluster
         } = props;
         let w = this.state.canvasWidth;
-        let h = canvasHeight;
+        const tempDimensions = [...attributeList.selectedAttributes];
+        const adjustHeight = tempDimensions.map(
+            d => Object.keys(input.labels[d]["map"]).length
+        );
+        console.log(adjustHeight);
+        let h = Math.max(d3.max(adjustHeight) * 25, canvasHeight);
+        const svgRoot = d3.select("#parallel-coordinates");
+        svgRoot.style("height", h);
         let margin = { top: 130, right: 110, bottom: 10, left: 80 },
-            width = w - margin.left - margin.right,
+            width = w - margin.left - margin.right - 5,
             height = h - margin.top - margin.bottom;
 
         let x = d3.scalePoint().range([0, width]),
@@ -209,7 +216,7 @@ class ParallelSetView extends React.Component {
         let groupData = wholeData.filter(item => {
             return brushSelectedCluster.has(String(item.id));
         });
-        const tempDimensions = [...attributeList.selectedAttributes];
+
         let itemSetIDLists = new Set();
         Object.keys(input.nodes).forEach(node => {
             let itemSetID = "";

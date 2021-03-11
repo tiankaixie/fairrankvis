@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { kldivergence } from "mathjs";
 import { regularGrey } from "../constants/colorScheme";
 
+const normalized = require("array-normalize");
 const mapStateToProps = state => {
     return {
         input: state.input,
@@ -113,9 +114,12 @@ class KLDivergenceView extends React.Component {
             const wholeAttributesProb = Object.values(
                 wholeAttributeStatItem
             ).map(value => value / wholeAttributeSum);
-
-            klchartData[d] = kldivergence(attributesProb, wholeAttributesProb);
+            klchartData[d] = kldivergence(
+                attributesProb,
+                wholeAttributesProb
+            );
         });
+        console.log(klchartData);
         let klY = d3
             .scaleBand()
             .domain(Object.keys(klchartData))
@@ -123,8 +127,8 @@ class KLDivergenceView extends React.Component {
             .padding(0.3);
 
         let klX = d3
-            .scaleLinear()
-            .domain([0, d3.max(Object.values(klchartData))])
+            .scaleSqrt()
+            .domain([0, 1])
             .range([0, klWidth - margin.left - margin.right]);
 
         const klbase = d3.select("#kldivergence-base");

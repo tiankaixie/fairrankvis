@@ -44,7 +44,7 @@ class IndividualGroupShift extends React.Component {
          * Canvas setup
          */
         const height = canvasHeight;
-        const width = this.container.current.getBoundingClientRect().width;
+        const width = this.container.current.getBoundingClientRect().width - 5;
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");

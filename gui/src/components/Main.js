@@ -410,9 +410,19 @@ class Main extends React.Component {
                                             </Space>
                                         }
                                     >
-                                        <ParallelSetView
-                                            canvasHeight={globalHeight * 0.37}
-                                        />
+                                        <div
+                                            style={{
+                                                height: globalHeight * 0.375,
+                                                overflowY: "scroll",
+                                                overflowX: "hidden"
+                                            }}
+                                        >
+                                            <ParallelSetView
+                                                canvasHeight={
+                                                    globalHeight * 0.36
+                                                }
+                                            />
+                                        </div>
                                     </Card>
                                 </Col>
                                 <Col span={7}>
@@ -527,13 +537,14 @@ class Main extends React.Component {
                                                     style={{
                                                         height:
                                                             globalHeight * 0.45,
-                                                        overflowY: "scroll"
+                                                        overflowY: "scroll",
+                                                        overflowX: "hidden"
                                                     }}
                                                 >
                                                     <RankMappingView
                                                         svgID={"rank-mapping"}
                                                         canvasHeight={
-                                                            globalHeight * 0.45
+                                                            globalHeight * 0.44
                                                         }
                                                     />
                                                 </div>

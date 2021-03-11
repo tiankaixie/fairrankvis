@@ -84,7 +84,7 @@ class rankMappingView extends React.Component {
             dimensions.forEach((d, i) => {
                 itemSetID += input["nodes"][node][d];
             });
-            itemSetIDLists.add(itemSetID)
+            itemSetIDLists.add(itemSetID);
         });
         selectedNodes.sort(
             (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
@@ -362,88 +362,125 @@ class rankMappingView extends React.Component {
         //////////////////////////////////////////////////////////////////////////////////////////
         // input group links
         const inputGroupXOffset = 120;
-        const inputGroupYOffset = 20;
-        const inputGroupYScale = d3
-            .scaleBand()
-            .domain(sortedInputBinKeys)
-            .range([margin.top, height - margin.bottom]);
 
-        const inputPathData = sortedInputBinKeys.map((d, i) => {
+
+        const blockWidth = 20;
+        const inputGroupLinkData = sortedInputBinKeys.map((d, i) => {
             if (i % 2 === 0) {
                 return {
                     binID: d,
-                    area: [
-                        {
-                            x: inputGroupNodesX,
-                            y0: inputGroupYScale(d) + inputGroupYOffset,
-                            y1: inputGroupYScale(d) + inputGroupYOffset
-                        },
-                        {
-                            x: inputX - 50,
-                            y0: inputGroupYScale(d),
-                            y1: inputGroupYScale(d) + inputGroupYOffset
-                        },
-                        {
-                            x: inputX,
-                            y0: inputYScale(inputBins[d]["instances"][0]),
-                            y1:
-                                inputYScale(
-                                    inputBins[d]["instances"][
-                                        inputBins[d]["instances"].length - 1
-                                    ]
-                                ) + inputYScale.bandwidth()
-                        }
-                    ]
+                    x1: inputGroupNodesX,
+                    y1:
+                        (inputYScale(
+                            inputBins[d]["instances"][
+                                inputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            inputYScale.bandwidth() +
+                            inputYScale(inputBins[d]["instances"][0])) /
+                        2,
+                    x2: inputX - blockWidth,
+                    y2:
+                        (inputYScale(
+                            inputBins[d]["instances"][
+                                inputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            inputYScale.bandwidth() +
+                            inputYScale(inputBins[d]["instances"][0])) /
+                        2
                 };
             } else {
                 return {
                     binID: d,
-                    area: [
-                        {
-                            x: inputGroupNodesX + inputGroupXOffset,
-                            y0: inputGroupYScale(d) + inputGroupYOffset,
-                            y1: inputGroupYScale(d) + inputGroupYOffset
-                        },
-                        {
-                            x: inputX - 50,
-                            y0: inputGroupYScale(d),
-                            y1: inputGroupYScale(d) + inputGroupYOffset
-                        },
-                        {
-                            x: inputX,
-                            y0: inputYScale(inputBins[d]["instances"][0]),
-                            y1:
-                                inputYScale(
-                                    inputBins[d]["instances"][
-                                        inputBins[d]["instances"].length - 1
-                                    ]
-                                ) + inputYScale.bandwidth()
-                        }
-                    ]
+                    x1: inputGroupNodesX + inputGroupXOffset,
+                    y1:
+                        (inputYScale(
+                            inputBins[d]["instances"][
+                                inputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            inputYScale.bandwidth() +
+                            inputYScale(inputBins[d]["instances"][0])) /
+                        2,
+                    x2: inputX - blockWidth,
+                    y2:
+                        (inputYScale(
+                            inputBins[d]["instances"][
+                                inputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            inputYScale.bandwidth() +
+                            inputYScale(inputBins[d]["instances"][0])) /
+                        2
                 };
             }
         });
 
-        let area = d3
-            .area()
-            .curve(d3.curveBasis)
-            .x(d => d.x)
-            .y0(d => d.y0)
-            .y1(d => d.y1);
+        const inputPathBlockData = sortedInputBinKeys.map((d, i) => {
+            return {
+                binID: d,
+                x: inputX - blockWidth,
+                y: inputYScale(inputBins[d]["instances"][0]),
+                h:
+                    inputYScale(
+                        inputBins[d]["instances"][
+                            inputBins[d]["instances"].length - 1
+                        ]
+                    ) +
+                    inputYScale.bandwidth() -
+                    inputYScale(inputBins[d]["instances"][0])
+            };
+        });
 
         linkArea
             .append("g")
-            .attr("class", "inputPathGroup")
+            .attr("class", "inputGroupLinkLine")
             .selectAll("path")
-            .data(inputPathData)
+            .data(inputGroupLinkData)
             .enter()
             .append("path")
-            .attr("class", "area")
-            .attr("id", (d, i) => "inputArea" + d.binID)
-            .attr("d", d => area(d.area))
-            .style("stroke", regularGreyStroke)
-            .attr("fill", regularGreyDark)
-            .attr("opacity", 0.3);
+            .attr(
+                "d",
+                d =>
+                    "M" +
+                    d.x1 +
+                    "," +
+                    d.y1 +
+                    "C" +
+                    (d.x1 + d.x2) / 2 +
+                    "," +
+                    d.y1 +
+                    " " +
+                    (d.x1 + d.x2) / 2 +
+                    "," +
+                    d.y2 +
+                    " " +
+                    d.x2 +
+                    "," +
+                    d.y2
+            )
+            .attr("fill", "none")
+            .attr("stroke", "black");
+
+        const inputBlocks = linkArea
+            .append("g")
+            .attr("class", "inputGroupBlock")
+            .selectAll("rect")
+            .data(inputPathBlockData)
+            .enter()
+            .append("rect")
+            .attr("id", (d, i) => "inputBlock" + d.binID)
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("width", blockWidth)
+            .attr("height", d => d.h)
+            .attr("stroke", "black")
+            .attr(
+                "stroke-dasharray",
+                d => blockWidth + "," + d.h + "," + (blockWidth + d.h)
+            )
+            .attr("fill", "none");
 
         ////////////////////////////////////////////////////////////////////////////////////////
         // input group nodes
@@ -473,7 +510,14 @@ class rankMappingView extends React.Component {
                         "translate(" +
                         inputGroupNodesX +
                         "," +
-                        (inputGroupYScale(d) + inputGroupYOffset) +
+                        (inputYScale(
+                            inputBins[d]["instances"][
+                                inputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            inputYScale.bandwidth() +
+                            inputYScale(inputBins[d]["instances"][0])) /
+                            2 +
                         ")"
                     );
                 } else {
@@ -481,7 +525,14 @@ class rankMappingView extends React.Component {
                         "translate(" +
                         (inputGroupNodesX + inputGroupXOffset) +
                         "," +
-                        (inputGroupYScale(d) + inputGroupYOffset) +
+                        (inputYScale(
+                            inputBins[d]["instances"][
+                                inputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            inputYScale.bandwidth() +
+                            inputYScale(inputBins[d]["instances"][0])) /
+                            2 +
                         ")"
                     );
                 }
@@ -573,81 +624,123 @@ class rankMappingView extends React.Component {
         //////////////////////////////////////////////////////////////////////////////////////////
         // output group links
         const outputGroupXOffset = 150;
-        const outputGroupYOffset = 30;
-        const outputGroupYScale = d3
-            .scaleBand()
-            .domain(sortedOutputBinKeys)
-            .range([margin.top, height - margin.bottom]);
-        const outputPathData = sortedOutputBinKeys.map((d, i) => {
+
+        const outputGroupLinkData = sortedOutputBinKeys.map((d, i) => {
             if (i % 2 === 0) {
                 return {
                     binID: d,
-                    area: [
-                        {
-                            x: outputX + rectLength,
-                            y0: outputYScale(outputBins[d]["instances"][0]),
-                            y1:
-                                outputYScale(
-                                    outputBins[d]["instances"][
-                                        outputBins[d]["instances"].length - 1
-                                    ]
-                                ) + outputYScale.bandwidth()
-                        },
-                        {
-                            x: outputX + rectLength + 50,
-                            y0: outputGroupYScale(d),
-                            y1: outputGroupYScale(d) + outputGroupYOffset
-                        },
-                        {
-                            x: outputGroupNodesX + outputGroupXOffset,
-                            y0: outputGroupYScale(d) + outputGroupYOffset,
-                            y1: outputGroupYScale(d) + outputGroupYOffset
-                        }
-                    ]
+                    x1: outputX + rectLength + blockWidth,
+                    y1:
+                        (outputYScale(
+                            outputBins[d]["instances"][
+                                outputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            outputYScale.bandwidth() +
+                            outputYScale(outputBins[d]["instances"][0])) /
+                        2,
+                    x2: outputGroupNodesX + outputGroupXOffset,
+                    y2:
+                        (outputYScale(
+                            outputBins[d]["instances"][
+                                outputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            outputYScale.bandwidth() +
+                            outputYScale(outputBins[d]["instances"][0])) /
+                        2
                 };
             } else {
                 return {
                     binID: d,
-                    area: [
-                        {
-                            x: outputX + rectLength,
-                            y0: outputYScale(outputBins[d]["instances"][0]),
-                            y1:
-                                outputYScale(
-                                    outputBins[d]["instances"][
-                                        outputBins[d]["instances"].length - 1
-                                    ]
-                                ) + outputYScale.bandwidth()
-                        },
-                        {
-                            x: outputX + rectLength + 50,
-                            y0: outputGroupYScale(d),
-                            y1: outputGroupYScale(d) + outputGroupYOffset
-                        },
-                        {
-                            x: outputGroupNodesX,
-                            y0: outputGroupYScale(d) + outputGroupYOffset,
-                            y1: outputGroupYScale(d) + outputGroupYOffset
-                        }
-                    ]
+                    x1: outputX + rectLength + blockWidth,
+                    y1:
+                        (outputYScale(
+                            outputBins[d]["instances"][
+                                outputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            outputYScale.bandwidth() +
+                            outputYScale(outputBins[d]["instances"][0])) /
+                        2,
+                    x2: outputGroupNodesX,
+                    y2:
+                        (outputYScale(
+                            outputBins[d]["instances"][
+                                outputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            outputYScale.bandwidth() +
+                            outputYScale(outputBins[d]["instances"][0])) /
+                        2
                 };
             }
         });
 
+        const outputPathBlockData = sortedOutputBinKeys.map((d, i) => {
+            return {
+                binID: d,
+                x: outputX + rectLength,
+                y: outputYScale(outputBins[d]["instances"][0]),
+                h:
+                    outputYScale(
+                        outputBins[d]["instances"][
+                            outputBins[d]["instances"].length - 1
+                        ]
+                    ) +
+                    outputYScale.bandwidth() -
+                    outputYScale(outputBins[d]["instances"][0])
+            };
+        });
+
         linkArea
             .append("g")
-            .attr("class", "outputPathGroup")
+            .attr("class", "outputGroupLinkLine")
             .selectAll("path")
-            .data(outputPathData)
+            .data(outputGroupLinkData)
             .enter()
             .append("path")
-            .attr("class", "area")
-            .attr("id", (d, i) => "outputArea" + d.binID)
-            .attr("d", d => area(d.area))
-            .style("stroke", regularGreyStroke)
-            .attr("fill", regularGreyDark)
-            .attr("opacity", 0.3);
+            .attr(
+                "d",
+                d =>
+                    "M" +
+                    d.x1 +
+                    "," +
+                    d.y1 +
+                    "C" +
+                    (d.x1 + d.x2) / 2 +
+                    "," +
+                    d.y1 +
+                    " " +
+                    (d.x1 + d.x2) / 2 +
+                    "," +
+                    d.y2 +
+                    " " +
+                    d.x2 +
+                    "," +
+                    d.y2
+            )
+            .attr("fill", "none")
+            .attr("stroke", "black");
 
+        const outputBlocks = linkArea
+            .append("g")
+            .attr("class", "ouputGroupBlock")
+            .selectAll("rect")
+            .data(outputPathBlockData)
+            .enter()
+            .append("rect")
+            .attr("id", (d, i) => "outputBlock" + d.binID)
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("width", blockWidth)
+            .attr("height", d => d.h)
+            .attr("stroke", "black")
+            .attr(
+                "stroke-dasharray",
+                d => blockWidth + ",0,"  + (blockWidth + d.h) + ", " + d.h
+            )
+            .attr("fill", "none");
         ///////////////////////////////////////////////////////////////////////////////////////
         // output group nodes
 
@@ -663,7 +756,14 @@ class rankMappingView extends React.Component {
                         "translate(" +
                         (outputGroupNodesX + outputGroupXOffset) +
                         "," +
-                        (outputGroupYScale(d) + outputGroupYOffset) +
+                        ((outputYScale(
+                            outputBins[d]["instances"][
+                                outputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            outputYScale.bandwidth() +
+                            outputYScale(outputBins[d]["instances"][0])) /
+                        2) +
                         ")"
                     );
                 } else {
@@ -671,7 +771,14 @@ class rankMappingView extends React.Component {
                         "translate(" +
                         outputGroupNodesX +
                         "," +
-                        (outputGroupYScale(d) + outputGroupYOffset) +
+                        ((outputYScale(
+                            outputBins[d]["instances"][
+                                outputBins[d]["instances"].length - 1
+                            ]
+                        ) +
+                            outputYScale.bandwidth() +
+                            outputYScale(outputBins[d]["instances"][0])) /
+                        2) +
                         ")"
                     );
                 }

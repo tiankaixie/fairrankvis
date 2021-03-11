@@ -12,7 +12,7 @@ import debias_result as pagerank
 def fair(name, vanilla, lambda_=0., similarity=None):
     # vanilla result
     r = vanilla[name]
-    print(r.shape)
+    print(r.shape)r
     # load dataset
     data = graph.read_mat(name)
     A = data['adjacency']
