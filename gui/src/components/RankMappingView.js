@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import {
     regularGreyDark,
     regularGreyStroke,
-    subGroupColor
+    subGroupColor,
+    subGroupHighlightColor
 } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
@@ -48,7 +49,9 @@ class rankMappingView extends React.Component {
             attributeList,
             brushSelectedCluster,
             modelName,
-            individualSim
+            individualSim,
+            showAdvantagedNode,
+            showDisadvantagedNode
         } = props;
 
         /***
@@ -224,7 +227,7 @@ class rankMappingView extends React.Component {
         const hightlightNodeColor = d3
             .scaleOrdinal()
             .domain(itemSetIDLists)
-            .range(subGroupColor);
+            .range(subGroupHighlightColor);
         //////////////////////////////////////////////////////////////////////////////
         // Input Nodes
         linkArea
@@ -232,21 +235,44 @@ class rankMappingView extends React.Component {
             .data(inputNodes)
             .join("rect")
             .attr("id", d => "inputNodeID" + d)
-            .attr(
-                "class",
-                d =>
+            .attr("class", d => {
+                let className =
                     "rectInput " +
                     "inputNode" +
                     inputNodesGroupMap[d] +
                     "inputBin" +
-                    inputNodesBinMap[d]
-            )
+                    inputNodesBinMap[d];
+                if (
+                    input["topological_feature"]["pagerank"][d]["rank"] <
+                    output["res"][d]["rank"]
+                ) {
+                    className += " disadvantaged";
+                } else if (
+                    input["topological_feature"]["pagerank"][d]["rank"] >
+                    output["res"][d]["rank"]
+                ) {
+                    className += " advantaged";
+                }
+                return className;
+            })
             .attr("x", inputX)
             .attr("y", d => inputYScale(d))
             .attr("width", rectLength)
             .attr("height", inputYScale.bandwidth() - 1)
             .attr("stroke", "#fff")
-            .attr("fill", d => nodeColor(inputNodesGroupMap[d]))
+            .attr("fill", d => {
+                if (
+                    (showAdvantagedNode &&
+                        input["topological_feature"]["pagerank"][d]["rank"] >
+                            output["res"][d]["rank"]) ||
+                    (showDisadvantagedNode &&
+                        input["topological_feature"]["pagerank"][d]["rank"] <
+                            output["res"][d]["rank"])
+                ) {
+                    return hightlightNodeColor(inputNodesGroupMap[d]);
+                }
+                return nodeColor(inputNodesGroupMap[d]);
+            })
             .on("mouseover", function(d, i) {
                 d3.select(this)
                     .transition()
@@ -269,15 +295,57 @@ class rankMappingView extends React.Component {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("fill", d => nodeColor(inputNodesGroupMap[d]));
+                    .attr("fill", d => {
+                        if (
+                            (showAdvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] > output["res"][d]["rank"]) ||
+                            (showDisadvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] < output["res"][d]["rank"])
+                        ) {
+                            return hightlightNodeColor(inputNodesGroupMap[d]);
+                        }
+                        return nodeColor(inputNodesGroupMap[d]);
+                    });
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
-                    .attr("fill", d => nodeColor(inputNodesGroupMap[d]));
+                    .attr("fill", d => {
+                        if (
+                            (showAdvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] > output["res"][d]["rank"]) ||
+                            (showDisadvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] < output["res"][d]["rank"])
+                        ) {
+                            return hightlightNodeColor(inputNodesGroupMap[d]);
+                        }
+                        return nodeColor(inputNodesGroupMap[d]);
+                    });
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
-                    .attr("stroke", "#ccc");
+                    .attr("stroke", d => {
+                        if (
+                            (showAdvantagedNode &&
+                                input["topological_feature"]["pagerank"][d.id][
+                                    "rank"
+                                ] > output["res"][d.id]["rank"]) ||
+                            (showDisadvantagedNode &&
+                                input["topological_feature"]["pagerank"][d.id][
+                                    "rank"
+                                ] < output["res"][d.id]["rank"])
+                        ) {
+                            return "black";
+                        }
+                        return "#ccc";
+                    });
             })
             .append("title")
             .text(
@@ -312,14 +380,26 @@ class rankMappingView extends React.Component {
             .attr("width", rectLength)
             .attr("height", outputYScale.bandwidth() - 1)
             .attr("stroke", "#fff")
-            .attr("fill", d => nodeColor(outputNodesGroupMap[d]))
+            .attr("fill", d => {
+                if (
+                    (showAdvantagedNode &&
+                        input["topological_feature"]["pagerank"][d]["rank"] >
+                            output["res"][d]["rank"]) ||
+                    (showDisadvantagedNode &&
+                        input["topological_feature"]["pagerank"][d]["rank"] <
+                            output["res"][d]["rank"])
+                ) {
+                    return hightlightNodeColor(outputNodesGroupMap[d]);
+                }
+                return nodeColor(outputNodesGroupMap[d]);
+            })
             .on("mouseover", function(d, i) {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("fill", d =>
-                        hightlightNodeColor(outputNodesGroupMap[d])
-                    );
+                    .attr("fill", d => {
+                        return hightlightNodeColor(outputNodesGroupMap[d]);
+                    });
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
@@ -335,15 +415,58 @@ class rankMappingView extends React.Component {
                 d3.select(this)
                     .transition()
                     .duration("50")
-                    .attr("fill", d => nodeColor(outputNodesGroupMap[d]));
+                    .attr("fill", d => {
+                        if (
+                            (showAdvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] > output["res"][d]["rank"]) ||
+                            (showDisadvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] < output["res"][d]["rank"])
+                        ) {
+                            return hightlightNodeColor(outputNodesGroupMap[d]);
+                        }
+                        return nodeColor(outputNodesGroupMap[d]);
+                    });
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
-                    .attr("fill", d => nodeColor(outputNodesGroupMap[d]));
+                    .attr("fill", d => {
+                        if (
+                            (showAdvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] > output["res"][d]["rank"]) ||
+                            (showDisadvantagedNode &&
+                                input["topological_feature"]["pagerank"][d][
+                                    "rank"
+                                ] < output["res"][d]["rank"])
+                        ) {
+                            return hightlightNodeColor(outputNodesGroupMap[d]);
+                        }
+
+                        return nodeColor(outputNodesGroupMap[d]);
+                    });
                 d3.select("#link" + d)
                     .transition()
                     .duration("50")
-                    .attr("stroke", "#ccc");
+                    .attr("stroke", d => {
+                        if (
+                            (showAdvantagedNode &&
+                                input["topological_feature"]["pagerank"][d.id][
+                                    "rank"
+                                ] > output["res"][d.id]["rank"]) ||
+                            (showDisadvantagedNode &&
+                                input["topological_feature"]["pagerank"][d.id][
+                                    "rank"
+                                ] < output["res"][d.id]["rank"])
+                        ) {
+                            return "black";
+                        }
+                        return "#ccc";
+                    });
             })
             .append("title")
             .text(
@@ -539,7 +662,7 @@ class rankMappingView extends React.Component {
 
         circleInputSummaryGroup
             .append("text")
-            .attr("dx", "-1em")
+            .attr("dx", "-5em")
             .attr(
                 "dy",
                 d =>
@@ -548,7 +671,22 @@ class rankMappingView extends React.Component {
                     baseRadius +
                     20
             )
-            .text(d => "Size: " + inputBins[d]["instances"].length);
+            .text(d => {
+                const scoreRank = d3.extent(
+                    inputBins[d]["instances"].map(node => {
+                        return input["topological_feature"]["pagerank"][node][
+                            "score"
+                        ];
+                    })
+                );
+                //return "Size: " + inputBins[d]["instances"].length
+                return (
+                    "Range: " +
+                    scoreRank[0].toFixed(5) +
+                    "~" +
+                    scoreRank[1].toFixed(5)
+                );
+            });
 
         circleInputSummaryGroup
             .selectAll(".circleInputSummary")
@@ -757,7 +895,7 @@ class rankMappingView extends React.Component {
         ///////////////////////////////////////////////////////////////////////////////////////
         // output group nodes
 
-        linkArea
+        const circleOutputSummaryGroup = linkArea
             .selectAll(".circleOutputSummaryGroup")
             .data(sortedOutputBinKeys)
             .enter()
@@ -795,7 +933,36 @@ class rankMappingView extends React.Component {
                         ")"
                     );
                 }
-            })
+            });
+
+        circleOutputSummaryGroup
+            .append("text")
+            .attr("dx", "-5em")
+            .attr(
+                "dy",
+                d =>
+                    (outputBins[d]["instances"].length /
+                        maxInstanceSizeOfBins) *
+                        generalRadius +
+                    baseRadius +
+                    20
+            )
+            .text(d => {
+                const scoreRank = d3.extent(
+                    outputBins[d]["instances"].map(node => {
+                        return output["res"][node]["res"];
+                    })
+                );
+                //return "Size: " + inputBins[d]["instances"].length
+                return (
+                    "Range: " +
+                    scoreRank[0].toFixed(5) +
+                    "~" +
+                    scoreRank[1].toFixed(5)
+                );
+            });
+
+        circleOutputSummaryGroup
             .selectAll(".circleOutputSummary")
             .data(d => {
                 const statGroupIDs = Object.keys(outputBins[d]["stat"]);
@@ -904,11 +1071,36 @@ class rankMappingView extends React.Component {
             .data(links)
             .join("line")
             .attr("id", d => "link" + d.id)
+            .attr("class", d => {
+                if (
+                    input["topological_feature"]["pagerank"][d.id]["rank"] <
+                    output["res"][d.id]["rank"]
+                ) {
+                    return "disadvantaged";
+                } else if (
+                    input["topological_feature"]["pagerank"][d.id]["rank"] >
+                    output["res"][d.id]["rank"]
+                ) {
+                    return "advantaged";
+                }
+            })
             .attr("x1", d => d.x1)
             .attr("y1", d => d.y1)
             .attr("x2", d => d.x2)
             .attr("y2", d => d.y2)
-            .attr("stroke", "#ccc")
+            .attr("stroke", d => {
+                if (
+                    (showAdvantagedNode &&
+                        input["topological_feature"]["pagerank"][d.id]["rank"] >
+                            output["res"][d.id]["rank"]) ||
+                    (showDisadvantagedNode &&
+                        input["topological_feature"]["pagerank"][d.id]["rank"] <
+                            output["res"][d.id]["rank"])
+                ) {
+                    return "black";
+                }
+                return "#ccc";
+            })
             .attr("stroke-width", 2);
 
         // const yAxis = svgBase

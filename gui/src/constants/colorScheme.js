@@ -21,6 +21,18 @@ export const subGroupColor = [
     "#CEBAAF"
 ];
 
+export const subGroupHighlightColor = [
+    "#7793b2",
+    "#D1975D",
+    "#CB7375",
+    "#88BAB6",
+    "#80B278",
+    "#CEB86A",
+    "#BE92B1",
+    "#AC9284"
+
+]
+
 export const attributeColor = [
     "#636363",
     "#969696",

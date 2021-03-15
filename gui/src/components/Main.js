@@ -634,6 +634,14 @@ class Main extends React.Component {
                                                         canvasHeight={
                                                             globalHeight * 0.44
                                                         }
+                                                        showAdvantagedNode={
+                                                            this.state
+                                                                .showAdvantagedNode
+                                                        }
+                                                        showDisadvantagedNode={
+                                                            this.state
+                                                                .showDisadvantagedNode
+                                                        }
                                                     />
                                                 </div>
                                             </Col>
