@@ -88,8 +88,8 @@ def generate_attrirank_input(data_name):
 
 if __name__ == "__main__":
     config = {
-        "data_name" : "weibo",
-        "model_name": "inform",
+        "data_name" : "facebook",
+        "model_name": "attrirank",
         "individual_sim": "pagerank"
     }
     generate_cache_data(config=config)

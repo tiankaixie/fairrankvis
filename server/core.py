@@ -82,70 +82,79 @@ def load_social_network(n: int = 400):
 
 
 def synthesis_biased_data():
-    path = os.path.join(BASE_PATH, "data", "socfb-Haverford76.mtx")
+    edge_path = os.path.join(BASE_PATH, "data/fb-caltech", "socfb-Caltech36.mtx")
     # matrix = mmread(path)
     graph = nx.DiGraph()
     np.random.seed(0)
-    with open(path) as tsvfile:
-        tsvreader = csv.reader(tsvfile, delimiter="\t")
-        for index, line in enumerate(tsvreader):
-            if index != 0 and index != 1:
-                temp_split = line[0].split()
-                graph.add_edge(int(temp_split[0]) - 1, int(temp_split[1]) - 1)
-        for node in list(graph.nodes):
-            # male 0, female 1, other 2
-            graph.nodes[node]["gender"] = np.random.choice(
-                3, 1, p=[0.45, 0.45, 0.1])[0]
-            # european, latino, african-american, asian, others
-            graph.nodes[node]["race"] = np.random.choice(
-                8, 1, p=[0.15, 0.1, 0.1, 0.15, 0.15, 0.15, 0.1, 0.1])[0]
-            # age
-            graph.nodes[node]["age"] = np.random.choice(
-                6, 1, p=[0.1, 0.2, 0.3, 0.1, 0.2, 0.1])[0]
-            #
-            graph.nodes[node]["grade"] = np.random.choice(
-                5, 1, p=[0.2, 0.2, 0.3, 0.1, 0.2])[0]
-            graph.nodes[node]["area"] = np.random.choice(
-                5, 1, p=[0.4, 0.1, 0.1, 0.1, 0.3])[0]
-            graph.nodes[node]["salary"] = np.random.choice(
-                5, 1, p=[0.3, 0.2, 0.3, 0.1, 0.1])[0]
+    with open(edge_path) as edge_file:
+        line = edge_file.readlines()
+        for index, line in enumerate(line):
+            if index == 0 or index == 1:
+                continue
+            edge = line.split(" ")
+            graph.add_edge(edge[0], edge[1])
+
+    components = sorted(nx.weakly_connected_components(graph), key=len)
+    # giant_component = max(nx.weakly_connected_components(network), key=len)
+    giant = graph.subgraph(components[-1])
+    threshold = 500
+    sampled_nodes = random.sample(giant.nodes, threshold)
+    sampled_graph = giant.subgraph(sampled_nodes)
+
+    print("node size: %d", (len(list(sampled_graph.nodes()))),)
+    print("edge size: %d", (len(list(sampled_graph.edges()))),)
+    for node in list(sampled_graph.nodes):
+        # male 0, female 1, other 2
+        sampled_graph.nodes[node]["gender"] = np.random.choice(
+            2, 1, p=[0.45, 0.55])[0]
+        # european, latino, african-american, asian, others
+        sampled_graph.nodes[node]["race"] = np.random.choice(
+            4, 1, p=[0.15, 0.3, 0.3, 0.25])[0]
+        # age
+        sampled_graph.nodes[node]["age"] = np.random.choice(
+            6, 1, p=[0.1, 0.2, 0.3, 0.1, 0.2, 0.1])[0]
+        #
+        # graph.nodes[node]["grade"] = np.random.choice(
+        #     5, 1, p=[0.2, 0.2, 0.3, 0.1, 0.2])[0]
+        # graph.nodes[node]["experience"] = np.random.choice(
+        #     5, 1, p=[0.4, 0.1, 0.1, 0.1, 0.3])[0]
     # print(matrix.toarray())
     print("create biased profile")
 
-    graph.nodes[0]["gender"] = 0
-    graph.nodes[100]["gender"] = 0
-    graph.nodes[269]["gender"] = 0
-    graph.nodes[279]["gender"] = 0
-    graph.nodes[668]["gender"] = 0
-    graph.nodes[783]["gender"] = 0
-    graph.nodes[1039]["gender"] = 0
-    graph.nodes[1193]["gender"] = 0
-    graph.nodes[1300]["gender"] = 0
-    graph.nodes[1326]["gender"] = 0
+    # graph.nodes[0]["gender"] = 0
+    # graph.nodes[100]["gender"] = 0
+    # graph.nodes[269]["gender"] = 0
+    # graph.nodes[279]["gender"] = 0
+    # graph.nodes[668]["gender"] = 0
+    # graph.nodes[783]["gender"] = 0
+    # graph.nodes[1039]["gender"] = 0
+    # graph.nodes[1193]["gender"] = 0
+    # graph.nodes[1300]["gender"] = 0
+    # graph.nodes[1326]["gender"] = 0
+    #
+    # graph.nodes[0]["race"] = 0
+    # graph.nodes[100]["race"] = 1
+    # graph.nodes[269]["race"] = 1
+    # graph.nodes[279]["race"] = 1
+    # graph.nodes[668]["race"] = 1
+    # graph.nodes[783]["race"] = 1
+    # graph.nodes[1039]["race"] = 1
+    # graph.nodes[1193]["race"] = 1
+    # graph.nodes[1300]["race"] = 1
+    # graph.nodes[1326]["race"] = 4
+    #
+    # graph.nodes[0]["grade"] = 3
+    # graph.nodes[100]["grade"] = 3
+    # graph.nodes[269]["grade"] = 3
+    # graph.nodes[279]["grade"] = 3
+    # graph.nodes[668]["grade"] = 3
+    # graph.nodes[783]["grade"] = 3
+    # graph.nodes[1039]["grade"] = 3
+    # graph.nodes[1193]["grade"] = 4
+    # graph.nodes[1300]["grade"] = 4
+    # graph.nodes[1326]["grade"] = 4
 
-    graph.nodes[0]["race"] = 0
-    graph.nodes[100]["race"] = 1
-    graph.nodes[269]["race"] = 1
-    graph.nodes[279]["race"] = 1
-    graph.nodes[668]["race"] = 1
-    graph.nodes[783]["race"] = 1
-    graph.nodes[1039]["race"] = 1
-    graph.nodes[1193]["race"] = 1
-    graph.nodes[1300]["race"] = 1
-    graph.nodes[1326]["race"] = 4
-
-    graph.nodes[0]["grade"] = 3
-    graph.nodes[100]["grade"] = 3
-    graph.nodes[269]["grade"] = 3
-    graph.nodes[279]["grade"] = 3
-    graph.nodes[668]["grade"] = 3
-    graph.nodes[783]["grade"] = 3
-    graph.nodes[1039]["grade"] = 3
-    graph.nodes[1193]["grade"] = 4
-    graph.nodes[1300]["grade"] = 4
-    graph.nodes[1326]["grade"] = 4
-
-    return graph
+    return sampled_graph
 
 
 def load_labels(data_name: str) -> dict:
@@ -182,15 +191,10 @@ def load_labels(data_name: str) -> dict:
             "race": {
                 "feature_type": "category",
                 "map": {
-                    0: "American Indian/Alaska Native",
-                    1: "Asian",
-                    2: "Black/African American",
-                    3: "Hispanic/Latino",
-                    4: "Native Hawaiian/Other Pacific Islander",
-                    5: "White",
-                    6: "Two or more Races",
-                    7: "Others"
-
+                    0: "Class 0",
+                    1: "Class 1",
+                    2: "Class 2",
+                    3: "Class 3",
                 }
             },
             "age": {
@@ -204,36 +208,15 @@ def load_labels(data_name: str) -> dict:
                     5: "above 60"
                 }
             },
-            "grade": {
-                "feature_type": "category",
-                "map": {
-                    0: "under 2.0",
-                    1: "2.0 - 2.9",
-                    2: "3.0 - 3.5",
-                    3: "3.5 - 3.9",
-                    4: "4.0",
-                }
-            },
-            "area": {
-                "feature_type": "category",
-                "map": {
-                    0: "area 1",
-                    1: "area 2",
-                    2: "area 3",
-                    3: "area 4",
-                    4: "area 5",
-                }
-            },
-            "salary": {
-                "feature_type": "category",
-                "map": {
-                    0: "below $25000",
-                    1: "$25000 to $60000",
-                    2: "$60000 to $100000",
-                    3: "$100000 to $200000",
-                    4: "above $200000"
-                }
-            },
+            # "experience": {
+            #     "feature_type": "category",
+            #     "map": {
+            #         0: "entry level",
+            #         1: "intermediate",
+            #         2: "senior",
+            #         3: "expert"
+            #     }
+            # },
         }
     else:
         raise NameError("not supported data: %s", (data_name,))
@@ -535,30 +518,30 @@ def graph_mining(model_name: str, data: type(nx), labels: dict) -> dict:
         scores = AttriRank(graph, feat, nodeCount=len(data.nodes()),
                            adjacency_matrix=nx.adjacency_matrix(data).todense()).runModel()
         # print(scores)
-        rank_index = sorted(range(len(scores["0.85"])), key=lambda k: scores["0.85"][k], reverse=True)
+
         graph_nodes = list(data.nodes)
         for index, node in enumerate(graph_nodes):
             res[node] = {"res": scores["0.85"][index]}
-
+        rank_index = sorted(range(len(scores["0.85"])), key=lambda k: scores["0.85"][k], reverse=True)
         for rank, i in enumerate(rank_index):
             res[graph_nodes[i]]["rank"] = rank + 1
     elif model_name == "inform":
         r = nx.pagerank(data)
         # print(np.array(list(r.values())))
-        print(sparse.csr_matrix(np.array(list(r.values()))))
+        # print(sparse.csr_matrix(np.array(list(r.values()))))
         # load dataset
         A = utils.symmetric_normalize(nx.to_scipy_sparse_matrix(data, dtype='float', format='csc'))
         pre_r = sparse.csr_matrix(np.array(list(r.values())))
-        print(pre_r)
+        # print(pre_r)
         # build similarity matrix
         S = utils.filter_similarity_matrix(utils.get_similarity_matrix(A, metric="cosine"), sigma=0.75)
         S = utils.symmetric_normalize(S)
-        print(S.shape)
-        print(pre_r.shape)
+        # print(S.shape)
+        # print(pre_r.shape)
         r = pagerank.debias_result(pre_r.transpose(), S, 0.5)
         graph_nodes = list(data.nodes)
         r = r.toarray().reshape(-1)
-        print(r[0])
+        # print(r[0])
         for index, node in enumerate(graph_nodes):
             res[node] = {"res": r[index]}
         rank_index = sorted(range(len(r)), key=lambda k: r[k], reverse=True)

@@ -663,14 +663,23 @@ class rankMappingView extends React.Component {
         circleInputSummaryGroup
             .append("text")
             .attr("dx", "-5em")
-            .attr(
-                "dy",
-                d =>
+            .attr("dy", (d, i) => {
+                if (i < 2) {
+                    return (
+                        (inputBins[d]["instances"].length /
+                            maxInstanceSizeOfBins) *
+                            generalRadius -
+                        baseRadius -
+                        20
+                    );
+                }
+                return (
                     (inputBins[d]["instances"].length / maxInstanceSizeOfBins) *
                         generalRadius +
                     baseRadius +
                     20
-            )
+                );
+            })
             .text(d => {
                 const scoreRank = d3.extent(
                     inputBins[d]["instances"].map(node => {
@@ -938,15 +947,24 @@ class rankMappingView extends React.Component {
         circleOutputSummaryGroup
             .append("text")
             .attr("dx", "-5em")
-            .attr(
-                "dy",
-                d =>
+            .attr("dy", (d, i) => {
+                if (i < 1) {
+                    return (
+                        (outputBins[d]["instances"].length /
+                            maxInstanceSizeOfBins) *
+                            generalRadius -
+                        baseRadius -
+                        20
+                    );
+                }
+                return (
                     (outputBins[d]["instances"].length /
                         maxInstanceSizeOfBins) *
                         generalRadius +
                     baseRadius +
                     20
-            )
+                );
+            })
             .text(d => {
                 const scoreRank = d3.extent(
                     outputBins[d]["instances"].map(node => {

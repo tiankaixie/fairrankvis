@@ -323,7 +323,8 @@ class ParallelSetView extends React.Component {
                 prefix += (itemSetCount[key] / totalLen) * height + 5;
                 oneDimScale[key] = {
                     y: y,
-                    height: (itemSetCount[key] / totalLen) * height
+                    height: (itemSetCount[key] / totalLen) * height,
+                    percent: itemSetCount[key] / totalLen
                 };
             });
             console.log(oneDimScale);
@@ -478,13 +479,22 @@ class ParallelSetView extends React.Component {
                 })
                 .attr("dy", "0.35em")
                 .attr("text-anchor", d => (d.x0 < width / 2 ? "start" : "end"))
-                .text(
-                    d =>
+                .text(d => {
+                    if (isNaN(d.x0)) {
+                        return (
+                            d.title +
+                            " (" +
+                            (oneDimScale[d.name].percent * 100).toFixed(2) +
+                            "%)"
+                        );
+                    }
+                    return (
                         d.title +
                         " (" +
                         ((d.value * 100) / groupData.length).toFixed(2) +
                         "%)"
-                )
+                    );
+                })
                 .append("tspan")
                 .attr("fill-opacity", 0.7);
             // .text(d => ` ${d.value.toLocaleString()}`);
@@ -506,7 +516,9 @@ class ParallelSetView extends React.Component {
                     .range([height, 0]))
             );
         });
-        x.domain(dimensions);
+        x.domain(tempDimensions);
+        console.log(tempDimensions);
+        console.log(dimensions);
 
         // Add a group element for each dimension.
         let g = svg

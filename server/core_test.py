@@ -9,7 +9,7 @@ from core import Core, load_polblogs
 
 if __name__ == '__main__':
     config = {
-        "data_name" : "weibo",
+        "data_name" : "synthesis",
         "model_name": "inform",
         "individual_sim": "pagerank"
     }

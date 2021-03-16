@@ -24,7 +24,15 @@ const initialStateConfig = {
             //"political"
         ])
     },
-    synthesis: {},
+    synthesis: {
+        initialAttributes: new Set([
+            //"birthday",
+            "gender",
+            "race"
+            //"middle_name",
+            //"political"
+        ])
+    },
     weibo: {
         initialAttributes: new Set([
             //"birthday",
@@ -39,6 +47,8 @@ const initialStateConfig = {
 const initialState = {
     dataName: "weibo",
     modelName: "inform",
+    // dataName: "facebook",
+    // modelName: "attrirank",
     individualSim: "pagerank",
     pairwiseAttribute: "pagerank",
     input: {
