@@ -192,9 +192,10 @@ class MiningResultDensity extends React.Component {
             .selectAll("text")
             .attr("y", 9)
             .attr("x", -6)
+            .attr("class", "label-text")
             .attr("dy", ".35em")
             .attr("transform", "rotate(-35)")
-            .attr("font-size", "0.5rem")
+            .attr("font-size", "0.6rem")
             .style("text-anchor", "end");
 
         svg.append("g")

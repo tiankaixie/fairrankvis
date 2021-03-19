@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { Row, Col, Space, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
 import { subGroupColor } from "../constants/colorScheme";
+import { displayName } from "../constants/text";
 
 const mapStateToProps = state => {
     return {
@@ -217,7 +218,7 @@ class ProportionViewNew extends React.Component {
             <React.Fragment>
                 <Row>
                     <Col span={5}>
-                        <Text strong>PageRank </Text>
+                        <Text>{displayName[individualSim]} </Text>
                     </Col>
                     <Col span={19}>
                         <div
@@ -235,7 +236,7 @@ class ProportionViewNew extends React.Component {
                 </Row>
                 <Row>
                     <Col span={5}>
-                        <Text strong>AttriRank </Text>
+                        <Text>{displayName[modelName]} </Text>
                     </Col>
                     <Col span={19}>
                         <div

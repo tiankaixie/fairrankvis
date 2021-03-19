@@ -2,11 +2,14 @@ import React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
 import {
+    regularGrey,
     regularGreyDark,
     regularGreyStroke,
     subGroupColor,
-    subGroupHighlightColor
+    subGroupHighlightColor,
+    textGrey
 } from "../constants/colorScheme";
+import { displayName } from "../constants/text";
 
 const mapStateToProps = state => {
     return {
@@ -224,7 +227,7 @@ class rankMappingView extends React.Component {
             .domain(itemSetIDLists)
             .range(subGroupColor);
 
-        const hightlightNodeColor = d3
+        const highlightNodeColor = d3
             .scaleOrdinal()
             .domain(itemSetIDLists)
             .range(subGroupHighlightColor);
@@ -269,7 +272,7 @@ class rankMappingView extends React.Component {
                         input["topological_feature"]["pagerank"][d]["rank"] <
                             output["res"][d]["rank"])
                 ) {
-                    return hightlightNodeColor(inputNodesGroupMap[d]);
+                    return highlightNodeColor(inputNodesGroupMap[d]);
                 }
                 return nodeColor(inputNodesGroupMap[d]);
             })
@@ -278,13 +281,13 @@ class rankMappingView extends React.Component {
                     .transition()
                     .duration("50")
                     .attr("fill", d =>
-                        hightlightNodeColor(inputNodesGroupMap[d])
+                        highlightNodeColor(inputNodesGroupMap[d])
                     );
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
                     .attr("fill", d =>
-                        hightlightNodeColor(inputNodesGroupMap[d])
+                        highlightNodeColor(inputNodesGroupMap[d])
                     );
                 d3.select("#link" + d)
                     .transition()
@@ -306,7 +309,7 @@ class rankMappingView extends React.Component {
                                     "rank"
                                 ] < output["res"][d]["rank"])
                         ) {
-                            return hightlightNodeColor(inputNodesGroupMap[d]);
+                            return highlightNodeColor(inputNodesGroupMap[d]);
                         }
                         return nodeColor(inputNodesGroupMap[d]);
                     });
@@ -324,7 +327,7 @@ class rankMappingView extends React.Component {
                                     "rank"
                                 ] < output["res"][d]["rank"])
                         ) {
-                            return hightlightNodeColor(inputNodesGroupMap[d]);
+                            return highlightNodeColor(inputNodesGroupMap[d]);
                         }
                         return nodeColor(inputNodesGroupMap[d]);
                     });
@@ -348,6 +351,7 @@ class rankMappingView extends React.Component {
                     });
             })
             .append("title")
+            .attr("class", "text-label")
             .text(
                 d =>
                     "ID: " +
@@ -389,7 +393,7 @@ class rankMappingView extends React.Component {
                         input["topological_feature"]["pagerank"][d]["rank"] <
                             output["res"][d]["rank"])
                 ) {
-                    return hightlightNodeColor(outputNodesGroupMap[d]);
+                    return highlightNodeColor(outputNodesGroupMap[d]);
                 }
                 return nodeColor(outputNodesGroupMap[d]);
             })
@@ -398,13 +402,13 @@ class rankMappingView extends React.Component {
                     .transition()
                     .duration("50")
                     .attr("fill", d => {
-                        return hightlightNodeColor(outputNodesGroupMap[d]);
+                        return highlightNodeColor(outputNodesGroupMap[d]);
                     });
                 d3.select("#outputNodeID" + d)
                     .transition()
                     .duration("50")
                     .attr("fill", d =>
-                        hightlightNodeColor(outputNodesGroupMap[d])
+                        highlightNodeColor(outputNodesGroupMap[d])
                     );
                 d3.select("#link" + d)
                     .transition()
@@ -426,7 +430,7 @@ class rankMappingView extends React.Component {
                                     "rank"
                                 ] < output["res"][d]["rank"])
                         ) {
-                            return hightlightNodeColor(outputNodesGroupMap[d]);
+                            return highlightNodeColor(outputNodesGroupMap[d]);
                         }
                         return nodeColor(outputNodesGroupMap[d]);
                     });
@@ -444,7 +448,7 @@ class rankMappingView extends React.Component {
                                     "rank"
                                 ] < output["res"][d]["rank"])
                         ) {
-                            return hightlightNodeColor(outputNodesGroupMap[d]);
+                            return highlightNodeColor(outputNodesGroupMap[d]);
                         }
 
                         return nodeColor(outputNodesGroupMap[d]);
@@ -469,6 +473,7 @@ class rankMappingView extends React.Component {
                     });
             })
             .append("title")
+            .attr("class", "text-label")
             .text(
                 d =>
                     "ID: " +
@@ -543,7 +548,7 @@ class rankMappingView extends React.Component {
             return {
                 binID: d,
                 x: inputX - blockWidth,
-                y: inputYScale(inputBins[d]["instances"][0]),
+                y: inputYScale(inputBins[d]["instances"][0]) + 2,
                 h:
                     inputYScale(
                         inputBins[d]["instances"][
@@ -551,7 +556,8 @@ class rankMappingView extends React.Component {
                         ]
                     ) +
                     inputYScale.bandwidth() -
-                    inputYScale(inputBins[d]["instances"][0])
+                    inputYScale(inputBins[d]["instances"][0]) -
+                    2
             };
         });
 
@@ -583,7 +589,7 @@ class rankMappingView extends React.Component {
                     d.y2
             )
             .attr("fill", "none")
-            .attr("stroke", "black");
+            .attr("stroke", regularGrey);
 
         const inputBlocks = linkArea
             .append("g")
@@ -595,12 +601,14 @@ class rankMappingView extends React.Component {
             .attr("id", (d, i) => "inputBlock" + d.binID)
             .attr("x", d => d.x)
             .attr("y", d => d.y)
+            .attr("rx", 2)
+            .attr("ry", 2)
             .attr("width", blockWidth)
             .attr("height", d => d.h)
-            .attr("stroke", "black")
+            .attr("stroke", regularGrey)
             .attr(
                 "stroke-dasharray",
-                d => blockWidth + "," + d.h + "," + (blockWidth + d.h)
+                d => blockWidth - 2 + "," + (d.h - 2) + "," + (blockWidth + d.h)
             )
             .attr("fill", "none");
 
@@ -662,6 +670,7 @@ class rankMappingView extends React.Component {
 
         circleInputSummaryGroup
             .append("text")
+            .attr("class", "text-label")
             .attr("dx", "-5em")
             .attr("dy", (d, i) => {
                 if (i < 2) {
@@ -670,7 +679,7 @@ class rankMappingView extends React.Component {
                             maxInstanceSizeOfBins) *
                             generalRadius -
                         baseRadius -
-                        20
+                        25
                     );
                 }
                 return (
@@ -728,7 +737,7 @@ class rankMappingView extends React.Component {
                 d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
-                    .attr("fill", d => hightlightNodeColor(d["data"]["id"]));
+                    .attr("fill", d => highlightNodeColor(d["data"]["id"]));
 
                 d3.select("#inputArea" + d["data"]["binID"])
                     .transition()
@@ -744,7 +753,7 @@ class rankMappingView extends React.Component {
                     .transition()
                     .duration("50")
                     .attr("fill", d =>
-                        hightlightNodeColor(inputNodesGroupMap[d])
+                        highlightNodeColor(inputNodesGroupMap[d])
                     );
             })
             .on("mouseout", function(d, i) {
@@ -841,7 +850,7 @@ class rankMappingView extends React.Component {
             return {
                 binID: d,
                 x: outputX + rectLength,
-                y: outputYScale(outputBins[d]["instances"][0]),
+                y: outputYScale(outputBins[d]["instances"][0]) + 2,
                 h:
                     outputYScale(
                         outputBins[d]["instances"][
@@ -849,7 +858,8 @@ class rankMappingView extends React.Component {
                         ]
                     ) +
                     outputYScale.bandwidth() -
-                    outputYScale(outputBins[d]["instances"][0])
+                    outputYScale(outputBins[d]["instances"][0]) -
+                    2
             };
         });
 
@@ -881,7 +891,7 @@ class rankMappingView extends React.Component {
                     d.y2
             )
             .attr("fill", "none")
-            .attr("stroke", "black");
+            .attr("stroke", regularGrey);
 
         const outputBlocks = linkArea
             .append("g")
@@ -893,12 +903,21 @@ class rankMappingView extends React.Component {
             .attr("id", (d, i) => "outputBlock" + d.binID)
             .attr("x", d => d.x)
             .attr("y", d => d.y)
+            .attr("rx", 2)
+            .attr("ry", 2)
             .attr("width", blockWidth)
             .attr("height", d => d.h)
-            .attr("stroke", "black")
+            .attr("stroke", regularGrey)
             .attr(
                 "stroke-dasharray",
-                d => blockWidth + ",0," + (blockWidth + d.h) + ", " + d.h
+                d =>
+                    blockWidth +
+                    ",0," +
+                    (blockWidth + d.h - 6) +
+                    ", " +
+                    (d.h + 2) +
+                    "," +
+                    2
             )
             .attr("fill", "none");
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -946,6 +965,7 @@ class rankMappingView extends React.Component {
 
         circleOutputSummaryGroup
             .append("text")
+            .attr("class", "text-label")
             .attr("dx", "-5em")
             .attr("dy", (d, i) => {
                 if (i < 1) {
@@ -1014,7 +1034,7 @@ class rankMappingView extends React.Component {
                 d3.selectAll(".group" + d["data"]["id"])
                     .transition()
                     .duration("50")
-                    .attr("fill", d => hightlightNodeColor(d["data"]["id"]));
+                    .attr("fill", d => highlightNodeColor(d["data"]["id"]));
 
                 d3.select("#outputArea" + d["data"]["binID"])
                     .transition()
@@ -1030,7 +1050,7 @@ class rankMappingView extends React.Component {
                     .transition()
                     .duration("50")
                     .attr("fill", d =>
-                        hightlightNodeColor(outputNodesGroupMap[d])
+                        highlightNodeColor(outputNodesGroupMap[d])
                     );
             })
             .on("mouseout", function(d, i) {
@@ -1117,9 +1137,9 @@ class rankMappingView extends React.Component {
                 ) {
                     return "black";
                 }
-                return "#ccc";
+                return regularGrey;
             })
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 1);
 
         // const yAxis = svgBase
         //     .append("g")
@@ -1146,13 +1166,15 @@ class rankMappingView extends React.Component {
             .append("text")
             .attr("x", inputX)
             .attr("y", textTop)
-            .text(individualSim);
+            .attr("class", "text-label")
+            .text(displayName[individualSim]);
 
         textGroup
             .append("text")
             .attr("x", outputX)
             .attr("y", textTop)
-            .text(modelName);
+            .attr("class", "text-label")
+            .text(displayName[modelName]);
 
         // textGroup
         //     .append("text")

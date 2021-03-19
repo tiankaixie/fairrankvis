@@ -32,3 +32,28 @@ canvas {
 ::-webkit-scrollbar-thumb:hover {
     background: #aaa;
 }
+
+.tick text {
+    color: #6b6b76;
+}
+
+.domain {
+    color: #e6e6e6;
+}
+
+.tick line {
+    color: #e6e6e6;
+}
+
+strong {
+    color: #6b6b76;
+    font-weight: 300;
+}
+
+text {
+    color: #6b6b76;
+}
+
+.text-label {
+    font-color: #6b6b76;
+}

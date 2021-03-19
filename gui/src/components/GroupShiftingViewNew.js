@@ -256,15 +256,15 @@ class GroupShiftingView extends React.Component {
                 dataSource={Object.keys(data)}
                 header={
                     <Space>
-                        <Text strong>Group ID & Group Shifting</Text>{" "}
-                        <Text strong> Distribution Changes</Text>
+                        <Text>Group ID & Group Shifting</Text>{" "}
+                        <Text> Distribution Changes</Text>
                     </Space>
                 }
                 renderItem={item => (
                     <List.Item>
                         <Row style={{ width: "100%" }}>
                             <Col span={10}>
-                                <Text strong> {item}</Text>
+                                <Text>Group ID: {item}</Text>
                                 <IndividualGroupShift
                                     svgID={"igs-" + item}
                                     canvasHeight={"70"}

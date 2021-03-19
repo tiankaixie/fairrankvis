@@ -7,35 +7,35 @@ export const regularGreyStroke = "#f0f0f0";
 export const regularGreyDark = "#cccccc";
 // export const regularGreyDark = "#D6D6D6";
 
-export const regularGrey = "#e6e6e6";
-export const textGrey = "#333";
+export const attributeBar = "#666"
+
+export const regularGrey = "#D6D6D6";
+export const textGrey = "#ddd";
 
 export const subGroupColor = [
-    "#A7BCD3",
-    "#F9C796",
+    "#ACD0A7",
     "#F0ABAC",
     "#BBDBD9",
-    "#ACD0A7",
+    "#F9C796",
     "#F6E4A4",
     "#D7BDD0",
-    "#CEBAAF"
+    "#CEBAAF",
+    "#A7BCD3"
 ];
 
 export const subGroupHighlightColor = [
-    "#7793b2",
-    "#D1975D",
+    "#80B278",
     "#CB7375",
     "#88BAB6",
-    "#80B278",
+    "#D1975D",
     "#CEB86A",
     "#BE92B1",
-    "#AC9284"
-
-]
-
-export const attributeColor = [
-    "#636363",
-    "#969696",
-    "#cccccc",
-    "#f7f7f7",
+    "#AC9284",
+    "#7793b2"
 ];
+
+export const attributeColor = ["#636363", "#969696", "#cccccc", "#f7f7f7"];
+
+export const labelText = "#6B6B76";
+
+export const axisColor = "#E6E6E6";

@@ -1,6 +1,7 @@
 import React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
+import { displayName } from "../constants/text";
 import {
     getData,
     updateClusterSliderValue,
@@ -11,6 +12,7 @@ import {
     Row,
     Col,
     Slider,
+    Input,
     InputNumber,
     Divider,
     Button,
@@ -27,6 +29,7 @@ import {
 import { Typography } from "antd";
 import {
     CheckCircleOutlined,
+    PlusOutlined,
     QuestionCircleOutlined,
     SettingOutlined
 } from "@ant-design/icons";
@@ -46,6 +49,7 @@ import GroupShiftingViewNew from "./GroupShiftingViewNew";
 import ProportionViewNew from "./ProportionViewNew";
 import Avatar from "antd/es/avatar/avatar";
 import Search from "antd/es/input/Search";
+import Modal from "antd/es/modal/Modal";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -87,7 +91,8 @@ class Main extends React.Component {
             comparisonMode: false,
             showDisadvantagedNode: false,
             showAdvantagedNode: false,
-            highlightAttribute: true
+            highlightAttribute: true,
+            displayAttributeModal: false
         };
     }
 
@@ -103,6 +108,7 @@ class Main extends React.Component {
             dataName,
             modelName,
             brushSelectedCluster,
+            individualSim,
             updateBrushClusterSelected
         } = this.props;
 
@@ -166,7 +172,7 @@ class Main extends React.Component {
             miningResultDensity = (
                 <React.Fragment>
                     <p>
-                        <Text strong>Ranking range:</Text>
+                        <Text>Ranking range:</Text>
                     </p>
                     <Space>
                         <InputNumber
@@ -259,7 +265,7 @@ class Main extends React.Component {
                                 >
                                     <Row>
                                         <Col span={14}>
-                                            <Text strong>Dataset</Text>
+                                            <Text>Dataset</Text>
                                         </Col>
                                         <Col span={10}>
                                             <Select
@@ -288,8 +294,31 @@ class Main extends React.Component {
                                     <br />
                                     <Row>
                                         <Col span={14}>
-                                            <Text strong>
-                                                {"Ranking Model"}
+                                            <Text>{"Base Ranking Model"}</Text>
+                                        </Col>
+                                        <Col span={10}>
+                                            <Select
+                                                size={"small"}
+                                                onChange={() => {}}
+                                                style={{
+                                                    width: "100%"
+                                                }}
+                                                value={individualSim}
+                                            >
+                                                <Option
+                                                    key="pagerank"
+                                                    value="pagerank"
+                                                >
+                                                    {displayName[individualSim]}
+                                                </Option>
+                                            </Select>
+                                        </Col>
+                                    </Row>
+                                    <br />
+                                    <Row>
+                                        <Col span={14}>
+                                            <Text>
+                                                {"Target Ranking Model"}
                                             </Text>
                                         </Col>
                                         <Col span={10}>
@@ -305,12 +334,17 @@ class Main extends React.Component {
                                                     key="attrirank"
                                                     value="attrirank"
                                                 >
-                                                    Attrirank
+                                                    {displayName["attrirank"]}
+                                                </Option>
+                                                <Option
+                                                    key="inform"
+                                                    value="inform"
+                                                >
+                                                    {displayName["inform"]}
                                                 </Option>
                                             </Select>
                                         </Col>
                                     </Row>
-
                                     <Divider
                                         style={{
                                             marginTop: "12px",
@@ -318,13 +352,12 @@ class Main extends React.Component {
                                         }}
                                     />
                                     <Space>
-                                        <Text strong>
-                                            Ranking Score Density
-                                        </Text>
+                                        <Text>Ranking Score Density</Text>
 
                                         <Dropdown
                                             overlay={setting}
                                             placement="bottomLeft"
+                                            trigger={["click"]}
                                         >
                                             <SettingOutlined />
                                         </Dropdown>
@@ -336,7 +369,6 @@ class Main extends React.Component {
                                             this.state.miningResultControl
                                         }
                                     />
-                                    <br />
                                     {miningResultDensity}
                                     <Divider
                                         style={{
@@ -346,7 +378,7 @@ class Main extends React.Component {
                                     />
                                     <Row>
                                         <Col span={14}>
-                                            <Text strong> Selected Data </Text>
+                                            <Text> Selected Data </Text>
                                         </Col>
                                         <Col span={10}>
                                             <Text>
@@ -361,9 +393,7 @@ class Main extends React.Component {
                                     <br />
                                     <Row>
                                         <Col span={14}>
-                                            <Text strong>
-                                                Mining Result Range:
-                                            </Text>
+                                            <Text>Mining Result Range:</Text>
                                         </Col>
                                         <Col span={10}>
                                             <Text>
@@ -388,7 +418,7 @@ class Main extends React.Component {
                             <br />
                             <Card
                                 size="small"
-                                title="SUBGROUPS"
+                                title="GROUPS"
                                 extra={
                                     <Space>
                                         <Search
@@ -459,7 +489,7 @@ class Main extends React.Component {
                                         <div style={{ padding: 16 }}>
                                             <Row>
                                                 <Col span={12}>
-                                                    <Text strong>
+                                                    <Text>
                                                         Selected Attributes
                                                     </Text>
                                                 </Col>
@@ -495,9 +525,7 @@ class Main extends React.Component {
                                                         >
                                                             <Row justify="space-between">
                                                                 <Col span={8}>
-                                                                    <Text
-                                                                        strong
-                                                                    >
+                                                                    <Text>
                                                                         {
                                                                             item.title
                                                                         }
@@ -516,13 +544,217 @@ class Main extends React.Component {
                                                                 </Col>
                                                                 <Col>
                                                                     <Button
-                                                                        disabled
                                                                         size={
                                                                             "small"
                                                                         }
+                                                                        onClick={() => {
+                                                                            this.setState(
+                                                                                {
+                                                                                    displayAttributeModal: true
+                                                                                }
+                                                                            );
+                                                                        }}
                                                                     >
                                                                         Settings
                                                                     </Button>
+                                                                    <Modal
+                                                                        title="Attribute: fans Range: 0 - 19494813"
+                                                                        visible={
+                                                                            this
+                                                                                .state
+                                                                                .displayAttributeModal
+                                                                        }
+                                                                        onOk={() => {
+                                                                            this.setState(
+                                                                                {
+                                                                                    displayAttributeModal: false
+                                                                                }
+                                                                            );
+                                                                        }}
+                                                                        onCancel={() => {
+                                                                            this.setState(
+                                                                                {
+                                                                                    displayAttributeModal: false
+                                                                                }
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <Space direction="vertical">
+                                                                            <Space>
+                                                                                <Text>
+                                                                                    #1
+                                                                                </Text>
+                                                                                <Input
+                                                                                    placeholder="value"
+                                                                                    value={
+                                                                                        "above 10M"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="from"
+                                                                                    value={
+                                                                                        "10000000"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    className="site-input-split"
+                                                                                    style={{
+                                                                                        width: 30,
+                                                                                        borderLeft: 0,
+                                                                                        borderRight: 0,
+                                                                                        pointerEvents:
+                                                                                            "none"
+                                                                                    }}
+                                                                                    placeholder="~"
+                                                                                    disabled
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="to"
+                                                                                    value={
+                                                                                        "19494813"
+                                                                                    }
+                                                                                />
+                                                                                <Button
+                                                                                    type="primary"
+                                                                                    danger
+                                                                                >
+                                                                                    Delete
+                                                                                </Button>
+                                                                            </Space>
+                                                                            <Space>
+                                                                                <Text>
+                                                                                    #2
+                                                                                </Text>
+                                                                                <Input
+                                                                                    placeholder="value"
+                                                                                    value={
+                                                                                        "1M to 10M"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="from"
+                                                                                    value={
+                                                                                        "1000000"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    className="site-input-split"
+                                                                                    style={{
+                                                                                        width: 30,
+                                                                                        borderLeft: 0,
+                                                                                        borderRight: 0,
+                                                                                        pointerEvents:
+                                                                                            "none"
+                                                                                    }}
+                                                                                    placeholder="~"
+                                                                                    disabled
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="to"
+                                                                                    value={
+                                                                                        "10000000"
+                                                                                    }
+                                                                                />
+                                                                                <Button
+                                                                                    type="primary"
+                                                                                    danger
+                                                                                >
+                                                                                    Delete
+                                                                                </Button>
+                                                                            </Space>
+
+                                                                            <Space>
+                                                                                <Text>
+                                                                                    #3
+                                                                                </Text>
+                                                                                <Input
+                                                                                    placeholder="value"
+                                                                                    value={
+                                                                                        "10k to 1M"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="from"
+                                                                                    value={
+                                                                                        "10000"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    className="site-input-split"
+                                                                                    style={{
+                                                                                        width: 30,
+                                                                                        borderLeft: 0,
+                                                                                        borderRight: 0,
+                                                                                        pointerEvents:
+                                                                                            "none"
+                                                                                    }}
+                                                                                    placeholder="~"
+                                                                                    disabled
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="to"
+                                                                                    value={
+                                                                                        "1000000"
+                                                                                    }
+                                                                                />
+                                                                                <Button
+                                                                                    type="primary"
+                                                                                    danger
+                                                                                >
+                                                                                    Delete
+                                                                                </Button>
+                                                                            </Space>
+                                                                            <Space>
+                                                                                <Text>
+                                                                                    #4
+                                                                                </Text>
+                                                                                <Input
+                                                                                    placeholder="value"
+                                                                                    value={
+                                                                                        "under 10k"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="from"
+                                                                                    value={
+                                                                                        "0"
+                                                                                    }
+                                                                                />
+                                                                                <Input
+                                                                                    className="site-input-split"
+                                                                                    style={{
+                                                                                        width: 30,
+                                                                                        borderLeft: 0,
+                                                                                        borderRight: 0,
+                                                                                        pointerEvents:
+                                                                                            "none"
+                                                                                    }}
+                                                                                    placeholder="~"
+                                                                                    disabled
+                                                                                />
+                                                                                <Input
+                                                                                    placeholder="to"
+                                                                                    value={
+                                                                                        "10000"
+                                                                                    }
+                                                                                />
+                                                                                <Button
+                                                                                    type="primary"
+                                                                                    danger
+                                                                                >
+                                                                                    Delete
+                                                                                </Button>
+                                                                            </Space>
+                                                                            <Button
+                                                                                style={{ width: "100%" }}
+                                                                                size={
+                                                                                    "small"
+                                                                                }
+                                                                            >
+                                                                                <PlusOutlined />
+                                                                            </Button>
+                                                                        </Space>
+                                                                    </Modal>
                                                                 </Col>
                                                             </Row>
                                                         </div>
@@ -537,7 +769,7 @@ class Main extends React.Component {
                                             />
                                             <Row>
                                                 <Col span={12}>
-                                                    <Text strong>
+                                                    <Text>
                                                         Distribution Similarity
                                                     </Text>
                                                 </Col>
@@ -624,7 +856,7 @@ class Main extends React.Component {
                                                 <div
                                                     style={{
                                                         height:
-                                                            globalHeight * 0.45,
+                                                            globalHeight * 0.46,
                                                         overflowY: "scroll",
                                                         overflowX: "hidden"
                                                     }}

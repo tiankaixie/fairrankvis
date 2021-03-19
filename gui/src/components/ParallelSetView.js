@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { connect } from "react-redux";
 import { updateTableData } from "../actions";
 import {
+    attributeBar,
     attributeColor,
     regularGreyDark,
     subGroupColor,
@@ -169,7 +170,7 @@ class ParallelSetView extends React.Component {
                 .attr("x", -6)
                 .attr("dy", ".35em")
                 .attr("transform", "rotate(-35)")
-                .attr("font-size", "0.5rem")
+                .attr("font-size", "0.65rem")
                 .style("text-anchor", "end");
 
             svg.append("g")
@@ -185,7 +186,7 @@ class ParallelSetView extends React.Component {
             attributeList,
             brushSelectedCluster
         } = props;
-        let w = this.state.canvasWidth;
+
         const tempDimensions = [...attributeList.selectedAttributes];
         const adjustHeight = tempDimensions.map(
             d => Object.keys(input.labels[d]["map"]).length
@@ -194,6 +195,7 @@ class ParallelSetView extends React.Component {
         let h = d3.max(adjustHeight) > 6 ? canvasHeight * 1.5 : canvasHeight;
         const svgRoot = d3.select("#parallel-coordinates");
         svgRoot.style("height", h);
+        let w = Math.min(this.container.current.getBoundingClientRect().width, tempDimensions.length * 300);
         let margin = { top: 130, right: 110, bottom: 10, left: 80 },
             width = w - margin.left - margin.right - 5,
             height = h - margin.top - margin.bottom;
@@ -312,7 +314,7 @@ class ParallelSetView extends React.Component {
                 }
             });
 
-            console.log(itemSetCount);
+            //console.log(itemSetCount);
             let prefix = 0;
             const totalLen = Object.values(itemSetCount).reduce(
                 (accumulator, currentValue) => accumulator + currentValue
@@ -327,7 +329,7 @@ class ParallelSetView extends React.Component {
                     percent: itemSetCount[key] / totalLen
                 };
             });
-            console.log(oneDimScale);
+            //console.log(oneDimScale);
             let index = -1;
             const nodes = [];
             const nodeByKey = new Map();
@@ -388,15 +390,13 @@ class ParallelSetView extends React.Component {
                 nodes: nodes.map(d => Object.assign({}, d)),
                 links: links.map(d => Object.assign({}, d))
             });
-            console.log(graph);
+            // console.log(graph);
             // console.log(graph)
             // console.log(linksData)
             svg.append("g")
                 .selectAll("rect")
                 .data(graph.nodes)
                 .join("rect")
-                .attr("rx", "5")
-                .attr("ry", "5")
                 .attr("x", d => {
                     if (isNaN(d.x0)) {
                         return width / 2;
@@ -416,7 +416,7 @@ class ParallelSetView extends React.Component {
                     return d.y1 - d.y0;
                 })
                 .attr("width", d => 3)
-                .attr("fill", "black");
+                .attr("fill", attributeBar);
             // .append("title")
             // .text(d => `${d.name}\n${d.value.toLocaleString()}`);
 
@@ -538,7 +538,6 @@ class ParallelSetView extends React.Component {
             .append("text")
             .style("text-anchor", "middle")
             .attr("y", -12)
-            .attr("fill", textGrey)
             .attr("font-size", "0.9rem")
             //   .attr("dy", "0.5em")
             .text(function(d) {
