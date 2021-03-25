@@ -29,10 +29,10 @@ class IndividualGroupDistribution extends React.Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        let {svgID} = this.props;
+        let { svgID } = this.props;
         const svgRoot = d3.select("#" + svgID);
         svgRoot.select("g").remove();
-        svgRoot.attr("id", nextProps.svgID)
+        svgRoot.attr("id", nextProps.svgID);
         this.updateCanvas(nextProps);
     }
 
@@ -64,7 +64,7 @@ class IndividualGroupDistribution extends React.Component {
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 40, right: 20, bottom: 20, left: 5 };
+        const margin = { top: 45, right: 20, bottom: 20, left: 5 };
 
         /***
          * Data processing
@@ -169,6 +169,20 @@ class IndividualGroupDistribution extends React.Component {
             .selectAll("g.tick")
             .select("line")
             .remove();
+
+        detailView
+            .append("g")
+            .attr("transform", "translate(" + (margin.left) + "," + 40 + ")")
+            .append("text")
+            .attr("font-size", "0.7rem")
+            .text("Base Model")
+
+        detailView
+            .append("g")
+            .attr("transform", "translate(" + (margin.left) + "," + 90 + ")")
+            .append("text")
+            .attr("font-size", "0.7rem")
+            .text("Target Model")
     }
 
     /**

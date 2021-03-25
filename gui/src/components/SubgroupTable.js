@@ -92,6 +92,7 @@ class SubgroupTable extends React.Component {
         });
 
         itemSetIDLists = [...itemSetIDLists].sort()
+        console.log(itemSetIDLists);
         const subgroupColor = d3
             .scaleOrdinal()
             .domain(itemSetIDLists)

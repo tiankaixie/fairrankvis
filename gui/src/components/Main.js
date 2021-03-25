@@ -111,7 +111,8 @@ class Main extends React.Component {
             individualSim,
             updateBrushClusterSelected
         } = this.props;
-
+        console.log(Object.keys(input.edges).length);
+        console.log(Object.keys(input.labels).length);
         let attributes = [];
         const data = Object.keys(input.nodes).map(key => input.nodes[key]);
         if (data.length > 0) {
@@ -393,7 +394,7 @@ class Main extends React.Component {
                                     <br />
                                     <Row>
                                         <Col span={14}>
-                                            <Text>Mining Result Range:</Text>
+                                            <Text>Ranking Score Range:</Text>
                                         </Col>
                                         <Col span={10}>
                                             <Text>
@@ -488,12 +489,12 @@ class Main extends React.Component {
                                     >
                                         <div style={{ padding: 16 }}>
                                             <Row>
-                                                <Col span={12}>
+                                                <Col span={10}>
                                                     <Text>
                                                         Selected Attributes
                                                     </Text>
                                                 </Col>
-                                                <Col span={12}>
+                                                <Col span={14}>
                                                     <MultipleSelect />
                                                 </Col>
                                             </Row>
@@ -808,7 +809,7 @@ class Main extends React.Component {
                                         title="RANK MAPPING"
                                         extra={
                                             <Space>
-                                                <Text>Advantaged nodes</Text>
+                                                <Text>Advantaged individuals</Text>
                                                 <Switch
                                                     size="small"
                                                     checked={
@@ -821,7 +822,7 @@ class Main extends React.Component {
                                                         });
                                                     }}
                                                 />
-                                                <Text>Disadvantaged nodes</Text>
+                                                <Text>Disadvantaged individuals</Text>
                                                 <Switch
                                                     size="small"
                                                     checked={

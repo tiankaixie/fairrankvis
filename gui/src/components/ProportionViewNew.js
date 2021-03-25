@@ -167,7 +167,7 @@ class ProportionViewNew extends React.Component {
                     <Tooltip
                         placement="top"
                         title={
-                            ((inputTopK[key]["count"] * 100) / total).toFixed(
+                            "ID: " + key + " " + ((inputTopK[key]["count"] * 100) / total).toFixed(
                                 2
                             ) + "%"
                         }
@@ -195,7 +195,7 @@ class ProportionViewNew extends React.Component {
                     <Tooltip
                         placement="bottom"
                         title={
-                            ((resultTopK[key]["count"] * 100) / total).toFixed(
+                            "ID: " + key + " " + ((resultTopK[key]["count"] * 100) / total).toFixed(
                                 2
                             ) + "%"
                         }

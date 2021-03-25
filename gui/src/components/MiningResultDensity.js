@@ -182,6 +182,25 @@ class MiningResultDensity extends React.Component {
         svg.append("g")
             .attr(
                 "transform",
+                "translate(" +
+                    (Number(width) - 85) +
+                    "," +
+                    (Number(height) - Number(margin.bottom) - 20) +
+                    ")"
+            )
+            .append("text")
+            .attr("font-size", "0.6rem")
+            .text("Ranking Score");
+
+        svg.append("g")
+            .attr("transform", "translate(" + 0 + "," + Number(margin.top - 10) + ")")
+            .append("text")
+            .attr("font-size", "0.6rem")
+            .text("Count");
+
+        svg.append("g")
+            .attr(
+                "transform",
                 "translate(0," + (Number(height) - Number(margin.bottom)) + ")"
             )
             .call(
@@ -197,7 +216,6 @@ class MiningResultDensity extends React.Component {
             .attr("transform", "rotate(-35)")
             .attr("font-size", "0.6rem")
             .style("text-anchor", "end");
-
         svg.append("g")
             .attr("transform", "translate(" + margin.left + ",0)")
             .call(d3.axisLeft(yScale).ticks(6));

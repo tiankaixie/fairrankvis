@@ -176,6 +176,28 @@ class ParallelSetView extends React.Component {
             svg.append("g")
                 .attr("transform", "translate(" + margin.left + ",0)")
                 .call(d3.axisLeft(yScale).ticks(3));
+
+            svg.append("g")
+                .attr(
+                    "transform",
+                    "translate(0," +
+                        (Number(margin.top)) +
+                        ")"
+                )
+                .append("text")
+                .attr("font-size", "0.65rem")
+                .text("Count")
+
+            svg.append("g")
+                .attr(
+                    "transform",
+                    "translate(" + (Number(width) - margin.right) + "," +
+                        (Number(height) - 10) +
+                        ")"
+                )
+                .append("text")
+                .attr("font-size", "0.65rem")
+                .text("Value")
         });
     }
 
@@ -192,7 +214,7 @@ class ParallelSetView extends React.Component {
             d => Object.keys(input.labels[d]["map"]).length
         );
 
-        let h = d3.max(adjustHeight) > 6 ? canvasHeight * 1.5 : canvasHeight;
+        let h = d3.max(adjustHeight) > 6 ? canvasHeight * 1.2 : canvasHeight;
         const svgRoot = d3.select("#parallel-coordinates");
         svgRoot.style("height", h);
         let w = Math.min(this.container.current.getBoundingClientRect().width, tempDimensions.length * 300);

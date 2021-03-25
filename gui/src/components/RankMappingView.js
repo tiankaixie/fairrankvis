@@ -293,6 +293,7 @@ class rankMappingView extends React.Component {
                     .transition()
                     .duration("50")
                     .attr("stroke", "black");
+
             })
             .on("mouseout", function(d, i) {
                 d3.select(this)

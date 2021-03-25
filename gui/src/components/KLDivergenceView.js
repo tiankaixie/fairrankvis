@@ -114,10 +114,7 @@ class KLDivergenceView extends React.Component {
             const wholeAttributesProb = Object.values(
                 wholeAttributeStatItem
             ).map(value => value / wholeAttributeSum);
-            klchartData[d] = kldivergence(
-                attributesProb,
-                wholeAttributesProb
-            );
+            klchartData[d] = kldivergence(attributesProb, wholeAttributesProb);
         });
         console.log(klchartData);
         let klY = d3
@@ -170,6 +167,27 @@ class KLDivergenceView extends React.Component {
                         ")"
                 )
                 .call(d3.axisBottom(klX).ticks(5));
+
+            klbase
+                .append("g")
+                .attr("transform", "translate(" + 0 + "," + margin.top + ")")
+                .append("text")
+                .attr("font-size", "0.7rem")
+                .text("Attribute");
+
+            klbase
+                .append("g")
+                .attr(
+                    "transform",
+                    "translate(" +
+                        (Number(klWidth) - margin.right - margin.left) +
+                        "," +
+                        (klHeight - margin.top - margin.bottom) +
+                        ")"
+                )
+                .append("text")
+                .attr("font-size", "0.7rem")
+                .text("Divergence");
         }
     }
 
