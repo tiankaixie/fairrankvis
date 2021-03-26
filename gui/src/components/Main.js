@@ -24,7 +24,8 @@ import {
     Space,
     List,
     Alert,
-    Tag
+    Tag,
+    Empty
 } from "antd";
 import { Typography } from "antd";
 import {
@@ -473,11 +474,14 @@ class Main extends React.Component {
                                                 overflowX: "hidden"
                                             }}
                                         >
-                                            <ParallelSetView
+                                        {
+                                            (brushSelectedCluster.size > 0) ? <ParallelSetView
                                                 canvasHeight={
                                                     globalHeight * 0.36
                                                 }
-                                            />
+                                            />: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} imageStyle={{marginTop: globalHeight * 0.36 / 2.9}}/>
+                                        }
+                                            
                                         </div>
                                     </Card>
                                 </Col>
@@ -499,7 +503,7 @@ class Main extends React.Component {
                                                 </Col>
                                             </Row>
                                             <br />
-                                            <List
+                                            {(brushSelectedCluster.size > 0) ?                                             <List
                                                 itemLayout="horizontal"
                                                 dataSource={[
                                                     ...attributeList.selectedAttributes
@@ -761,7 +765,8 @@ class Main extends React.Component {
                                                         </div>
                                                     </List.Item>
                                                 )}
-                                            />
+                                            /> : <Empty style={{ marginTop: 10}} image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+
                                             <Divider
                                                 style={{
                                                     marginTop: "12px",
@@ -852,6 +857,7 @@ class Main extends React.Component {
                                             </Space>
                                         }
                                     >
+                                    {(brushSelectedCluster.size > 0) ?
                                         <Row>
                                             <Col span={16}>
                                                 <div
@@ -904,6 +910,9 @@ class Main extends React.Component {
                                                 </div>
                                             </Col>
                                         </Row>
+                                        :
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} imageStyle={{marginTop: globalHeight * 0.20 }} style={{height: globalHeight * 0.23}} />
+                                    }
                                     </Card>
                                 </Col>
                             </Row>

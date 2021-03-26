@@ -177,9 +177,10 @@ class SubgroupTable extends React.Component {
                 id={"summary-view"}
                 style={{ height: canvasHeight * 1.08 }}
                 size={"small"}
+                pagination={false}
                 columns={columns}
                 dataSource={similarGroup}
-                scroll={{ y: canvasHeight * 0.8 }}
+                scroll={{ y: canvasHeight * 0.9 }}
             />
         );
     }
