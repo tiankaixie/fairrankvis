@@ -111,8 +111,8 @@ class Main extends React.Component {
             individualSim,
             updateBrushClusterSelected
         } = this.props;
-        console.log(Object.keys(input.edges).length);
-        console.log(Object.keys(input.labels).length);
+        // console.log(Object.keys(input.edges).length);
+        // console.log(Object.keys(input.labels).length);
         let attributes = [];
         const data = Object.keys(input.nodes).map(key => input.nodes[key]);
         if (data.length > 0) {
@@ -525,14 +525,14 @@ class Main extends React.Component {
                                                             }}
                                                         >
                                                             <Row justify="space-between">
-                                                                <Col span={8}>
+                                                                <Col span={6}>
                                                                     <Text>
                                                                         {
                                                                             item.title
                                                                         }
                                                                     </Text>
                                                                 </Col>
-                                                                <Col>
+                                                                <Col span={12}>
                                                                     <Tag
                                                                         icon={
                                                                             <CheckCircleOutlined />
@@ -543,7 +543,7 @@ class Main extends React.Component {
                                                                         Attribute
                                                                     </Tag>
                                                                 </Col>
-                                                                <Col>
+                                                                <Col span={6}>
                                                                     <Button
                                                                         size={
                                                                             "small"

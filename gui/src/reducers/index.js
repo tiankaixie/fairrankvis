@@ -18,8 +18,8 @@ const initialStateConfig = {
     facebook: {
         initialAttributes: new Set([
             //"birthday",
-            "gender",
-            "locale"
+            //"gender",
+            //"locale"
             //"middle_name",
             //"political"
         ])
@@ -27,8 +27,8 @@ const initialStateConfig = {
     synthesis: {
         initialAttributes: new Set([
             //"birthday",
-            "gender",
-            "race"
+            //"gender",
+            //"race"
             //"middle_name",
             //"political"
         ])
@@ -36,8 +36,8 @@ const initialStateConfig = {
     weibo: {
         initialAttributes: new Set([
             //"birthday",
-            "gender",
-            "fans"
+            //"gender",
+            //"fans"
             //"middle_name",
             //"political"
         ])
