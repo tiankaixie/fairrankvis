@@ -102,7 +102,7 @@ class SubgroupTable extends React.Component {
             title: "Color",
             field: "id",
             cellStyle: {
-                fontSize: "0.8rem"
+                fontSize: "0.7rem"
             },
             render: rowData => {
                 return (
@@ -129,11 +129,11 @@ class SubgroupTable extends React.Component {
                 title: d,
                 field: d,
                 cellStyle: {
-                    fontSize: "0.8rem"
+                    fontSize: "0.6rem"
                 },
                 render: rowData => {
                     if (rowData[d]) {
-                        return rowData[d];
+                        return <div style={{width: 100}}>{rowData[d]}</div>
                     } else {
                         return "N/A";
                     }

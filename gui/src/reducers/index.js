@@ -36,8 +36,8 @@ const initialStateConfig = {
     weibo: {
         initialAttributes: new Set([
             //"birthday",
-            //"gender",
-            //"fans"
+            // "gender",
+            // "fans"
             //"middle_name",
             //"political"
         ])

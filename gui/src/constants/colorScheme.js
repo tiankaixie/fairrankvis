@@ -13,47 +13,47 @@ export const regularGrey = "#D6D6D6";
 export const textGrey = "#ddd";
 
 export const subGroupColor = [
+    "#CEBAAF",
     "#ACD0A7",
-    "#F0ABAC",
     "#BBDBD9",
     "#F9C796",
     "#F6E4A4",
     "#D7BDD0",
-    "#CEBAAF",
+    "#F0ABAC",
     "#A7BCD3"
 ];
 
 export const subGroupHighlightColor = [
+    "#AC9284",
     "#80B278",
-    "#CB7375",
     "#88BAB6",
     "#D1975D",
     "#CEB86A",
     "#BE92B1",
-    "#AC9284",
+    "#CB7375",
     "#7793b2"
 ];
 
 // export const subGroupColor = [
-//     "#ACD0A7",
+//     "#BBDBD9",
 //     "#F0ABAC",
-//     "#F6E4A4",
+//     "#ACD0A7",
 //     "#A7BCD3",
 //     "#F9C796",
 //     "#D7BDD0",
 //     "#CEBAAF",
-//     "#BBDBD9"
+//     "#F6E4A4"
 // ];
 //
 // export const subGroupHighlightColor = [
-//     "#80B278",
+//     "#88BAB6",
 //     "#CB7375",
-//     "#CEB86A",
+//     "#80B278",
 //     "#7793b2",
 //     "#D1975D",
 //     "#BE92B1",
 //     "#AC9284",
-//     "#88BAB6"
+//     "#CEB86A"
 // ];
 
 export const attributeColor = ["#636363", "#969696", "#cccccc", "#f7f7f7"];
