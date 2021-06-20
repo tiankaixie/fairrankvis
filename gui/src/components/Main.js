@@ -257,7 +257,62 @@ class Main extends React.Component {
                             <Card
                                 size="small"
                                 title="DATA"
-                                extra={<QuestionCircleOutlined />}
+                                extra={
+                                    <div style={{ display: "flex" }}>
+                                        <Select
+                                            size={"small"}
+                                            onChange={() => {}}
+                                            style={{
+                                                width: "100%"
+                                            }}
+                                            value={dataName}
+                                        >
+                                            <Option
+                                                key="facebook"
+                                                value="facebook"
+                                            >
+                                                Facebook
+                                            </Option>
+                                            <Option key="weibo" value="weibo">
+                                                Weibo
+                                            </Option>
+                                        </Select>
+                                        <Select
+                                            size={"small"}
+                                            onChange={() => {}}
+                                            style={{
+                                                width: "100%"
+                                            }}
+                                            value={individualSim}
+                                        >
+                                            <Option
+                                                key="pagerank"
+                                                value="pagerank"
+                                            >
+                                                {displayName[individualSim]}
+                                            </Option>
+                                        </Select>
+                                        <Select
+                                            size={"small"}
+                                            onChange={() => {}}
+                                            style={{
+                                                width: "100%"
+                                            }}
+                                            value={modelName}
+                                        >
+                                            <Option
+                                                key="attrirank"
+                                                value="attrirank"
+                                            >
+                                                {displayName["attrirank"]}
+                                            </Option>
+                                            <Option key="inform" value="inform">
+                                                {displayName["inform"]}
+                                            </Option>
+                                        </Select>
+                                        <QuestionCircleOutlined />
+                                    </div>
+                                }
                             >
                                 <div
                                     style={{
@@ -265,7 +320,7 @@ class Main extends React.Component {
                                         paddingRight: 16
                                     }}
                                 >
-                                    <Row>
+                                    {/* <Row>
                                         <Col span={14}>
                                             <Text>Dataset</Text>
                                         </Col>
@@ -317,7 +372,7 @@ class Main extends React.Component {
                                         </Col>
                                     </Row>
                                     <br />
-                                    <Row>
+                                    <Row> 
                                         <Col span={14}>
                                             <Text>
                                                 {"Target Ranking Model"}
@@ -346,13 +401,13 @@ class Main extends React.Component {
                                                 </Option>
                                             </Select>
                                         </Col>
-                                    </Row>
-                                    <Divider
+                                    </Row>*/}
+                                    {/* <Divider
                                         style={{
                                             marginTop: "12px",
                                             marginBottom: "12px"
                                         }}
-                                    />
+                                    /> */}
                                     <Space>
                                         <Text>Ranking Score Density</Text>
 
@@ -366,7 +421,7 @@ class Main extends React.Component {
                                     </Space>
 
                                     <MiningResultDensity
-                                        canvasHeight={globalHeight * 0.16}
+                                        canvasHeight={globalHeight * 0.18}
                                         miningResultControl={
                                             this.state.miningResultControl
                                         }
@@ -434,7 +489,7 @@ class Main extends React.Component {
                                 }
                             >
                                 <SubgroupTable
-                                    canvasHeight={globalHeight * 0.32}
+                                    canvasHeight={globalHeight * 0.42}
                                 />
                             </Card>
                         </Col>
@@ -474,14 +529,25 @@ class Main extends React.Component {
                                                 overflowX: "hidden"
                                             }}
                                         >
-                                        {
-                                            (brushSelectedCluster.size > 0) ? <ParallelSetView
-                                                canvasHeight={
-                                                    globalHeight * 0.36
-                                                }
-                                            />: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} imageStyle={{marginTop: globalHeight * 0.36 / 2.9}}/>
-                                        }
-                                            
+                                            {brushSelectedCluster.size > 0 ? (
+                                                <ParallelSetView
+                                                    canvasHeight={
+                                                        globalHeight * 0.36
+                                                    }
+                                                />
+                                            ) : (
+                                                <Empty
+                                                    image={
+                                                        Empty.PRESENTED_IMAGE_SIMPLE
+                                                    }
+                                                    imageStyle={{
+                                                        marginTop:
+                                                            (globalHeight *
+                                                                0.36) /
+                                                            2.9
+                                                    }}
+                                                />
+                                            )}
                                         </div>
                                     </Card>
                                 </Col>
@@ -503,269 +569,291 @@ class Main extends React.Component {
                                                 </Col>
                                             </Row>
                                             <br />
-                                            {(brushSelectedCluster.size > 0) ?                                             <List
-                                                itemLayout="horizontal"
-                                                dataSource={[
-                                                    ...attributeList.selectedAttributes
-                                                ].map(item => {
-                                                    return { title: item };
-                                                })}
-                                                style={{
-                                                    height: globalHeight * 0.09,
-                                                    overflowY: "scroll",
-                                                    overflowX: "hidden"
-                                                }}
-                                                size="small"
-                                                renderItem={item => (
-                                                    <List.Item
-                                                        style={{
-                                                            paddingLeft: 0,
-                                                            paddingRight: 0
-                                                        }}
-                                                    >
-                                                        <div
+                                            {brushSelectedCluster.size > 0 ? (
+                                                <List
+                                                    itemLayout="horizontal"
+                                                    dataSource={[
+                                                        ...attributeList.selectedAttributes
+                                                    ].map(item => {
+                                                        return { title: item };
+                                                    })}
+                                                    style={{
+                                                        height:
+                                                            globalHeight * 0.09,
+                                                        overflowY: "scroll",
+                                                        overflowX: "hidden"
+                                                    }}
+                                                    size="small"
+                                                    renderItem={item => (
+                                                        <List.Item
                                                             style={{
-                                                                width: "100%"
+                                                                paddingLeft: 0,
+                                                                paddingRight: 0
                                                             }}
                                                         >
-                                                            <Row justify="space-between">
-                                                                <Col span={6}>
-                                                                    <Text>
-                                                                        {
-                                                                            item.title
-                                                                        }
-                                                                    </Text>
-                                                                </Col>
-                                                                <Col span={12}>
-                                                                    <Tag
-                                                                        icon={
-                                                                            <CheckCircleOutlined />
-                                                                        }
-                                                                        color="success"
+                                                            <div
+                                                                style={{
+                                                                    width:
+                                                                        "100%"
+                                                                }}
+                                                            >
+                                                                <Row justify="space-between">
+                                                                    <Col
+                                                                        span={6}
                                                                     >
-                                                                        Categorical
-                                                                        Attribute
-                                                                    </Tag>
-                                                                </Col>
-                                                                <Col span={6}>
-                                                                    <Button
-                                                                        size={
-                                                                            "small"
+                                                                        <Text>
+                                                                            {
+                                                                                item.title
+                                                                            }
+                                                                        </Text>
+                                                                    </Col>
+                                                                    <Col
+                                                                        span={
+                                                                            12
                                                                         }
-                                                                        onClick={() => {
-                                                                            this.setState(
-                                                                                {
-                                                                                    displayAttributeModal: true
-                                                                                }
-                                                                            );
-                                                                        }}
                                                                     >
-                                                                        Settings
-                                                                    </Button>
-                                                                    <Modal
-                                                                        title="Attribute: fans Range: 0 - 19494813"
-                                                                        visible={
-                                                                            this
-                                                                                .state
-                                                                                .displayAttributeModal
-                                                                        }
-                                                                        onOk={() => {
-                                                                            this.setState(
-                                                                                {
-                                                                                    displayAttributeModal: false
-                                                                                }
-                                                                            );
-                                                                        }}
-                                                                        onCancel={() => {
-                                                                            this.setState(
-                                                                                {
-                                                                                    displayAttributeModal: false
-                                                                                }
-                                                                            );
-                                                                        }}
+                                                                        <Tag
+                                                                            icon={
+                                                                                <CheckCircleOutlined />
+                                                                            }
+                                                                            color="success"
+                                                                        >
+                                                                            Categorical
+                                                                            Attribute
+                                                                        </Tag>
+                                                                    </Col>
+                                                                    <Col
+                                                                        span={6}
                                                                     >
-                                                                        <Space direction="vertical">
-                                                                            <Space>
-                                                                                <Text>
-                                                                                    #1
-                                                                                </Text>
-                                                                                <Input
-                                                                                    placeholder="value"
-                                                                                    value={
-                                                                                        "above 10M"
+                                                                        <Button
+                                                                            size={
+                                                                                "small"
+                                                                            }
+                                                                            onClick={() => {
+                                                                                this.setState(
+                                                                                    {
+                                                                                        displayAttributeModal: true
                                                                                     }
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="from"
-                                                                                    value={
-                                                                                        "10000000"
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            Settings
+                                                                        </Button>
+                                                                        <Modal
+                                                                            title="Attribute: fans Range: 0 - 19494813"
+                                                                            visible={
+                                                                                this
+                                                                                    .state
+                                                                                    .displayAttributeModal
+                                                                            }
+                                                                            onOk={() => {
+                                                                                this.setState(
+                                                                                    {
+                                                                                        displayAttributeModal: false
                                                                                     }
-                                                                                />
-                                                                                <Input
-                                                                                    className="site-input-split"
-                                                                                    style={{
-                                                                                        width: 30,
-                                                                                        borderLeft: 0,
-                                                                                        borderRight: 0,
-                                                                                        pointerEvents:
-                                                                                            "none"
-                                                                                    }}
-                                                                                    placeholder="~"
-                                                                                    disabled
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="to"
-                                                                                    value={
-                                                                                        "19494813"
+                                                                                );
+                                                                            }}
+                                                                            onCancel={() => {
+                                                                                this.setState(
+                                                                                    {
+                                                                                        displayAttributeModal: false
                                                                                     }
-                                                                                />
-                                                                                <Button
-                                                                                    type="primary"
-                                                                                    danger
-                                                                                >
-                                                                                    Delete
-                                                                                </Button>
-                                                                            </Space>
-                                                                            <Space>
-                                                                                <Text>
-                                                                                    #2
-                                                                                </Text>
-                                                                                <Input
-                                                                                    placeholder="value"
-                                                                                    value={
-                                                                                        "1M to 10M"
-                                                                                    }
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="from"
-                                                                                    value={
-                                                                                        "1000000"
-                                                                                    }
-                                                                                />
-                                                                                <Input
-                                                                                    className="site-input-split"
-                                                                                    style={{
-                                                                                        width: 30,
-                                                                                        borderLeft: 0,
-                                                                                        borderRight: 0,
-                                                                                        pointerEvents:
-                                                                                            "none"
-                                                                                    }}
-                                                                                    placeholder="~"
-                                                                                    disabled
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="to"
-                                                                                    value={
-                                                                                        "10000000"
-                                                                                    }
-                                                                                />
-                                                                                <Button
-                                                                                    type="primary"
-                                                                                    danger
-                                                                                >
-                                                                                    Delete
-                                                                                </Button>
-                                                                            </Space>
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <Space direction="vertical">
+                                                                                <Space>
+                                                                                    <Text>
+                                                                                        #1
+                                                                                    </Text>
+                                                                                    <Input
+                                                                                        placeholder="value"
+                                                                                        value={
+                                                                                            "above 10M"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="from"
+                                                                                        value={
+                                                                                            "10000000"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        className="site-input-split"
+                                                                                        style={{
+                                                                                            width: 30,
+                                                                                            borderLeft: 0,
+                                                                                            borderRight: 0,
+                                                                                            pointerEvents:
+                                                                                                "none"
+                                                                                        }}
+                                                                                        placeholder="~"
+                                                                                        disabled
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="to"
+                                                                                        value={
+                                                                                            "19494813"
+                                                                                        }
+                                                                                    />
+                                                                                    <Button
+                                                                                        type="primary"
+                                                                                        danger
+                                                                                    >
+                                                                                        Delete
+                                                                                    </Button>
+                                                                                </Space>
+                                                                                <Space>
+                                                                                    <Text>
+                                                                                        #2
+                                                                                    </Text>
+                                                                                    <Input
+                                                                                        placeholder="value"
+                                                                                        value={
+                                                                                            "1M to 10M"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="from"
+                                                                                        value={
+                                                                                            "1000000"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        className="site-input-split"
+                                                                                        style={{
+                                                                                            width: 30,
+                                                                                            borderLeft: 0,
+                                                                                            borderRight: 0,
+                                                                                            pointerEvents:
+                                                                                                "none"
+                                                                                        }}
+                                                                                        placeholder="~"
+                                                                                        disabled
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="to"
+                                                                                        value={
+                                                                                            "10000000"
+                                                                                        }
+                                                                                    />
+                                                                                    <Button
+                                                                                        type="primary"
+                                                                                        danger
+                                                                                    >
+                                                                                        Delete
+                                                                                    </Button>
+                                                                                </Space>
 
-                                                                            <Space>
-                                                                                <Text>
-                                                                                    #3
-                                                                                </Text>
-                                                                                <Input
-                                                                                    placeholder="value"
-                                                                                    value={
-                                                                                        "10k to 1M"
-                                                                                    }
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="from"
-                                                                                    value={
-                                                                                        "10000"
-                                                                                    }
-                                                                                />
-                                                                                <Input
-                                                                                    className="site-input-split"
-                                                                                    style={{
-                                                                                        width: 30,
-                                                                                        borderLeft: 0,
-                                                                                        borderRight: 0,
-                                                                                        pointerEvents:
-                                                                                            "none"
-                                                                                    }}
-                                                                                    placeholder="~"
-                                                                                    disabled
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="to"
-                                                                                    value={
-                                                                                        "1000000"
-                                                                                    }
-                                                                                />
+                                                                                <Space>
+                                                                                    <Text>
+                                                                                        #3
+                                                                                    </Text>
+                                                                                    <Input
+                                                                                        placeholder="value"
+                                                                                        value={
+                                                                                            "10k to 1M"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="from"
+                                                                                        value={
+                                                                                            "10000"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        className="site-input-split"
+                                                                                        style={{
+                                                                                            width: 30,
+                                                                                            borderLeft: 0,
+                                                                                            borderRight: 0,
+                                                                                            pointerEvents:
+                                                                                                "none"
+                                                                                        }}
+                                                                                        placeholder="~"
+                                                                                        disabled
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="to"
+                                                                                        value={
+                                                                                            "1000000"
+                                                                                        }
+                                                                                    />
+                                                                                    <Button
+                                                                                        type="primary"
+                                                                                        danger
+                                                                                    >
+                                                                                        Delete
+                                                                                    </Button>
+                                                                                </Space>
+                                                                                <Space>
+                                                                                    <Text>
+                                                                                        #4
+                                                                                    </Text>
+                                                                                    <Input
+                                                                                        placeholder="value"
+                                                                                        value={
+                                                                                            "under 10k"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="from"
+                                                                                        value={
+                                                                                            "0"
+                                                                                        }
+                                                                                    />
+                                                                                    <Input
+                                                                                        className="site-input-split"
+                                                                                        style={{
+                                                                                            width: 30,
+                                                                                            borderLeft: 0,
+                                                                                            borderRight: 0,
+                                                                                            pointerEvents:
+                                                                                                "none"
+                                                                                        }}
+                                                                                        placeholder="~"
+                                                                                        disabled
+                                                                                    />
+                                                                                    <Input
+                                                                                        placeholder="to"
+                                                                                        value={
+                                                                                            "10000"
+                                                                                        }
+                                                                                    />
+                                                                                    <Button
+                                                                                        type="primary"
+                                                                                        danger
+                                                                                    >
+                                                                                        Delete
+                                                                                    </Button>
+                                                                                </Space>
                                                                                 <Button
-                                                                                    type="primary"
-                                                                                    danger
+                                                                                    style={{
+                                                                                        width:
+                                                                                            "100%"
+                                                                                    }}
+                                                                                    size={
+                                                                                        "small"
+                                                                                    }
                                                                                 >
-                                                                                    Delete
+                                                                                    <PlusOutlined />
                                                                                 </Button>
                                                                             </Space>
-                                                                            <Space>
-                                                                                <Text>
-                                                                                    #4
-                                                                                </Text>
-                                                                                <Input
-                                                                                    placeholder="value"
-                                                                                    value={
-                                                                                        "under 10k"
-                                                                                    }
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="from"
-                                                                                    value={
-                                                                                        "0"
-                                                                                    }
-                                                                                />
-                                                                                <Input
-                                                                                    className="site-input-split"
-                                                                                    style={{
-                                                                                        width: 30,
-                                                                                        borderLeft: 0,
-                                                                                        borderRight: 0,
-                                                                                        pointerEvents:
-                                                                                            "none"
-                                                                                    }}
-                                                                                    placeholder="~"
-                                                                                    disabled
-                                                                                />
-                                                                                <Input
-                                                                                    placeholder="to"
-                                                                                    value={
-                                                                                        "10000"
-                                                                                    }
-                                                                                />
-                                                                                <Button
-                                                                                    type="primary"
-                                                                                    danger
-                                                                                >
-                                                                                    Delete
-                                                                                </Button>
-                                                                            </Space>
-                                                                            <Button
-                                                                                style={{ width: "100%" }}
-                                                                                size={
-                                                                                    "small"
-                                                                                }
-                                                                            >
-                                                                                <PlusOutlined />
-                                                                            </Button>
-                                                                        </Space>
-                                                                    </Modal>
-                                                                </Col>
-                                                            </Row>
-                                                        </div>
-                                                    </List.Item>
-                                                )}
-                                            /> : <Empty style={{ marginTop: 10}} image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                                                                        </Modal>
+                                                                    </Col>
+                                                                </Row>
+                                                            </div>
+                                                        </List.Item>
+                                                    )}
+                                                />
+                                            ) : (
+                                                <Empty
+                                                    style={{ marginTop: 10 }}
+                                                    image={
+                                                        Empty.PRESENTED_IMAGE_SIMPLE
+                                                    }
+                                                />
+                                            )}
 
                                             <Divider
                                                 style={{
@@ -814,7 +902,9 @@ class Main extends React.Component {
                                         title="RANK MAPPING"
                                         extra={
                                             <Space>
-                                                <Text>Advantaged individuals</Text>
+                                                <Text>
+                                                    Advantaged individuals
+                                                </Text>
                                                 <Switch
                                                     size="small"
                                                     checked={
@@ -827,7 +917,9 @@ class Main extends React.Component {
                                                         });
                                                     }}
                                                 />
-                                                <Text>Disadvantaged individuals</Text>
+                                                <Text>
+                                                    Disadvantaged individuals
+                                                </Text>
                                                 <Switch
                                                     size="small"
                                                     checked={
@@ -857,62 +949,78 @@ class Main extends React.Component {
                                             </Space>
                                         }
                                     >
-                                    {(brushSelectedCluster.size > 0) ?
-                                        <Row>
-                                            <Col span={16}>
-                                                <div
-                                                    style={{
-                                                        height:
-                                                            globalHeight * 0.46,
-                                                        overflowY: "scroll",
-                                                        overflowX: "hidden"
-                                                    }}
-                                                >
-                                                    <RankMappingView
-                                                        svgID={"rank-mapping"}
-                                                        canvasHeight={
-                                                            globalHeight * 0.44
-                                                        }
-                                                        showAdvantagedNode={
-                                                            this.state
-                                                                .showAdvantagedNode
-                                                        }
-                                                        showDisadvantagedNode={
-                                                            this.state
-                                                                .showDisadvantagedNode
-                                                        }
-                                                    />
-                                                </div>
-                                            </Col>
-                                            <Col span={8}>
-                                                {/*<ProportionView*/}
-                                                {/*    svgID={"proportion"}*/}
-                                                {/*    canvasHeight={globalHeight * 0.1}*/}
-                                                {/*/>*/}
-                                                <div
-                                                    style={{
-                                                        paddingTop: 16,
-                                                        paddingLeft: 16
-                                                    }}
-                                                >
-                                                    <ProportionViewNew
-                                                        comparisonMode={
-                                                            this.state
-                                                                .comparisonMode
-                                                        }
-                                                    />
-                                                    <br />
-                                                    <GroupShiftingViewNew
-                                                        canvasHeight={
-                                                            globalHeight * 0.37
-                                                        }
-                                                    />
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                        :
-                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} imageStyle={{marginTop: globalHeight * 0.20 }} style={{height: globalHeight * 0.23}} />
-                                    }
+                                        {brushSelectedCluster.size > 0 ? (
+                                            <Row>
+                                                <Col span={16}>
+                                                    <div
+                                                        style={{
+                                                            height:
+                                                                globalHeight *
+                                                                0.46,
+                                                            overflowY: "scroll",
+                                                            overflowX: "hidden"
+                                                        }}
+                                                    >
+                                                        <RankMappingView
+                                                            svgID={
+                                                                "rank-mapping"
+                                                            }
+                                                            canvasHeight={
+                                                                globalHeight *
+                                                                0.44
+                                                            }
+                                                            showAdvantagedNode={
+                                                                this.state
+                                                                    .showAdvantagedNode
+                                                            }
+                                                            showDisadvantagedNode={
+                                                                this.state
+                                                                    .showDisadvantagedNode
+                                                            }
+                                                        />
+                                                    </div>
+                                                </Col>
+                                                <Col span={8}>
+                                                    {/*<ProportionView*/}
+                                                    {/*    svgID={"proportion"}*/}
+                                                    {/*    canvasHeight={globalHeight * 0.1}*/}
+                                                    {/*/>*/}
+                                                    <div
+                                                        style={{
+                                                            paddingTop: 16,
+                                                            paddingLeft: 16
+                                                        }}
+                                                    >
+                                                        <ProportionViewNew
+                                                            comparisonMode={
+                                                                this.state
+                                                                    .comparisonMode
+                                                            }
+                                                        />
+                                                        <br />
+                                                        <GroupShiftingViewNew
+                                                            canvasHeight={
+                                                                globalHeight *
+                                                                0.37
+                                                            }
+                                                        />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        ) : (
+                                            <Empty
+                                                image={
+                                                    Empty.PRESENTED_IMAGE_SIMPLE
+                                                }
+                                                imageStyle={{
+                                                    marginTop:
+                                                        globalHeight * 0.2
+                                                }}
+                                                style={{
+                                                    height: globalHeight * 0.23
+                                                }}
+                                            />
+                                        )}
                                     </Card>
                                 </Col>
                             </Row>
