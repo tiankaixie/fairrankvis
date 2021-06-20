@@ -46,6 +46,8 @@ import {
     updateSelectedCluster,
     updateBrushClusterSelected
 } from "../actions";
+import { subGroupColor } from "../constants/colorScheme";
+
 import GroupShiftingViewNew from "./GroupShiftingViewNew";
 import ProportionViewNew from "./ProportionViewNew";
 import Avatar from "antd/es/avatar/avatar";
@@ -53,7 +55,6 @@ import Search from "antd/es/input/Search";
 import Modal from "antd/es/modal/Modal";
 const { Title, Text } = Typography;
 const { Option } = Select;
-
 const mapStateToProps = state => {
     return {
         clusterSliderUI: state.ui.clusterSliderUI,
@@ -112,10 +113,10 @@ class Main extends React.Component {
             individualSim,
             updateBrushClusterSelected
         } = this.props;
-        // console.log(Object.keys(input.edges).length);
-        // console.log(Object.keys(input.labels).length);
+
         let attributes = [];
         const data = Object.keys(input.nodes).map(key => input.nodes[key]);
+        if (data.length == 0) return <div />;
         if (data.length > 0) {
             attributes = Object.keys(data[0])
                 .filter(d => {
@@ -136,30 +137,78 @@ class Main extends React.Component {
                 });
         }
 
-        const selectedNodes = Object.keys(input.nodes).filter(key =>
+        const targetModelNodes = Object.keys(input.nodes).filter(key =>
             brushSelectedCluster.has(key)
         );
-        const selectedEdges = Object.keys(input.edges).filter(
-            edge =>
-                brushSelectedCluster.has(String(edge.source)) &&
-                brushSelectedCluster.has(String(edge.target))
-        );
+        // const selectedEdges = Object.keys(input.edges).filter(
+        //     edge =>
+        //         brushSelectedCluster.has(String(edge.source)) &&
+        //         brushSelectedCluster.has(String(edge.target))
+        // );
+
+        const dimensions = [...attributeList.selectedAttributes];
+        const nodeItemSetIDMap = {};
+        Object.keys(input.nodes).forEach(node => {
+            let itemSetID = "";
+            dimensions.forEach(d => {
+                itemSetID += input["nodes"][node][d];
+            });
+            nodeItemSetIDMap[node] = itemSetID;
+        });
 
         const selectedMiningResult = d3.extent(
-            selectedNodes.map(key => output.res[key].res)
+            targetModelNodes.map(key => output.res[key].res)
         );
 
-        selectedNodes.sort(
+        targetModelNodes.sort(
             (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
         );
+        let nodeColor;
+        if (brushSelectedCluster.size > 0) {
+            let baseModelNodes = Object.keys(input.nodes);
+            console.log(targetModelNodes);
+            baseModelNodes.sort(
+                (a, b) =>
+                    input["topological_feature"]["pagerank"][a]["rank"] -
+                    input["topological_feature"]["pagerank"][b]["rank"]
+            );
+
+            baseModelNodes = baseModelNodes.slice(
+                output["res"][targetModelNodes[0]]["rank"] - 1,
+                output["res"][targetModelNodes[targetModelNodes.length - 1]][
+                    "rank"
+                ]
+            );
+
+            const unionedSelectedItemSet = [
+                ...new Set(Object.values(nodeItemSetIDMap))
+            ].filter(
+                item =>
+                    new Set(
+                        baseModelNodes.map(node => nodeItemSetIDMap[node])
+                    ).has(item) ||
+                    new Set(
+                        targetModelNodes.map(node => nodeItemSetIDMap[node])
+                    ).has(item)
+            );
+            unionedSelectedItemSet.sort();
+            console.log(unionedSelectedItemSet);
+
+            nodeColor = d3
+                .scaleOrdinal()
+                .domain(unionedSelectedItemSet)
+                .range(subGroupColor);
+        }
 
         const leftRank =
-            selectedNodes.length > 0
-                ? output["res"][selectedNodes[0]]["rank"]
+            targetModelNodes.length > 0
+                ? output["res"][targetModelNodes[0]]["rank"]
                 : 0;
         const rightRank =
-            selectedNodes.length > 0
-                ? output["res"][selectedNodes[selectedNodes.length - 1]]["rank"]
+            targetModelNodes.length > 0
+                ? output["res"][targetModelNodes[targetModelNodes.length - 1]][
+                      "rank"
+                  ]
                 : 0;
         const updateSelectedClusterHelper = (left, right) => {
             const filteredNodes = Object.keys(input.nodes).filter(
@@ -439,7 +488,7 @@ class Main extends React.Component {
                                         </Col>
                                         <Col span={10}>
                                             <Text>
-                                                {selectedNodes.length +
+                                                {targetModelNodes.length +
                                                     "/" +
                                                     Object.keys(input.nodes)
                                                         .length +
@@ -490,6 +539,7 @@ class Main extends React.Component {
                             >
                                 <SubgroupTable
                                     canvasHeight={globalHeight * 0.42}
+                                    nodeColor={nodeColor}
                                 />
                             </Card>
                         </Col>
@@ -534,6 +584,7 @@ class Main extends React.Component {
                                                     canvasHeight={
                                                         globalHeight * 0.36
                                                     }
+                                                    nodeColor={nodeColor}
                                                 />
                                             ) : (
                                                 <Empty
@@ -977,6 +1028,9 @@ class Main extends React.Component {
                                                                 this.state
                                                                     .showDisadvantagedNode
                                                             }
+                                                            nodeColor={
+                                                                nodeColor
+                                                            }
                                                         />
                                                     </div>
                                                 </Col>
@@ -996,12 +1050,18 @@ class Main extends React.Component {
                                                                 this.state
                                                                     .comparisonMode
                                                             }
+                                                            nodeColor={
+                                                                nodeColor
+                                                            }
                                                         />
                                                         <br />
                                                         <GroupShiftingViewNew
                                                             canvasHeight={
                                                                 globalHeight *
                                                                 0.37
+                                                            }
+                                                            nodeColor={
+                                                                nodeColor
                                                             }
                                                         />
                                                     </div>

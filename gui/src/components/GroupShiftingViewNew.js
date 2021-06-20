@@ -24,158 +24,7 @@ class GroupShiftingView extends React.Component {
         this.container = React.createRef();
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-
-    }
-
-    // componentDidMount() {
-    //     // this.initializeCanvas();
-    // }
-    //
-    // shouldComponentUpdate(nextProps) {
-    //     return true;
-    // }
-    //
-    // componentWillReceiveProps(nextProps, nextContext) {
-    //     this.updateCanvas(nextProps);
-    // }
-    //
-    // renderSvg(props) {
-    //     let {
-    //         svgID,
-    //         canvasHeight,
-    //         input,
-    //         output,
-    //         clusterSliderUI,
-    //         attributeList,
-    //         brushSelectedCluster,
-    //         modelName,
-    //         individualSim
-    //     } = props;
-    //
-    //     /***
-    //      * Terminate rendering condition
-    //      */
-    //     if (brushSelectedCluster.size === 0) return;
-    //
-    //     /***
-    //      * Canvas setup
-    //      */
-    //     const height = canvasHeight;
-    //     const width = this.container.current.getBoundingClientRect().width;
-    //     const svgRoot = d3.select("#" + svgID);
-    //     svgRoot.style("width", width);
-    //     const svgBase = svgRoot.select("g");
-    //     const margin = { top: 10, right: 20, bottom: 20, left: 30 };
-    //
-    //     /***
-    //      * Data processing
-    //      */
-    //     const data = {};
-    //     const nodeResKey = Object.keys(output["res"]);
-    //     const selectedNodes = nodeResKey.filter(item => {
-    //         return brushSelectedCluster.has(String(item));
-    //     });
-    //     const dimensions = [...attributeList.selectedAttributes];
-    //     selectedNodes.forEach(node => {
-    //         let itemSetID = "";
-    //         dimensions.forEach(d => {
-    //             itemSetID += input["nodes"][node][d];
-    //         });
-    //         if (!data.hasOwnProperty(itemSetID)) {
-    //             data[itemSetID] = {
-    //                 id: itemSetID,
-    //                 value: 0,
-    //                 count: 0
-    //             };
-    //         }
-    //         data[itemSetID]["value"] +=
-    //             input["topological_feature"]["pagerank"][node]["rank"] -
-    //             output["res"][node]["rank"];
-    //
-    //         data[itemSetID]["count"]++;
-    //     });
-    //
-    //     console.log(data);
-    //
-    //     const statData = Object.values(data);
-    //
-    //     let subgroupIDs = Object.keys(data);
-    //     subgroupIDs.sort((a, b) => data[b]["count"] - data[a]["count"]);
-    //
-    //     const nodeColor = d3
-    //         .scaleOrdinal()
-    //         .domain(subgroupIDs)
-    //         .range(d3.schemeTableau10);
-    //
-    //     const statXScale = d3
-    //         .scaleBand()
-    //         .domain(statData.map(x => x.id))
-    //         .range([margin.left, width - margin.right]);
-    //
-    //     const statYScale = d3
-    //         .scaleLinear()
-    //         .domain(d3.extent(statData.map(x => x.value / x.count)))
-    //         .range([height - margin.bottom, margin.top]);
-    //
-    //     const detailView = svgBase.append("g").attr("class", "detail");
-    //
-    //     detailView
-    //         .selectAll("rect")
-    //         .data(statData)
-    //         .join("rect")
-    //         .attr("x", d => statXScale(d.id))
-    //         .attr("y", d => {
-    //             if (d.value >= 0) {
-    //                 return statYScale(d.value / d.count);
-    //             } else {
-    //                 return statYScale(0);
-    //             }
-    //         })
-    //         .attr("width", statXScale.bandwidth())
-    //         .attr("height", d => {
-    //             if (d.value >= 0) {
-    //                 return statYScale(0) - statYScale(d.value / d.count);
-    //             } else {
-    //                 return statYScale(d.value / d.count) - statYScale(0);
-    //             }
-    //         })
-    //         .attr("fill", d => nodeColor(d.id))
-    //         .attr("opacity", 0.5)
-    //         .append("title")
-    //         .text(d => (d.value / d.count).toFixed(2));
-    //
-    //     detailView
-    //         .append("g")
-    //         .attr("transform", "translate(0," + statYScale(0) + ")")
-    //         .call(d3.axisBottom(statXScale));
-    //
-    //     detailView
-    //         .append("g")
-    //         .attr("transform", "translate(" + margin.left + ",0)")
-    //         .call(d3.axisLeft(statYScale));
-    // }
-    //
-    // /**
-    //  * Entry point
-    //  * @returns None
-    //  */
-    // initializeCanvas() {
-    //     this.renderSvg(this.props);
-    // }
-    //
-    // /***
-    //  * When updating the props, according canvas needs to be updated.
-    //  * Remove original canvas and draw a new one.
-    //  * @param props {Object} from React.Component
-    //  */
-    // updateCanvas(props) {
-    //     const { svgID } = props;
-    //     const svgRoot = d3.select("#" + svgID);
-    //     svgRoot.select("g").remove();
-    //     svgRoot.append("g").attr("id", svgID + "-base");
-    //     this.renderSvg(props);
-    // }
+    componentWillReceiveProps(nextProps, nextContext) {}
 
     render() {
         const {
@@ -184,7 +33,8 @@ class GroupShiftingView extends React.Component {
             input,
             output,
             brushSelectedCluster,
-            attributeList
+            attributeList,
+            nodeColor
         } = this.props;
 
         const data = {};
@@ -242,10 +92,10 @@ class GroupShiftingView extends React.Component {
 
         subgroupIDs.sort((a, b) => data[b]["count"] - data[a]["count"]);
         itemSetIDLists = [...itemSetIDLists].sort();
-        const nodeColor = d3
-            .scaleOrdinal()
-            .domain(itemSetIDLists)
-            .range(subGroupColor);
+        // const nodeColor = d3
+        //     .scaleOrdinal()
+        //     .domain(itemSetIDLists)
+        //     .range(subGroupColor);
 
         const extent = d3.extent(statData.map(x => x.value / x.count));
         // console.log(extent)

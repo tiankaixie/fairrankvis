@@ -178,26 +178,23 @@ class ParallelSetView extends React.Component {
                 .call(d3.axisLeft(yScale).ticks(3));
 
             svg.append("g")
-                .attr(
-                    "transform",
-                    "translate(0," +
-                        (Number(margin.top)) +
-                        ")"
-                )
+                .attr("transform", "translate(0," + Number(margin.top) + ")")
                 .append("text")
                 .attr("font-size", "0.65rem")
-                .text("Count")
+                .text("Count");
 
             svg.append("g")
                 .attr(
                     "transform",
-                    "translate(" + (Number(width) - margin.right) + "," +
+                    "translate(" +
+                        (Number(width) - margin.right) +
+                        "," +
                         (Number(height) - 10) +
                         ")"
                 )
                 .append("text")
                 .attr("font-size", "0.65rem")
-                .text("Value")
+                .text("Value");
         });
     }
 
@@ -206,7 +203,8 @@ class ParallelSetView extends React.Component {
             canvasHeight,
             input,
             attributeList,
-            brushSelectedCluster
+            brushSelectedCluster,
+            nodeColor
         } = props;
 
         const tempDimensions = [...attributeList.selectedAttributes];
@@ -217,7 +215,10 @@ class ParallelSetView extends React.Component {
         let h = d3.max(adjustHeight) > 6 ? canvasHeight * 1.2 : canvasHeight;
         const svgRoot = d3.select("#parallel-coordinates");
         svgRoot.style("height", h);
-        let w = Math.min(this.container.current.getBoundingClientRect().width, tempDimensions.length * 300);
+        let w = Math.min(
+            this.container.current.getBoundingClientRect().width,
+            tempDimensions.length * 300
+        );
         let margin = { top: 130, right: 110, bottom: 10, left: 80 },
             width = w - margin.left - margin.right - 5,
             height = h - margin.top - margin.bottom;
@@ -277,10 +278,7 @@ class ParallelSetView extends React.Component {
             return b.groupCount - a.groupCount;
         });
         itemSetIDLists = [...itemSetIDLists].sort();
-        const subgroupColor = d3
-            .scaleOrdinal()
-            .domain(itemSetIDLists)
-            .range(subGroupColor);
+        const subgroupColor = nodeColor;
 
         data = wholeData.filter(item => {
             return brushSelectedCluster.has(String(item.id));
