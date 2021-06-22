@@ -46,30 +46,38 @@ class rankMappingView extends React.Component {
 
     clustering(nodeRankingScores, nodes, nodeItemSetIDMap) {
         console.log("kmeans!!!");
+        const nodeClusterMap = {};
         const nodeItemSetSet = new Set();
         let clusterMaker = require("clusters");
-        let clusterNumber = 7;
+        let clusterNumber = 9;
         clusterMaker.k(clusterNumber);
         clusterMaker.iterations(750);
         clusterMaker.data(nodeRankingScores);
         let nodeIter = 0;
-        let clusters = Object.values(clusterMaker.clusters()).map(cluster => {
-            // console.log(cluster["points"].length);
-            let count = 0;
-            const clusterSet = [];
-            while (count < cluster["points"].length) {
-                const nodeID = nodes[nodeIter];
-                nodeItemSetSet.add(nodeItemSetIDMap[nodeID]);
-                clusterSet.push({
-                    nodeID: nodeID,
-                    itemSetID: nodeItemSetIDMap[nodeID]
-                });
-                nodeIter++;
-                count++;
+        let clusters = Object.values(clusterMaker.clusters()).map(
+            (cluster, index) => {
+                // console.log(cluster["points"].length);
+                let count = 0;
+                const clusterSet = [];
+                while (count < cluster["points"].length) {
+                    const nodeID = nodes[nodeIter];
+                    nodeClusterMap[nodeID] = index;
+                    nodeItemSetSet.add(nodeItemSetIDMap[nodeID]);
+                    clusterSet.push({
+                        nodeID: nodeID,
+                        itemSetID: nodeItemSetIDMap[nodeID]
+                    });
+                    nodeIter++;
+                    count++;
+                }
+                return clusterSet;
             }
-            return clusterSet;
-        });
-        return { cluster: clusters, nodeItemSetSet: nodeItemSetSet };
+        );
+        return {
+            cluster: clusters,
+            nodeItemSetSet: nodeItemSetSet,
+            nodeClusterMap: nodeClusterMap
+        };
     }
 
     renderSvg(props) {
@@ -102,7 +110,8 @@ class rankMappingView extends React.Component {
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
         const margin = { top: 50, right: 20, bottom: 20, left: 35 };
-
+        const rectHeight = 25;
+        const rectWidth = 25;
         /***
          *  Data processing: Target Model Nodes
          */
@@ -151,11 +160,6 @@ class rankMappingView extends React.Component {
         let baseModelNodes = Object.keys(
             input["topological_feature"]["pagerank"]
         );
-        // let bound = d3.extent(
-        //     inputNodes.map(node => {
-        //         return input["topological_feature"]["pagerank"][node]["score"];
-        //     })
-        // );
 
         baseModelNodes.sort(
             (a, b) =>
@@ -182,26 +186,134 @@ class rankMappingView extends React.Component {
         const baseNodeItemSetSet = baseClustersRes["nodeItemSetSet"];
         console.log(baseClusters);
 
-        const targetNodesSVG = svgBase.append("g");
-        const targetNodeX = 50;
+        const baseNodesSVG = svgBase
+            .append("g")
+            .attr("transform", "translate(125, 50)");
+        const targetNodesSVG = svgBase
+            .append("g")
+            .attr("transform", "translate(500, 50)");
 
         /**
-         * Start Drawing
+         * Start Drawing Base Clusters
          * */
-        const unionedSelectedItemSet = [
-            ...new Set(Object.values(nodeItemSetIDMap))
-        ].filter(
-            item =>
-                baseNodeItemSetSet.has(item) || targetNodeItemSetSet.has(item)
-        );
-        unionedSelectedItemSet.sort();
-        console.log(unionedSelectedItemSet);
+        baseNodesSVG
+            .append("text")
+            .text("Base Model")
+            .attr("x", 220)
+            .attr("y", -20);
 
-        // const nodeColor = d3
-        //     .scaleOrdinal()
-        //     .domain(unionedSelectedItemSet)
-        //     .range(subGroupColor);
+        targetNodesSVG
+            .append("text")
+            .text("Target Model")
+            .attr("y", -20);
 
+        let tempPrevH = 0;
+        const baseClusterPositions = {};
+        const baseClusterGroupSVG = baseNodesSVG
+            .selectAll(".baseClusterGroup")
+            .data(baseClusters)
+            .enter()
+            .append("g")
+            .attr("class", "baseClusterGroup")
+            .attr("id", (d, i) => "baseNodeCluster" + i)
+            .attr("transform", (d, i) => {
+                if (i === 0) {
+                    return (
+                        "translate(" +
+                        (d.length >= 10
+                            ? 0
+                            : rectWidth * 10 - d.length * rectWidth) +
+                        ", 0)"
+                    );
+                } else {
+                    const level = Math.ceil(baseClusters[i - 1].length / 10);
+                    const lastHeight = level * rectHeight;
+                    tempPrevH += lastHeight;
+                    baseClusterPositions[i - 1] = tempPrevH - lastHeight / 2;
+                    if (i === targetClusters.length - 1) {
+                        baseClusterPositions[i] =
+                            tempPrevH +
+                            (Math.ceil(baseClusters[i].length / 10) *
+                                rectHeight) /
+                                2;
+                    }
+                    return (
+                        "translate(" +
+                        (d.length >= 10
+                            ? 0
+                            : rectWidth * 10 - d.length * rectWidth) +
+                        ", " +
+                        tempPrevH +
+                        ")"
+                    );
+                }
+            });
+
+        baseClusterGroupSVG
+            .append("rect")
+            .attr("class", "baseClusterBorder")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("height", d => {
+                const level = Math.ceil(d.length / 10);
+                return rectHeight * level;
+            })
+            .attr("width", d => Math.min(d.length, 10) * rectWidth)
+            .attr("fill", "none")
+            .attr("stroke", "black");
+
+        baseClusterGroupSVG
+            .selectAll(".baseRect")
+            .data(d => {
+                // console.log(d);
+                return d;
+            })
+            .join("rect")
+            .attr("id", d => "baseNode" + d["nodeID"])
+            .attr("x", (d, i) => (i % 10) * rectWidth)
+            .attr("y", (d, i) => Math.floor(i / 10) * rectHeight)
+            .attr("height", rectHeight)
+            .attr("width", d => rectWidth)
+            .attr("stroke", "none")
+            .attr("fill", d => nodeColor(d["itemSetID"]))
+            .on("mouseover", (d, i) => {
+                d3.select("#baseNode" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+                d3.select("#targetNode" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+                d3.select("#distrbase" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+                d3.select("#distrtarget" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+            })
+            .on("mouseout", d => {
+                d3.select("#baseNode" + d["nodeID"]).attr("stroke", "none");
+                d3.select("#targetNode" + d["nodeID"]).attr("stroke", "none");
+                d3.select("#distrbase" + d["nodeID"]).attr("stroke", "none");
+                d3.select("#distrtarget" + d["nodeID"]).attr("stroke", "none");
+            })
+            .append("title")
+            .text(
+                (d, i) =>
+                    "Node ID:" +
+                    d["nodeID"] +
+                    " Rank:" +
+                    input["topological_feature"]["pagerank"][d["nodeID"]][
+                        "rank"
+                    ] +
+                    "->" +
+                    output["res"][d["nodeID"]]["rank"]
+            );
+
+        /**
+         * Target Cluster Drawing
+         */
+        tempPrevH = 0;
+        const targetClusterPositions = {};
         const targetClusterGroupSVG = targetNodesSVG
             .selectAll(".targetClusterGroup")
             .data(targetClusters)
@@ -209,7 +321,25 @@ class rankMappingView extends React.Component {
             .append("g")
             .attr("class", "targetClusterGroup")
             .attr("id", (d, i) => "targetNodeCluster" + i)
-            .attr("transform", (d, i) => "translate(0, " + 50 * (i + 1) + ")");
+            .attr("transform", (d, i) => {
+                if (i === 0) {
+                    return "translate(0, 0)";
+                } else {
+                    const level = Math.ceil(targetClusters[i - 1].length / 10);
+                    const lastHeight = level * rectHeight;
+
+                    tempPrevH += lastHeight;
+                    targetClusterPositions[i - 1] = tempPrevH - lastHeight / 2;
+                    if (i === targetClusters.length - 1) {
+                        targetClusterPositions[i] =
+                            tempPrevH +
+                            (Math.ceil(targetClusters[i].length / 10) *
+                                rectHeight) /
+                                2;
+                    }
+                    return "translate(0, " + tempPrevH + ")";
+                }
+            });
 
         targetClusterGroupSVG
             .selectAll(".targetRect")
@@ -218,12 +348,110 @@ class rankMappingView extends React.Component {
                 return d;
             })
             .join("rect")
-            .attr("x", (d, i) => i * 30)
+            .attr("id", d => "targetNode" + d["nodeID"])
+            .attr("x", (d, i) => (i % 10) * rectWidth)
+            .attr("y", (d, i) => Math.floor(i / 10) * rectHeight)
+            .attr("height", rectHeight)
+            .attr("width", d => rectWidth)
+            .attr("stroke", "none")
+            .attr("fill", d => nodeColor(d["itemSetID"]))
+            .on("mouseover", (d, i) => {
+                d3.select("#baseNode" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+                d3.select("#targetNode" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+                d3.select("#distrbase" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+                d3.select("#distrtarget" + d["nodeID"])
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2);
+            })
+            .on("mouseout", d => {
+                d3.select("#baseNode" + d["nodeID"]).attr("stroke", "none");
+                d3.select("#targetNode" + d["nodeID"]).attr("stroke", "none");
+                d3.select("#distrbase" + d["nodeID"]).attr("stroke", "none");
+                d3.select("#distrtarget" + d["nodeID"]).attr("stroke", "none");
+            })
+            .append("title")
+            .text(
+                (d, i) =>
+                    "Node ID:" +
+                    d["nodeID"] +
+                    " Rank:" +
+                    input["topological_feature"]["pagerank"][d["nodeID"]][
+                        "rank"
+                    ] +
+                    "->" +
+                    output["res"][d["nodeID"]]["rank"]
+            );
+
+        targetClusterGroupSVG
+            .append("rect")
+            .attr("class", "targetClusterBorder")
+            .attr("x", 0)
             .attr("y", 0)
-            .attr("height", 50)
-            .attr("width", d => 30)
-            .attr("stroke", "#fff")
-            .attr("fill", d => nodeColor(d["itemSetID"]));
+            .attr("height", d => {
+                const level = Math.ceil(d.length / 10);
+                return rectHeight * level;
+            })
+            .attr("width", d => Math.min(d.length, 10) * rectWidth)
+            .attr("fill", "none")
+            .attr("stroke", "black");
+
+        /****************************************************************************************
+         *  Data processing: Links
+         */
+        console.log(baseClusterPositions);
+        console.log(targetClusterPositions);
+        const linkData = {};
+        targetModelNodes.forEach(node => {
+            if (
+                baseClustersRes["nodeClusterMap"][node] !== undefined &&
+                targetClusteringRes["nodeClusterMap"][node] !== undefined
+            ) {
+                const linkKey =
+                    baseClustersRes["nodeClusterMap"][node] +
+                    "-" +
+                    targetClusteringRes["nodeClusterMap"][node];
+                if (linkKey in linkData) {
+                    linkData[linkKey]["count"]++;
+                } else {
+                    linkData[linkKey] = {
+                        source:
+                            baseClusterPositions[
+                                baseClustersRes["nodeClusterMap"][node]
+                            ],
+                        target:
+                            targetClusterPositions[
+                                targetClusteringRes["nodeClusterMap"][node]
+                            ],
+                        count: 1
+                    };
+                }
+            }
+        });
+        console.log(linkData);
+
+        /***
+         * Draw links
+         */
+        const linkSVG = svgBase
+            .append("g")
+            .attr("transform", "translate(300, 50)");
+
+        linkSVG
+            .selectAll("link")
+            .data(Object.values(linkData))
+            .join("line")
+            .attr("x1", 75)
+            .attr("x2", 200)
+            .attr("y1", d => d["source"])
+            .attr("y2", d => d["target"])
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
     }
 
     initializeCanvas() {

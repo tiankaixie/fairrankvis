@@ -94,11 +94,11 @@ class IndividualGroupDistribution extends React.Component {
             }
             let currRank = output["res"][node]["rank"];
             if (currRank >= rankStart && currRank <= rankEnd) {
-                data.push({ x: currRank, y: -1 });
+                data.push({ nodeID: "target" + node, x: currRank, y: -1 });
             }
             currRank = input["topological_feature"]["pagerank"][node]["rank"];
             if (currRank >= rankStart && currRank <= rankEnd) {
-                data.push({ x: currRank, y: 1 });
+                data.push({ nodeID: "base" + node, x: currRank, y: 1 });
             }
         });
 
@@ -125,6 +125,7 @@ class IndividualGroupDistribution extends React.Component {
             .selectAll("rect")
             .data(data)
             .join("rect")
+            .attr("id", d => "distr" + d["nodeID"])
             .attr("x", d => statXScale(d.x))
             .attr("y", d => {
                 if (d.y >= 0) {
@@ -172,17 +173,17 @@ class IndividualGroupDistribution extends React.Component {
 
         detailView
             .append("g")
-            .attr("transform", "translate(" + (margin.left) + "," + 40 + ")")
+            .attr("transform", "translate(" + margin.left + "," + 40 + ")")
             .append("text")
             .attr("font-size", "0.7rem")
-            .text("Base Model")
+            .text("Base Model");
 
         detailView
             .append("g")
-            .attr("transform", "translate(" + (margin.left) + "," + 90 + ")")
+            .attr("transform", "translate(" + margin.left + "," + 90 + ")")
             .append("text")
             .attr("font-size", "0.7rem")
-            .text("Target Model")
+            .text("Target Model");
     }
 
     /**

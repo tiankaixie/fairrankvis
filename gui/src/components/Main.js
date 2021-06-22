@@ -301,79 +301,17 @@ class Main extends React.Component {
         return (
             <React.Fragment>
                 <Layout style={{ padding: 16 }}>
-                    <Row gutter={16} justify="space-around">
-                        <Col span={6}>
-                            <Card
-                                size="small"
-                                title="DATA"
-                                extra={
-                                    <div style={{ display: "flex" }}>
-                                        <Select
-                                            size={"small"}
-                                            onChange={() => {}}
-                                            style={{
-                                                width: "100%"
-                                            }}
-                                            value={dataName}
-                                        >
-                                            <Option
-                                                key="facebook"
-                                                value="facebook"
-                                            >
-                                                Facebook
-                                            </Option>
-                                            <Option key="weibo" value="weibo">
-                                                Weibo
-                                            </Option>
-                                        </Select>
-                                        <Select
-                                            size={"small"}
-                                            onChange={() => {}}
-                                            style={{
-                                                width: "100%"
-                                            }}
-                                            value={individualSim}
-                                        >
-                                            <Option
-                                                key="pagerank"
-                                                value="pagerank"
-                                            >
-                                                {displayName[individualSim]}
-                                            </Option>
-                                        </Select>
-                                        <Select
-                                            size={"small"}
-                                            onChange={() => {}}
-                                            style={{
-                                                width: "100%"
-                                            }}
-                                            value={modelName}
-                                        >
-                                            <Option
-                                                key="attrirank"
-                                                value="attrirank"
-                                            >
-                                                {displayName["attrirank"]}
-                                            </Option>
-                                            <Option key="inform" value="inform">
-                                                {displayName["inform"]}
-                                            </Option>
-                                        </Select>
-                                        <QuestionCircleOutlined />
-                                    </div>
-                                }
-                            >
-                                <div
-                                    style={{
-                                        paddingLeft: 16,
-                                        paddingRight: 16
-                                    }}
-                                >
-                                    {/* <Row>
-                                        <Col span={14}>
-                                            <Text>Dataset</Text>
-                                        </Col>
-                                        <Col span={10}>
+                    <Card
+                        className={"containCard"}
+                        style={{ marginBottom: 16 }}
+                    >
+                        <Row gutter={16} justify="space-around">
+                            <Col span={6}>
+                                <Card
+                                    size="small"
+                                    title="DATA"
+                                    extra={
+                                        <Space>
                                             <Select
                                                 size={"small"}
                                                 onChange={() => {}}
@@ -395,14 +333,6 @@ class Main extends React.Component {
                                                     Weibo
                                                 </Option>
                                             </Select>
-                                        </Col>
-                                    </Row>
-                                    <br />
-                                    <Row>
-                                        <Col span={14}>
-                                            <Text>{"Base Ranking Model"}</Text>
-                                        </Col>
-                                        <Col span={10}>
                                             <Select
                                                 size={"small"}
                                                 onChange={() => {}}
@@ -418,16 +348,6 @@ class Main extends React.Component {
                                                     {displayName[individualSim]}
                                                 </Option>
                                             </Select>
-                                        </Col>
-                                    </Row>
-                                    <br />
-                                    <Row> 
-                                        <Col span={14}>
-                                            <Text>
-                                                {"Target Ranking Model"}
-                                            </Text>
-                                        </Col>
-                                        <Col span={10}>
                                             <Select
                                                 size={"small"}
                                                 onChange={() => {}}
@@ -449,643 +369,662 @@ class Main extends React.Component {
                                                     {displayName["inform"]}
                                                 </Option>
                                             </Select>
-                                        </Col>
-                                    </Row>*/}
-                                    {/* <Divider
+                                            <QuestionCircleOutlined />
+                                        </Space>
+                                    }
+                                >
+                                    <div
                                         style={{
-                                            marginTop: "12px",
-                                            marginBottom: "12px"
+                                            paddingLeft: 16,
+                                            paddingRight: 16
                                         }}
-                                    /> */}
-                                    <Space>
-                                        <Text>Ranking Score Density</Text>
+                                    >
+                                        <Space>
+                                            <Text>Ranking Score Density</Text>
 
-                                        <Dropdown
-                                            overlay={setting}
-                                            placement="bottomLeft"
-                                            trigger={["click"]}
-                                        >
-                                            <SettingOutlined />
-                                        </Dropdown>
-                                    </Space>
+                                            <Dropdown
+                                                overlay={setting}
+                                                placement="bottomLeft"
+                                                trigger={["click"]}
+                                            >
+                                                <SettingOutlined />
+                                            </Dropdown>
+                                        </Space>
 
-                                    <MiningResultDensity
-                                        canvasHeight={globalHeight * 0.18}
-                                        miningResultControl={
-                                            this.state.miningResultControl
-                                        }
-                                    />
-                                    {miningResultDensity}
-                                    <Divider
-                                        style={{
-                                            marginTop: "12px",
-                                            marginBottom: "12px"
-                                        }}
-                                    />
-                                    <Row>
-                                        <Col span={14}>
-                                            <Text> Selected Data </Text>
-                                        </Col>
-                                        <Col span={10}>
-                                            <Text>
-                                                {targetModelNodes.length +
-                                                    "/" +
-                                                    Object.keys(input.nodes)
-                                                        .length +
-                                                    " nodes"}
-                                            </Text>
-                                        </Col>
-                                    </Row>
-                                    <br />
-                                    <Row>
-                                        <Col span={14}>
-                                            <Text>Ranking Score Range:</Text>
-                                        </Col>
-                                        <Col span={10}>
-                                            <Text>
-                                                {" " +
-                                                    (selectedMiningResult[0] !==
-                                                    undefined
-                                                        ? selectedMiningResult[0].toFixed(
-                                                              6
-                                                          ) +
-                                                          " ~ " +
-                                                          selectedMiningResult[1].toFixed(
-                                                              6
-                                                          )
-                                                        : "null")}
-                                            </Text>
-                                        </Col>
-                                    </Row>
-
-                                    <br />
-                                </div>
-                            </Card>
-                            <br />
-                            <Card
-                                size="small"
-                                title="GROUPS"
-                                extra={
-                                    <Space>
-                                        <Search
-                                            placeholder="search"
-                                            allowClear
-                                            size="small"
-                                            onSearch={() => {}}
+                                        <MiningResultDensity
+                                            canvasHeight={globalHeight * 0.18}
+                                            miningResultControl={
+                                                this.state.miningResultControl
+                                            }
                                         />
-                                        <QuestionCircleOutlined />
-                                    </Space>
-                                }
-                            >
-                                <SubgroupTable
-                                    canvasHeight={globalHeight * 0.42}
-                                    nodeColor={nodeColor}
-                                />
-                            </Card>
-                        </Col>
-                        <Col span={18}>
-                            <Row
-                                justify="space-around"
-                                gutter={16}
-                                style={{ marginBottom: 16 }}
-                            >
-                                <Col span={17}>
-                                    <Card
-                                        size="small"
-                                        title="ATTRIBUTES VIEW"
-                                        extra={
-                                            <Space>
-                                                <Text>Highlight Attribute</Text>
-                                                <Switch
-                                                    size="small"
-                                                    checked={
-                                                        this.state
-                                                            .highlightAttribute
-                                                    }
-                                                    onChange={checked => {
-                                                        this.setState({
-                                                            highlightAttribute: checked
-                                                        });
-                                                    }}
-                                                />
-                                                <QuestionCircleOutlined />
-                                            </Space>
-                                        }
-                                    >
-                                        <div
+                                        {miningResultDensity}
+                                        <Divider
                                             style={{
-                                                height: globalHeight * 0.375,
-                                                overflowY: "scroll",
-                                                overflowX: "hidden"
+                                                marginTop: "12px",
+                                                marginBottom: "12px"
                                             }}
-                                        >
-                                            {brushSelectedCluster.size > 0 ? (
-                                                <ParallelSetView
-                                                    canvasHeight={
-                                                        globalHeight * 0.36
-                                                    }
-                                                    nodeColor={nodeColor}
-                                                />
-                                            ) : (
-                                                <Empty
-                                                    image={
-                                                        Empty.PRESENTED_IMAGE_SIMPLE
-                                                    }
-                                                    imageStyle={{
-                                                        marginTop:
-                                                            (globalHeight *
-                                                                0.36) /
-                                                            2.9
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                    </Card>
-                                </Col>
-                                <Col span={7}>
-                                    <Card
-                                        size="small"
-                                        title="ATTRIBUTES SETTING"
-                                        extra={<QuestionCircleOutlined />}
-                                    >
-                                        <div style={{ padding: 16 }}>
-                                            <Row>
-                                                <Col span={10}>
-                                                    <Text>
-                                                        Selected Attributes
-                                                    </Text>
-                                                </Col>
-                                                <Col span={14}>
-                                                    <MultipleSelect />
-                                                </Col>
-                                            </Row>
-                                            <br />
-                                            {brushSelectedCluster.size > 0 ? (
-                                                <List
-                                                    itemLayout="horizontal"
-                                                    dataSource={[
-                                                        ...attributeList.selectedAttributes
-                                                    ].map(item => {
-                                                        return { title: item };
-                                                    })}
-                                                    style={{
-                                                        height:
-                                                            globalHeight * 0.09,
-                                                        overflowY: "scroll",
-                                                        overflowX: "hidden"
-                                                    }}
-                                                    size="small"
-                                                    renderItem={item => (
-                                                        <List.Item
-                                                            style={{
-                                                                paddingLeft: 0,
-                                                                paddingRight: 0
-                                                            }}
-                                                        >
-                                                            <div
-                                                                style={{
-                                                                    width:
-                                                                        "100%"
-                                                                }}
-                                                            >
-                                                                <Row justify="space-between">
-                                                                    <Col
-                                                                        span={6}
-                                                                    >
-                                                                        <Text>
-                                                                            {
-                                                                                item.title
-                                                                            }
-                                                                        </Text>
-                                                                    </Col>
-                                                                    <Col
-                                                                        span={
-                                                                            12
-                                                                        }
-                                                                    >
-                                                                        <Tag
-                                                                            icon={
-                                                                                <CheckCircleOutlined />
-                                                                            }
-                                                                            color="success"
-                                                                        >
-                                                                            Categorical
-                                                                            Attribute
-                                                                        </Tag>
-                                                                    </Col>
-                                                                    <Col
-                                                                        span={6}
-                                                                    >
-                                                                        <Button
-                                                                            size={
-                                                                                "small"
-                                                                            }
-                                                                            onClick={() => {
-                                                                                this.setState(
-                                                                                    {
-                                                                                        displayAttributeModal: true
-                                                                                    }
-                                                                                );
-                                                                            }}
-                                                                        >
-                                                                            Settings
-                                                                        </Button>
-                                                                        <Modal
-                                                                            title="Attribute: fans Range: 0 - 19494813"
-                                                                            visible={
-                                                                                this
-                                                                                    .state
-                                                                                    .displayAttributeModal
-                                                                            }
-                                                                            onOk={() => {
-                                                                                this.setState(
-                                                                                    {
-                                                                                        displayAttributeModal: false
-                                                                                    }
-                                                                                );
-                                                                            }}
-                                                                            onCancel={() => {
-                                                                                this.setState(
-                                                                                    {
-                                                                                        displayAttributeModal: false
-                                                                                    }
-                                                                                );
-                                                                            }}
-                                                                        >
-                                                                            <Space direction="vertical">
-                                                                                <Space>
-                                                                                    <Text>
-                                                                                        #1
-                                                                                    </Text>
-                                                                                    <Input
-                                                                                        placeholder="value"
-                                                                                        value={
-                                                                                            "above 10M"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="from"
-                                                                                        value={
-                                                                                            "10000000"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        className="site-input-split"
-                                                                                        style={{
-                                                                                            width: 30,
-                                                                                            borderLeft: 0,
-                                                                                            borderRight: 0,
-                                                                                            pointerEvents:
-                                                                                                "none"
-                                                                                        }}
-                                                                                        placeholder="~"
-                                                                                        disabled
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="to"
-                                                                                        value={
-                                                                                            "19494813"
-                                                                                        }
-                                                                                    />
-                                                                                    <Button
-                                                                                        type="primary"
-                                                                                        danger
-                                                                                    >
-                                                                                        Delete
-                                                                                    </Button>
-                                                                                </Space>
-                                                                                <Space>
-                                                                                    <Text>
-                                                                                        #2
-                                                                                    </Text>
-                                                                                    <Input
-                                                                                        placeholder="value"
-                                                                                        value={
-                                                                                            "1M to 10M"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="from"
-                                                                                        value={
-                                                                                            "1000000"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        className="site-input-split"
-                                                                                        style={{
-                                                                                            width: 30,
-                                                                                            borderLeft: 0,
-                                                                                            borderRight: 0,
-                                                                                            pointerEvents:
-                                                                                                "none"
-                                                                                        }}
-                                                                                        placeholder="~"
-                                                                                        disabled
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="to"
-                                                                                        value={
-                                                                                            "10000000"
-                                                                                        }
-                                                                                    />
-                                                                                    <Button
-                                                                                        type="primary"
-                                                                                        danger
-                                                                                    >
-                                                                                        Delete
-                                                                                    </Button>
-                                                                                </Space>
+                                        />
+                                        <Row>
+                                            <Col span={14}>
+                                                <Text> Selected Data </Text>
+                                            </Col>
+                                            <Col span={10}>
+                                                <Text>
+                                                    {targetModelNodes.length +
+                                                        "/" +
+                                                        Object.keys(input.nodes)
+                                                            .length +
+                                                        " nodes"}
+                                                </Text>
+                                            </Col>
+                                        </Row>
+                                        <br />
+                                        <Row>
+                                            <Col span={14}>
+                                                <Text>
+                                                    Ranking Score Range:
+                                                </Text>
+                                            </Col>
+                                            <Col span={10}>
+                                                <Text>
+                                                    {" " +
+                                                        (selectedMiningResult[0] !==
+                                                        undefined
+                                                            ? selectedMiningResult[0].toFixed(
+                                                                  6
+                                                              ) +
+                                                              " ~ " +
+                                                              selectedMiningResult[1].toFixed(
+                                                                  6
+                                                              )
+                                                            : "null")}
+                                                </Text>
+                                            </Col>
+                                        </Row>
 
-                                                                                <Space>
-                                                                                    <Text>
-                                                                                        #3
-                                                                                    </Text>
-                                                                                    <Input
-                                                                                        placeholder="value"
-                                                                                        value={
-                                                                                            "10k to 1M"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="from"
-                                                                                        value={
-                                                                                            "10000"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        className="site-input-split"
-                                                                                        style={{
-                                                                                            width: 30,
-                                                                                            borderLeft: 0,
-                                                                                            borderRight: 0,
-                                                                                            pointerEvents:
-                                                                                                "none"
-                                                                                        }}
-                                                                                        placeholder="~"
-                                                                                        disabled
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="to"
-                                                                                        value={
-                                                                                            "1000000"
-                                                                                        }
-                                                                                    />
-                                                                                    <Button
-                                                                                        type="primary"
-                                                                                        danger
-                                                                                    >
-                                                                                        Delete
-                                                                                    </Button>
-                                                                                </Space>
-                                                                                <Space>
-                                                                                    <Text>
-                                                                                        #4
-                                                                                    </Text>
-                                                                                    <Input
-                                                                                        placeholder="value"
-                                                                                        value={
-                                                                                            "under 10k"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="from"
-                                                                                        value={
-                                                                                            "0"
-                                                                                        }
-                                                                                    />
-                                                                                    <Input
-                                                                                        className="site-input-split"
-                                                                                        style={{
-                                                                                            width: 30,
-                                                                                            borderLeft: 0,
-                                                                                            borderRight: 0,
-                                                                                            pointerEvents:
-                                                                                                "none"
-                                                                                        }}
-                                                                                        placeholder="~"
-                                                                                        disabled
-                                                                                    />
-                                                                                    <Input
-                                                                                        placeholder="to"
-                                                                                        value={
-                                                                                            "10000"
-                                                                                        }
-                                                                                    />
-                                                                                    <Button
-                                                                                        type="primary"
-                                                                                        danger
-                                                                                    >
-                                                                                        Delete
-                                                                                    </Button>
-                                                                                </Space>
-                                                                                <Button
-                                                                                    style={{
-                                                                                        width:
-                                                                                            "100%"
-                                                                                    }}
-                                                                                    size={
-                                                                                        "small"
-                                                                                    }
-                                                                                >
-                                                                                    <PlusOutlined />
-                                                                                </Button>
-                                                                            </Space>
-                                                                        </Modal>
-                                                                    </Col>
-                                                                </Row>
-                                                            </div>
-                                                        </List.Item>
-                                                    )}
-                                                />
-                                            ) : (
-                                                <Empty
-                                                    style={{ marginTop: 10 }}
-                                                    image={
-                                                        Empty.PRESENTED_IMAGE_SIMPLE
-                                                    }
-                                                />
-                                            )}
-
-                                            <Divider
-                                                style={{
-                                                    marginTop: "12px",
-                                                    marginBottom: "12px"
-                                                }}
-                                            />
-                                            <Row>
-                                                <Col span={12}>
+                                        <br />
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col span={18}>
+                                <Row justify="space-around" gutter={16}>
+                                    <Col span={17}>
+                                        <Card
+                                            size="small"
+                                            title="ATTRIBUTES VIEW"
+                                            extra={
+                                                <Space>
                                                     <Text>
-                                                        Distribution Similarity
+                                                        Highlight Attribute
                                                     </Text>
-                                                </Col>
-                                                <Col span={12}>
-                                                    <Select
-                                                        onChange={() => {}}
-                                                        size={"small"}
-                                                        style={{
-                                                            width: "100%"
+                                                    <Switch
+                                                        size="small"
+                                                        checked={
+                                                            this.state
+                                                                .highlightAttribute
+                                                        }
+                                                        onChange={checked => {
+                                                            this.setState({
+                                                                highlightAttribute: checked
+                                                            });
                                                         }}
-                                                        value={"kldivergence"}
-                                                    >
-                                                        <Option
-                                                            key="kldivergence"
-                                                            value="kldivergence"
-                                                        >
-                                                            KL Divergence
-                                                        </Option>
-                                                    </Select>
-                                                </Col>
-                                            </Row>
-                                            <KLDivergenceView
-                                                canvasHeight={
-                                                    globalHeight * 0.16
-                                                }
-                                                canvasWidth={300}
-                                            />
-                                        </div>
-                                    </Card>
-                                </Col>
-                            </Row>
-                            <Row justify="space-around" gutter={16}>
-                                <Col span={24}>
-                                    <Card
-                                        size="small"
-                                        title="RANK MAPPING"
-                                        extra={
-                                            <Space>
-                                                <Text>
-                                                    Advantaged individuals
-                                                </Text>
-                                                <Switch
-                                                    size="small"
-                                                    checked={
-                                                        this.state
-                                                            .showAdvantagedNode
-                                                    }
-                                                    onChange={checked => {
-                                                        this.setState({
-                                                            showAdvantagedNode: checked
-                                                        });
-                                                    }}
-                                                />
-                                                <Text>
-                                                    Disadvantaged individuals
-                                                </Text>
-                                                <Switch
-                                                    size="small"
-                                                    checked={
-                                                        this.state
-                                                            .showDisadvantagedNode
-                                                    }
-                                                    onChange={checked => {
-                                                        this.setState({
-                                                            showDisadvantagedNode: checked
-                                                        });
-                                                    }}
-                                                />
-                                                <Text>Comparison</Text>
-                                                <Switch
-                                                    size="small"
-                                                    checked={
-                                                        this.state
-                                                            .comparisonMode
-                                                    }
-                                                    onChange={checked => {
-                                                        this.setState({
-                                                            comparisonMode: checked
-                                                        });
-                                                    }}
-                                                />
-                                                <QuestionCircleOutlined />
-                                            </Space>
-                                        }
-                                    >
-                                        {brushSelectedCluster.size > 0 ? (
-                                            <Row>
-                                                <Col span={16}>
-                                                    <div
+                                                    />
+                                                    <QuestionCircleOutlined />
+                                                </Space>
+                                            }
+                                        >
+                                            <div
+                                                style={{
+                                                    height:
+                                                        globalHeight * 0.375,
+                                                    overflowY: "scroll",
+                                                    overflowX: "hidden"
+                                                }}
+                                            >
+                                                {brushSelectedCluster.size >
+                                                0 ? (
+                                                    <ParallelSetView
+                                                        canvasHeight={
+                                                            globalHeight * 0.36
+                                                        }
+                                                        nodeColor={nodeColor}
+                                                    />
+                                                ) : (
+                                                    <Empty
+                                                        image={
+                                                            Empty.PRESENTED_IMAGE_SIMPLE
+                                                        }
+                                                        imageStyle={{
+                                                            marginTop:
+                                                                (globalHeight *
+                                                                    0.36) /
+                                                                2.9
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                    <Col span={7}>
+                                        <Card
+                                            size="small"
+                                            title="ATTRIBUTES SETTING"
+                                            extra={<QuestionCircleOutlined />}
+                                        >
+                                            <div style={{ padding: 16 }}>
+                                                <Row>
+                                                    <Col span={10}>
+                                                        <Text>
+                                                            Selected Attributes
+                                                        </Text>
+                                                    </Col>
+                                                    <Col span={14}>
+                                                        <MultipleSelect />
+                                                    </Col>
+                                                </Row>
+                                                <br />
+                                                {brushSelectedCluster.size >
+                                                0 ? (
+                                                    <List
+                                                        itemLayout="horizontal"
+                                                        dataSource={[
+                                                            ...attributeList.selectedAttributes
+                                                        ].map(item => {
+                                                            return {
+                                                                title: item
+                                                            };
+                                                        })}
                                                         style={{
                                                             height:
                                                                 globalHeight *
-                                                                0.46,
+                                                                0.09,
                                                             overflowY: "scroll",
                                                             overflowX: "hidden"
                                                         }}
-                                                    >
-                                                        <RankMappingView
-                                                            svgID={
-                                                                "rank-mapping"
-                                                            }
-                                                            canvasHeight={
-                                                                globalHeight *
-                                                                0.44
-                                                            }
-                                                            showAdvantagedNode={
-                                                                this.state
-                                                                    .showAdvantagedNode
-                                                            }
-                                                            showDisadvantagedNode={
-                                                                this.state
-                                                                    .showDisadvantagedNode
-                                                            }
-                                                            nodeColor={
-                                                                nodeColor
-                                                            }
-                                                        />
-                                                    </div>
-                                                </Col>
-                                                <Col span={8}>
-                                                    {/*<ProportionView*/}
-                                                    {/*    svgID={"proportion"}*/}
-                                                    {/*    canvasHeight={globalHeight * 0.1}*/}
-                                                    {/*/>*/}
-                                                    <div
+                                                        size="small"
+                                                        renderItem={item => (
+                                                            <List.Item
+                                                                style={{
+                                                                    paddingLeft: 0,
+                                                                    paddingRight: 0
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        width:
+                                                                            "100%"
+                                                                    }}
+                                                                >
+                                                                    <Row justify="space-between">
+                                                                        <Col
+                                                                            span={
+                                                                                6
+                                                                            }
+                                                                        >
+                                                                            <Text>
+                                                                                {
+                                                                                    item.title
+                                                                                }
+                                                                            </Text>
+                                                                        </Col>
+                                                                        <Col
+                                                                            span={
+                                                                                12
+                                                                            }
+                                                                        >
+                                                                            <Tag
+                                                                                icon={
+                                                                                    <CheckCircleOutlined />
+                                                                                }
+                                                                                color="success"
+                                                                            >
+                                                                                Categorical
+                                                                                Attribute
+                                                                            </Tag>
+                                                                        </Col>
+                                                                        <Col
+                                                                            span={
+                                                                                6
+                                                                            }
+                                                                        >
+                                                                            <Button
+                                                                                size={
+                                                                                    "small"
+                                                                                }
+                                                                                onClick={() => {
+                                                                                    this.setState(
+                                                                                        {
+                                                                                            displayAttributeModal: true
+                                                                                        }
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                Settings
+                                                                            </Button>
+                                                                            <Modal
+                                                                                title="Attribute: fans Range: 0 - 19494813"
+                                                                                visible={
+                                                                                    this
+                                                                                        .state
+                                                                                        .displayAttributeModal
+                                                                                }
+                                                                                onOk={() => {
+                                                                                    this.setState(
+                                                                                        {
+                                                                                            displayAttributeModal: false
+                                                                                        }
+                                                                                    );
+                                                                                }}
+                                                                                onCancel={() => {
+                                                                                    this.setState(
+                                                                                        {
+                                                                                            displayAttributeModal: false
+                                                                                        }
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                <Space direction="vertical">
+                                                                                    <Space>
+                                                                                        <Text>
+                                                                                            #1
+                                                                                        </Text>
+                                                                                        <Input
+                                                                                            placeholder="value"
+                                                                                            value={
+                                                                                                "above 10M"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="from"
+                                                                                            value={
+                                                                                                "10000000"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            className="site-input-split"
+                                                                                            style={{
+                                                                                                width: 30,
+                                                                                                borderLeft: 0,
+                                                                                                borderRight: 0,
+                                                                                                pointerEvents:
+                                                                                                    "none"
+                                                                                            }}
+                                                                                            placeholder="~"
+                                                                                            disabled
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="to"
+                                                                                            value={
+                                                                                                "19494813"
+                                                                                            }
+                                                                                        />
+                                                                                        <Button
+                                                                                            type="primary"
+                                                                                            danger
+                                                                                        >
+                                                                                            Delete
+                                                                                        </Button>
+                                                                                    </Space>
+                                                                                    <Space>
+                                                                                        <Text>
+                                                                                            #2
+                                                                                        </Text>
+                                                                                        <Input
+                                                                                            placeholder="value"
+                                                                                            value={
+                                                                                                "1M to 10M"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="from"
+                                                                                            value={
+                                                                                                "1000000"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            className="site-input-split"
+                                                                                            style={{
+                                                                                                width: 30,
+                                                                                                borderLeft: 0,
+                                                                                                borderRight: 0,
+                                                                                                pointerEvents:
+                                                                                                    "none"
+                                                                                            }}
+                                                                                            placeholder="~"
+                                                                                            disabled
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="to"
+                                                                                            value={
+                                                                                                "10000000"
+                                                                                            }
+                                                                                        />
+                                                                                        <Button
+                                                                                            type="primary"
+                                                                                            danger
+                                                                                        >
+                                                                                            Delete
+                                                                                        </Button>
+                                                                                    </Space>
+
+                                                                                    <Space>
+                                                                                        <Text>
+                                                                                            #3
+                                                                                        </Text>
+                                                                                        <Input
+                                                                                            placeholder="value"
+                                                                                            value={
+                                                                                                "10k to 1M"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="from"
+                                                                                            value={
+                                                                                                "10000"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            className="site-input-split"
+                                                                                            style={{
+                                                                                                width: 30,
+                                                                                                borderLeft: 0,
+                                                                                                borderRight: 0,
+                                                                                                pointerEvents:
+                                                                                                    "none"
+                                                                                            }}
+                                                                                            placeholder="~"
+                                                                                            disabled
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="to"
+                                                                                            value={
+                                                                                                "1000000"
+                                                                                            }
+                                                                                        />
+                                                                                        <Button
+                                                                                            type="primary"
+                                                                                            danger
+                                                                                        >
+                                                                                            Delete
+                                                                                        </Button>
+                                                                                    </Space>
+                                                                                    <Space>
+                                                                                        <Text>
+                                                                                            #4
+                                                                                        </Text>
+                                                                                        <Input
+                                                                                            placeholder="value"
+                                                                                            value={
+                                                                                                "under 10k"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="from"
+                                                                                            value={
+                                                                                                "0"
+                                                                                            }
+                                                                                        />
+                                                                                        <Input
+                                                                                            className="site-input-split"
+                                                                                            style={{
+                                                                                                width: 30,
+                                                                                                borderLeft: 0,
+                                                                                                borderRight: 0,
+                                                                                                pointerEvents:
+                                                                                                    "none"
+                                                                                            }}
+                                                                                            placeholder="~"
+                                                                                            disabled
+                                                                                        />
+                                                                                        <Input
+                                                                                            placeholder="to"
+                                                                                            value={
+                                                                                                "10000"
+                                                                                            }
+                                                                                        />
+                                                                                        <Button
+                                                                                            type="primary"
+                                                                                            danger
+                                                                                        >
+                                                                                            Delete
+                                                                                        </Button>
+                                                                                    </Space>
+                                                                                    <Button
+                                                                                        style={{
+                                                                                            width:
+                                                                                                "100%"
+                                                                                        }}
+                                                                                        size={
+                                                                                            "small"
+                                                                                        }
+                                                                                    >
+                                                                                        <PlusOutlined />
+                                                                                    </Button>
+                                                                                </Space>
+                                                                            </Modal>
+                                                                        </Col>
+                                                                    </Row>
+                                                                </div>
+                                                            </List.Item>
+                                                        )}
+                                                    />
+                                                ) : (
+                                                    <Empty
                                                         style={{
-                                                            paddingTop: 16,
-                                                            paddingLeft: 16
+                                                            marginTop: 10
                                                         }}
-                                                    >
-                                                        <ProportionViewNew
-                                                            comparisonMode={
-                                                                this.state
-                                                                    .comparisonMode
+                                                        image={
+                                                            Empty.PRESENTED_IMAGE_SIMPLE
+                                                        }
+                                                    />
+                                                )}
+
+                                                <Divider
+                                                    style={{
+                                                        marginTop: "12px",
+                                                        marginBottom: "12px"
+                                                    }}
+                                                />
+                                                <Row>
+                                                    <Col span={12}>
+                                                        <Text>
+                                                            Distribution
+                                                            Similarity
+                                                        </Text>
+                                                    </Col>
+                                                    <Col span={12}>
+                                                        <Select
+                                                            onChange={() => {}}
+                                                            size={"small"}
+                                                            style={{
+                                                                width: "100%"
+                                                            }}
+                                                            value={
+                                                                "kldivergence"
                                                             }
-                                                            nodeColor={
-                                                                nodeColor
-                                                            }
-                                                        />
-                                                        <br />
-                                                        <GroupShiftingViewNew
-                                                            canvasHeight={
-                                                                globalHeight *
-                                                                0.37
-                                                            }
-                                                            nodeColor={
-                                                                nodeColor
-                                                            }
-                                                        />
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                        ) : (
-                                            <Empty
-                                                image={
-                                                    Empty.PRESENTED_IMAGE_SIMPLE
+                                                        >
+                                                            <Option
+                                                                key="kldivergence"
+                                                                value="kldivergence"
+                                                            >
+                                                                KL Divergence
+                                                            </Option>
+                                                        </Select>
+                                                    </Col>
+                                                </Row>
+                                                <KLDivergenceView
+                                                    canvasHeight={
+                                                        globalHeight * 0.16
+                                                    }
+                                                    canvasWidth={300}
+                                                />
+                                            </div>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </Card>
+                    <Card className={"containCard"}>
+                        <Row gutter={16} justify="space-around">
+                            <Col span={6}>
+                                <Card
+                                    size="small"
+                                    title="GROUPS"
+                                    extra={
+                                        <Space>
+                                            <Search
+                                                placeholder="search"
+                                                allowClear
+                                                size="small"
+                                                onSearch={() => {}}
+                                            />
+                                            <QuestionCircleOutlined />
+                                        </Space>
+                                    }
+                                >
+                                    <SubgroupTable
+                                        canvasHeight={globalHeight * 0.39}
+                                        nodeColor={nodeColor}
+                                    />
+                                </Card>
+                            </Col>
+                            <Col span={18}>
+                                <Card
+                                    size="small"
+                                    title="RANK MAPPING"
+                                    extra={
+                                        <Space>
+                                            <Text>Similarity Threshold</Text>
+                                            <Slider
+                                                min={1}
+                                                max={20}
+                                                onChange={() => {}}
+                                                size={"small"}
+                                                style={{ width: 50 }}
+                                                value={0}
+                                            />
+                                            <InputNumber
+                                                min={1}
+                                                max={20}
+                                                value={0}
+                                                style={{ width: 50 }}
+                                                size={"small"}
+                                                onChange={() => {}}
+                                            />
+                                            <Text>Advantaged Nodes</Text>
+                                            <Switch
+                                                size="small"
+                                                checked={
+                                                    this.state
+                                                        .showAdvantagedNode
                                                 }
-                                                imageStyle={{
-                                                    marginTop:
-                                                        globalHeight * 0.2
-                                                }}
-                                                style={{
-                                                    height: globalHeight * 0.23
+                                                onChange={checked => {
+                                                    this.setState({
+                                                        showAdvantagedNode: checked
+                                                    });
                                                 }}
                                             />
-                                        )}
-                                    </Card>
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Row>
+                                            <Text>Disadvantaged Nodes</Text>
+                                            <Switch
+                                                size="small"
+                                                checked={
+                                                    this.state
+                                                        .showDisadvantagedNode
+                                                }
+                                                onChange={checked => {
+                                                    this.setState({
+                                                        showDisadvantagedNode: checked
+                                                    });
+                                                }}
+                                            />
+                                            <Text>Comparison</Text>
+                                            <Switch
+                                                size="small"
+                                                checked={
+                                                    this.state.comparisonMode
+                                                }
+                                                onChange={checked => {
+                                                    this.setState({
+                                                        comparisonMode: checked
+                                                    });
+                                                }}
+                                            />
+                                            <QuestionCircleOutlined />
+                                        </Space>
+                                    }
+                                >
+                                    {brushSelectedCluster.size > 0 ? (
+                                        <Row>
+                                            <Col span={16}>
+                                                <div
+                                                    style={{
+                                                        height:
+                                                            globalHeight * 0.42,
+                                                        overflowY: "scroll",
+                                                        overflowX: "hidden"
+                                                    }}
+                                                >
+                                                    <RankMappingView
+                                                        svgID={"rank-mapping"}
+                                                        canvasHeight={
+                                                            globalHeight * 0.38
+                                                        }
+                                                        showAdvantagedNode={
+                                                            this.state
+                                                                .showAdvantagedNode
+                                                        }
+                                                        showDisadvantagedNode={
+                                                            this.state
+                                                                .showDisadvantagedNode
+                                                        }
+                                                        nodeColor={nodeColor}
+                                                    />
+                                                </div>
+                                            </Col>
+                                            <Col span={8}>
+                                                {/*<ProportionView*/}
+                                                {/*    svgID={"proportion"}*/}
+                                                {/*    canvasHeight={globalHeight * 0.1}*/}
+                                                {/*/>*/}
+                                                <div
+                                                    style={{
+                                                        paddingTop: 16,
+                                                        paddingLeft: 16
+                                                    }}
+                                                >
+                                                    <ProportionViewNew
+                                                        comparisonMode={
+                                                            this.state
+                                                                .comparisonMode
+                                                        }
+                                                        nodeColor={nodeColor}
+                                                    />
+                                                    <br />
+                                                    <GroupShiftingViewNew
+                                                        canvasHeight={
+                                                            globalHeight * 0.32
+                                                        }
+                                                        nodeColor={nodeColor}
+                                                    />
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    ) : (
+                                        <Empty
+                                            image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                            imageStyle={{
+                                                marginTop: globalHeight * 0.2
+                                            }}
+                                            style={{
+                                                height: globalHeight * 0.19
+                                            }}
+                                        />
+                                    )}
+                                </Card>
+                            </Col>
+                        </Row>
+                    </Card>
                 </Layout>
             </React.Fragment>
         );

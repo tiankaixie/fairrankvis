@@ -57,3 +57,7 @@ text {
 .text-label {
     font-color: #6b6b76;
 }
+
+.containCard .ant-card-body {
+    padding: 8px;
+}
