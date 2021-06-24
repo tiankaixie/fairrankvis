@@ -44,18 +44,31 @@ class rankMappingView extends React.Component {
 
     drawRankingResult() {}
 
-    clustering(nodeRankingScores, nodes, nodeItemSetIDMap) {
-        console.log("kmeans!!!");
+    clusterHelper(nodeRankingScores, nodes, nodeItemSetIDMap, k, threshold) {
+        // console.log(k + "means!!!");
         const nodeClusterMap = {};
         const nodeItemSetSet = new Set();
         let clusterMaker = require("clusters");
-        let clusterNumber = 9;
+        let clusterNumber = k;
         clusterMaker.k(clusterNumber);
         clusterMaker.iterations(750);
         clusterMaker.data(nodeRankingScores);
         let nodeIter = 0;
+        // console.log(clusterMaker.clusters());
+        const preClusters = clusterMaker.clusters().map(item => item["points"]);
+        for (const preCluster of preClusters) {
+            const [minV, maxV] = d3.extent(preCluster);
+            // console.log(maxV - minV);
+            if (maxV - minV > threshold) {
+                // console.log("over threshold");
+                return null;
+            }
+        }
+        const rankingScoreRange = [];
         let clusters = Object.values(clusterMaker.clusters()).map(
             (cluster, index) => {
+                // console.log(cluster["points"]);
+                rankingScoreRange.push(d3.extent(cluster["points"]));
                 // console.log(cluster["points"].length);
                 let count = 0;
                 const clusterSet = [];
@@ -76,8 +89,27 @@ class rankMappingView extends React.Component {
         return {
             cluster: clusters,
             nodeItemSetSet: nodeItemSetSet,
-            nodeClusterMap: nodeClusterMap
+            nodeClusterMap: nodeClusterMap,
+            rankingScoreRange: rankingScoreRange
         };
+    }
+
+    clustering(nodeRankingScores, nodes, nodeItemSetIDMap, threshold) {
+        let clusterRes;
+        for (let k = 1; k <= 9; k++) {
+            clusterRes = this.clusterHelper(
+                nodeRankingScores,
+                nodes,
+                nodeItemSetIDMap,
+                k,
+                threshold
+            );
+            if (clusterRes !== null) {
+                console.log("Got the right k=" + k);
+                return clusterRes;
+            }
+        }
+        return clusterRes;
     }
 
     renderSvg(props) {
@@ -104,6 +136,7 @@ class rankMappingView extends React.Component {
         /***
          * Canvas setup
          */
+        const similarityThreshold = 0.0035;
 
         const width = this.container.current.getBoundingClientRect().width;
         const svgRoot = d3.select("#" + svgID);
@@ -143,12 +176,13 @@ class rankMappingView extends React.Component {
         const targetClusteringRes = this.clustering(
             targetModelNodesRankingScores,
             targetModelNodes,
-            nodeItemSetIDMap
+            nodeItemSetIDMap,
+            similarityThreshold
         );
         const targetClusters = targetClusteringRes["cluster"];
         const targetNodeItemSetSet = targetClusteringRes["nodeItemSetSet"];
 
-        console.log(targetClusters);
+        // console.log(targetClusters);
         const targetNodeYScale = d3
             .scaleBand()
             .domain(targetClusters.map((item, i) => i))
@@ -179,12 +213,13 @@ class rankMappingView extends React.Component {
         const baseClustersRes = this.clustering(
             baseModelNodesRankingScores,
             baseModelNodes,
-            nodeItemSetIDMap
+            nodeItemSetIDMap,
+            similarityThreshold
         );
 
         const baseClusters = baseClustersRes["cluster"];
         const baseNodeItemSetSet = baseClustersRes["nodeItemSetSet"];
-        console.log(baseClusters);
+        // console.log(baseClusters.length);
 
         const baseNodesSVG = svgBase
             .append("g")
@@ -230,7 +265,7 @@ class rankMappingView extends React.Component {
                     const lastHeight = level * rectHeight;
                     tempPrevH += lastHeight;
                     baseClusterPositions[i - 1] = tempPrevH - lastHeight / 2;
-                    if (i === targetClusters.length - 1) {
+                    if (i === baseClusters.length - 1) {
                         baseClusterPositions[i] =
                             tempPrevH +
                             (Math.ceil(baseClusters[i].length / 10) *
@@ -307,6 +342,22 @@ class rankMappingView extends React.Component {
                     ] +
                     "->" +
                     output["res"][d["nodeID"]]["rank"]
+            );
+
+        baseClusterGroupSVG
+            .append("text")
+            .attr(
+                "x",
+                // d => 10 * rectWidth - Math.min(d.length, 10) * rectWidth - 200
+                d => -110
+            )
+            .attr("y", (d, i) => 15)
+            .attr("class", "text-label")
+            .text(
+                (d, i) =>
+                    baseClustersRes["rankingScoreRange"][i][0][0].toFixed(4) +
+                    "~" +
+                    baseClustersRes["rankingScoreRange"][i][1][0].toFixed(4)
             );
 
         /**
@@ -400,6 +451,22 @@ class rankMappingView extends React.Component {
             .attr("width", d => Math.min(d.length, 10) * rectWidth)
             .attr("fill", "none")
             .attr("stroke", "black");
+
+        console.log(targetClusteringRes["rankingScoreRange"][0]);
+
+        targetClusterGroupSVG
+            .append("text")
+            .attr("x", d => Math.min(d.length, 10) * rectWidth + 10)
+            .attr("y", (d, i) => 15)
+            .attr("class", "text-label")
+            .text(
+                (d, i) =>
+                    targetClusteringRes["rankingScoreRange"][i][0][0].toFixed(
+                        4
+                    ) +
+                    "~" +
+                    targetClusteringRes["rankingScoreRange"][i][1][0].toFixed(4)
+            );
 
         /****************************************************************************************
          *  Data processing: Links

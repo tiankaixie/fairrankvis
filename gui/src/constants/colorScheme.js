@@ -12,6 +12,17 @@ export const attributeBar = "#666";
 export const regularGrey = "#D6D6D6";
 export const textGrey = "#ddd";
 
+// export const subGroupColor = [
+//     "#CEBAAF",
+//     "#D7BDD0",
+//     "#F9C796",
+//     "#BBDBD9",
+//     "#F0ABAC",
+//     "#ACD0A7",
+//     "#A7BCD3",
+//     "#F6E4A4"
+// ];
+
 export const subGroupColor = [
     "#CEBAAF",
     "#ACD0A7",

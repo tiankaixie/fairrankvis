@@ -166,7 +166,7 @@ class Main extends React.Component {
         let nodeColor;
         if (brushSelectedCluster.size > 0) {
             let baseModelNodes = Object.keys(input.nodes);
-            console.log(targetModelNodes);
+            // console.log(targetModelNodes);
             baseModelNodes.sort(
                 (a, b) =>
                     input["topological_feature"]["pagerank"][a]["rank"] -
@@ -192,7 +192,7 @@ class Main extends React.Component {
                     ).has(item)
             );
             unionedSelectedItemSet.sort();
-            console.log(unionedSelectedItemSet);
+            // console.log(unionedSelectedItemSet);
 
             nodeColor = d3
                 .scaleOrdinal()
@@ -897,19 +897,21 @@ class Main extends React.Component {
                                         <Space>
                                             <Text>Similarity Threshold</Text>
                                             <Slider
-                                                min={1}
-                                                max={20}
+                                                min={0}
+                                                max={0.004}
                                                 onChange={() => {}}
                                                 size={"small"}
-                                                style={{ width: 50 }}
-                                                value={0}
+                                                style={{ width: 80 }}
+                                                step={0.0005}
+                                                value={0.0035}
                                             />
                                             <InputNumber
-                                                min={1}
-                                                max={20}
-                                                value={0}
-                                                style={{ width: 50 }}
+                                                min={0}
+                                                max={0.004}
+                                                value={0.0035}
+                                                style={{ width: 80 }}
                                                 size={"small"}
+                                                step={0.0005}
                                                 onChange={() => {}}
                                             />
                                             <Text>Advantaged Nodes</Text>
