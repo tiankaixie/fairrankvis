@@ -3,7 +3,6 @@ import * as d3 from "d3";
 import { connect } from "react-redux";
 import { displayName } from "../constants/text";
 import {
-    getData,
     updateClusterSliderValue,
     updateHighlightedAttribute
 } from "../actions";
@@ -23,7 +22,6 @@ import {
     Switch,
     Space,
     List,
-    Alert,
     Tag,
     Empty
 } from "antd";
@@ -41,20 +39,19 @@ import ParallelSetView from "./ParallelSetView";
 import KLDivergenceView from "./KLDivergenceView";
 import MultipleSelect from "./MultipleSelect";
 import SubgroupTable from "./SubgroupTable";
+import { updateBrushClusterSelected } from "../actions";
 import {
-    updatePairwiseCommonAttributes,
-    updateSelectedCluster,
-    updateBrushClusterSelected
-} from "../actions";
-import { subGroupColor } from "../constants/colorScheme";
+    subGroupColor,
+    subGroupHighlightColor
+} from "../constants/colorScheme";
 
 import GroupShiftingViewNew from "./GroupShiftingViewNew";
 import ProportionViewNew from "./ProportionViewNew";
-import Avatar from "antd/es/avatar/avatar";
 import Search from "antd/es/input/Search";
 import Modal from "antd/es/modal/Modal";
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Option } = Select;
+
 const mapStateToProps = state => {
     return {
         clusterSliderUI: state.ui.clusterSliderUI,
@@ -94,13 +91,13 @@ class Main extends React.Component {
             showDisadvantagedNode: false,
             showAdvantagedNode: false,
             highlightAttribute: true,
-            displayAttributeModal: false
+            displayAttributeModal: false,
+            similarityThreshold: 0.0005
         };
     }
 
     render() {
         const {
-            classes,
             globalHeight,
             clusterSliderUI,
             updateClusterSliderValue,
@@ -114,27 +111,27 @@ class Main extends React.Component {
             updateBrushClusterSelected
         } = this.props;
 
-        let attributes = [];
+        // let attributes = [];
         const data = Object.keys(input.nodes).map(key => input.nodes[key]);
-        if (data.length == 0) return <div />;
+        if (data.length === 0) return <div />;
         if (data.length > 0) {
-            attributes = Object.keys(data[0])
-                .filter(d => {
-                    return (
-                        d !== "id" &&
-                        d !== "x" &&
-                        d !== "y" &&
-                        d !== "sim_x" &&
-                        d !== "sim_y"
-                    );
-                })
-                .map(key => {
-                    return (
-                        <Option key={key} value={key}>
-                            {key}
-                        </Option>
-                    );
-                });
+            // attributes = Object.keys(data[0])
+            //     .filter(d => {
+            //         return (
+            //             d !== "id" &&
+            //             d !== "x" &&
+            //             d !== "y" &&
+            //             d !== "sim_x" &&
+            //             d !== "sim_y"
+            //         );
+            //     })
+            //     .map(key => {
+            //         return (
+            //             <Option key={key} value={key}>
+            //                 {key}
+            //             </Option>
+            //         );
+            //     });
         }
 
         const targetModelNodes = Object.keys(input.nodes).filter(key =>
@@ -164,6 +161,7 @@ class Main extends React.Component {
             (a, b) => output["res"][a]["rank"] - output["res"][b]["rank"]
         );
         let nodeColor;
+        let highlighNodeColor;
         if (brushSelectedCluster.size > 0) {
             let baseModelNodes = Object.keys(input.nodes);
             // console.log(targetModelNodes);
@@ -192,12 +190,18 @@ class Main extends React.Component {
                     ).has(item)
             );
             unionedSelectedItemSet.sort();
+            // console.log("#################");
             // console.log(unionedSelectedItemSet);
 
             nodeColor = d3
                 .scaleOrdinal()
                 .domain(unionedSelectedItemSet)
                 .range(subGroupColor);
+
+            highlighNodeColor = d3
+                .scaleOrdinal()
+                .domain(unionedSelectedItemSet)
+                .range(subGroupHighlightColor);
         }
 
         const leftRank =
@@ -899,20 +903,34 @@ class Main extends React.Component {
                                             <Slider
                                                 min={0}
                                                 max={0.004}
-                                                onChange={() => {}}
+                                                onChange={value => {
+                                                    this.setState({
+                                                        similarityThreshold: value
+                                                    });
+                                                }}
                                                 size={"small"}
                                                 style={{ width: 80 }}
                                                 step={0.0005}
-                                                value={0.0035}
+                                                value={
+                                                    this.state
+                                                        .similarityThreshold
+                                                }
                                             />
                                             <InputNumber
                                                 min={0}
                                                 max={0.004}
-                                                value={0.0035}
+                                                value={
+                                                    this.state
+                                                        .similarityThreshold
+                                                }
                                                 style={{ width: 80 }}
                                                 size={"small"}
                                                 step={0.0005}
-                                                onChange={() => {}}
+                                                onChange={value => {
+                                                    this.setState({
+                                                        similarityThreshold: value
+                                                    });
+                                                }}
                                             />
                                             <Text>Advantaged Nodes</Text>
                                             <Switch
@@ -981,6 +999,13 @@ class Main extends React.Component {
                                                                 .showDisadvantagedNode
                                                         }
                                                         nodeColor={nodeColor}
+                                                        highlighNodeColor={
+                                                            highlighNodeColor
+                                                        }
+                                                        similarityThreshold={
+                                                            this.state
+                                                                .similarityThreshold
+                                                        }
                                                     />
                                                 </div>
                                             </Col>

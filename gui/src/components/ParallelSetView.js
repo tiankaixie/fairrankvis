@@ -5,9 +5,7 @@ import { updateTableData } from "../actions";
 import {
     attributeBar,
     attributeColor,
-    regularGreyDark,
-    subGroupColor,
-    textGrey
+    regularGreyDark
 } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
@@ -313,7 +311,7 @@ class ParallelSetView extends React.Component {
         let dimWidth = 0;
         if (data.length !== 0) {
             let itemSetCount = {};
-            const omitSet = new Set(["x", "y", "sim_x", "sim_y", "id"]);
+            // const omitSet = new Set(["x", "y", "sim_x", "sim_y", "id"]);
             // console.log(Object.keys(data[0]))
             const dimensions = tempDimensions;
             // console.log(dimensions);

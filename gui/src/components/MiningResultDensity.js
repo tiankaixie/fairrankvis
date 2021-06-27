@@ -193,7 +193,10 @@ class MiningResultDensity extends React.Component {
             .text("Ranking Score");
 
         svg.append("g")
-            .attr("transform", "translate(" + 0 + "," + Number(margin.top - 10) + ")")
+            .attr(
+                "transform",
+                "translate(" + 0 + "," + Number(margin.top - 10) + ")"
+            )
             .append("text")
             .attr("font-size", "0.6rem")
             .text("Count");
@@ -222,7 +225,7 @@ class MiningResultDensity extends React.Component {
     }
 
     renderScatterPlot(baseGroup, props) {
-        let { canvasHeight, output, updateBrushClusterSelected } = props;
+        let { canvasHeight, output } = props;
         const height = canvasHeight;
         const width = this.container.current.getBoundingClientRect().width;
 
@@ -257,7 +260,7 @@ class MiningResultDensity extends React.Component {
         // Create the scatter letiable: where both the circles and the brush take place
         let scatter = baseGroup.append("g").attr("clip-path", "url(#clip)");
 
-        const circles = scatter
+        scatter
             .selectAll("circle")
             .data(dataset)
             .enter()

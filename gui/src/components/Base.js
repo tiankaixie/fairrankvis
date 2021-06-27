@@ -2,7 +2,6 @@ import * as React from "react";
 import Main from "./Main";
 import { connect } from "react-redux";
 import { getData } from "../actions";
-import { BrowserRouter } from "react-router-dom";
 
 // const mapStateToProps = state => {
 //     return {};

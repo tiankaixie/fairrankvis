@@ -1,9 +1,7 @@
 import * as React from "react";
-import * as d3 from "d3";
 import { connect } from "react-redux";
-import { Row, Col, Space, Tooltip } from "antd";
+import { Row, Col, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
-import { subGroupColor } from "../constants/colorScheme";
 import { displayName } from "../constants/text";
 
 const mapStateToProps = state => {
@@ -27,11 +25,8 @@ class ProportionViewNew extends React.Component {
 
     render() {
         let {
-            svgID,
-            canvasHeight,
             input,
             output,
-            clusterSliderUI,
             attributeList,
             brushSelectedCluster,
             modelName,

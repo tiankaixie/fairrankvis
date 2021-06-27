@@ -1,15 +1,6 @@
 import React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import {
-    regularGrey,
-    regularGreyDark,
-    regularGreyStroke,
-    subGroupColor,
-    subGroupHighlightColor,
-    textGrey
-} from "../constants/colorScheme";
-import { displayName } from "../constants/text";
 
 const mapStateToProps = state => {
     return {
@@ -78,7 +69,8 @@ class rankMappingView extends React.Component {
                     nodeItemSetSet.add(nodeItemSetIDMap[nodeID]);
                     clusterSet.push({
                         nodeID: nodeID,
-                        itemSetID: nodeItemSetIDMap[nodeID]
+                        itemSetID: nodeItemSetIDMap[nodeID],
+                        clusterID: index
                     });
                     nodeIter++;
                     count++;
@@ -118,14 +110,11 @@ class rankMappingView extends React.Component {
             canvasHeight,
             input,
             output,
-            clusterSliderUI,
             attributeList,
             brushSelectedCluster,
-            modelName,
-            individualSim,
-            showAdvantagedNode,
-            showDisadvantagedNode,
-            nodeColor
+            nodeColor,
+            highlighNodeColor,
+            similarityThreshold
         } = props;
 
         /***
@@ -136,13 +125,12 @@ class rankMappingView extends React.Component {
         /***
          * Canvas setup
          */
-        const similarityThreshold = 0.0035;
 
         const width = this.container.current.getBoundingClientRect().width;
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
         const svgBase = svgRoot.select("g");
-        const margin = { top: 50, right: 20, bottom: 20, left: 35 };
+        // const margin = { top: 50, right: 20, bottom: 20, left: 35 };
         const rectHeight = 25;
         const rectWidth = 25;
         /***
@@ -180,13 +168,13 @@ class rankMappingView extends React.Component {
             similarityThreshold
         );
         const targetClusters = targetClusteringRes["cluster"];
-        const targetNodeItemSetSet = targetClusteringRes["nodeItemSetSet"];
+        // const targetNodeItemSetSet = targetClusteringRes["nodeItemSetSet"];
 
         // console.log(targetClusters);
-        const targetNodeYScale = d3
-            .scaleBand()
-            .domain(targetClusters.map((item, i) => i))
-            .range([margin.top, height - margin.bottom]);
+        // const targetNodeYScale = d3
+        //     .scaleBand()
+        //     .domain(targetClusters.map((item, i) => i))
+        //     .range([margin.top, height - margin.bottom]);
 
         /***
          *  Data processing: Base Model Nodes
@@ -218,7 +206,7 @@ class rankMappingView extends React.Component {
         );
 
         const baseClusters = baseClustersRes["cluster"];
-        const baseNodeItemSetSet = baseClustersRes["nodeItemSetSet"];
+        // const baseNodeItemSetSet = baseClustersRes["nodeItemSetSet"];
         // console.log(baseClusters.length);
 
         const baseNodesSVG = svgBase
@@ -287,6 +275,7 @@ class rankMappingView extends React.Component {
         baseClusterGroupSVG
             .append("rect")
             .attr("class", "baseClusterBorder")
+            .attr("id", (d, i) => "baseClusterBorder" + i)
             .attr("x", 0)
             .attr("y", 0)
             .attr("height", d => {
@@ -299,10 +288,7 @@ class rankMappingView extends React.Component {
 
         baseClusterGroupSVG
             .selectAll(".baseRect")
-            .data(d => {
-                // console.log(d);
-                return d;
-            })
+            .data(d => d)
             .join("rect")
             .attr("id", d => "baseNode" + d["nodeID"])
             .attr("x", (d, i) => (i % 10) * rectWidth)
@@ -330,6 +316,28 @@ class rankMappingView extends React.Component {
                 d3.select("#targetNode" + d["nodeID"]).attr("stroke", "none");
                 d3.select("#distrbase" + d["nodeID"]).attr("stroke", "none");
                 d3.select("#distrtarget" + d["nodeID"]).attr("stroke", "none");
+            })
+            .on("click", d => {
+                d3.select("#baseClusterBorder" + d["clusterID"]).attr(
+                    "stroke",
+                    "red"
+                );
+                baseClusters[d["clusterID"]].forEach(item => {
+                    d3.select("#targetNode" + item["nodeID"]).attr("fill", d =>
+                        highlighNodeColor(d["itemSetID"])
+                    );
+                });
+            })
+            .on("dblclick", d => {
+                d3.select("#baseClusterBorder" + d["clusterID"]).attr(
+                    "stroke",
+                    "black"
+                );
+                baseClusters[d["clusterID"]].forEach(item => {
+                    d3.select("#targetNode" + item["nodeID"]).attr("fill", d =>
+                        nodeColor(d["itemSetID"])
+                    );
+                });
             })
             .append("title")
             .text(
@@ -393,11 +401,22 @@ class rankMappingView extends React.Component {
             });
 
         targetClusterGroupSVG
-            .selectAll(".targetRect")
-            .data(d => {
-                // console.log(d);
-                return d;
+            .append("rect")
+            .attr("class", "targetClusterBorder")
+            .attr("id", (d, i) => "targetClusterBorder" + i)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("height", d => {
+                const level = Math.ceil(d.length / 10);
+                return rectHeight * level;
             })
+            .attr("width", d => Math.min(d.length, 10) * rectWidth)
+            .attr("fill", "none")
+            .attr("stroke", "black");
+
+        targetClusterGroupSVG
+            .selectAll(".targetRect")
+            .data(d => d)
             .join("rect")
             .attr("id", d => "targetNode" + d["nodeID"])
             .attr("x", (d, i) => (i % 10) * rectWidth)
@@ -426,6 +445,28 @@ class rankMappingView extends React.Component {
                 d3.select("#distrbase" + d["nodeID"]).attr("stroke", "none");
                 d3.select("#distrtarget" + d["nodeID"]).attr("stroke", "none");
             })
+            .on("click", d => {
+                d3.select("#targetClusterBorder" + d["clusterID"]).attr(
+                    "stroke",
+                    "red"
+                );
+                targetClusters[d["clusterID"]].forEach(item => {
+                    d3.select("#baseNode" + item["nodeID"]).attr("fill", d =>
+                        highlighNodeColor(d["itemSetID"])
+                    );
+                });
+            })
+            .on("dblclick", d => {
+                d3.select("#targetClusterBorder" + d["clusterID"]).attr(
+                    "stroke",
+                    "black"
+                );
+                targetClusters[d["clusterID"]].forEach(item => {
+                    d3.select("#baseNode" + item["nodeID"]).attr("fill", d =>
+                        nodeColor(d["itemSetID"])
+                    );
+                });
+            })
             .append("title")
             .text(
                 (d, i) =>
@@ -439,20 +480,7 @@ class rankMappingView extends React.Component {
                     output["res"][d["nodeID"]]["rank"]
             );
 
-        targetClusterGroupSVG
-            .append("rect")
-            .attr("class", "targetClusterBorder")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("height", d => {
-                const level = Math.ceil(d.length / 10);
-                return rectHeight * level;
-            })
-            .attr("width", d => Math.min(d.length, 10) * rectWidth)
-            .attr("fill", "none")
-            .attr("stroke", "black");
-
-        console.log(targetClusteringRes["rankingScoreRange"][0]);
+        // console.log(targetClusteringRes["rankingScoreRange"][0]);
 
         targetClusterGroupSVG
             .append("text")

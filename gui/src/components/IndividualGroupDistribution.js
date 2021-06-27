@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { regularGreyDark } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -43,11 +42,8 @@ class IndividualGroupDistribution extends React.Component {
             input,
             output,
             groupID,
-            clusterSliderUI,
             attributeList,
             brushSelectedCluster,
-            modelName,
-            individualSim,
             nodeColor
         } = props;
 

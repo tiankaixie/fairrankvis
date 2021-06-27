@@ -1,8 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import * as d3 from "d3";
 import { Table, Tag } from "antd";
-import { subGroupColor } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -17,7 +15,6 @@ const mapStateToProps = state => {
 
 class SubgroupTable extends React.Component {
     render() {
-        let data = [];
         let columns = [];
         const {
             input,

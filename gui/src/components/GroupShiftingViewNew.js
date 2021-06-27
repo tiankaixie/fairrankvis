@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { regularGreyDark, subGroupColor } from "../constants/colorScheme";
 import { Row, Col, List, Space } from "antd";
 import IndividualGroupShift from "./IndividualGroupShift";
 import IndividualGroupDistribution from "./IndividualGroupDistribution";
@@ -24,11 +23,8 @@ class GroupShiftingView extends React.Component {
         this.container = React.createRef();
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {}
-
     render() {
         const {
-            svgID,
             canvasHeight,
             input,
             output,

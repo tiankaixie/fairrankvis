@@ -18,8 +18,8 @@ const initialStateConfig = {
     facebook: {
         initialAttributes: new Set([
             //"birthday",
-            //"gender",
-            //"locale"
+            // "gender",
+            // "locale"
             //"middle_name",
             //"political"
         ])
@@ -45,10 +45,10 @@ const initialStateConfig = {
 };
 
 const initialState = {
-    dataName: "weibo",
-    modelName: "inform",
-    // dataName: "facebook",
-    // modelName: "attrirank",
+    // dataName: "weibo",
+    // modelName: "inform",
+    dataName: "facebook",
+    modelName: "attrirank",
     individualSim: "pagerank",
     pairwiseAttribute: "pagerank",
     input: {

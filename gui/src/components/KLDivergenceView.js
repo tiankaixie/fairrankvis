@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { kldivergence } from "mathjs";
 import { regularGrey } from "../constants/colorScheme";
 
-const normalized = require("array-normalize");
+// const normalized = require("array-normalize");
 const mapStateToProps = state => {
     return {
         input: state.input,
