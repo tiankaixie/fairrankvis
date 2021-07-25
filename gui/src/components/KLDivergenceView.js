@@ -53,7 +53,7 @@ class KLDivergenceView extends React.Component {
         } = props;
         const klHeight = canvasHeight;
         const klWidth = this.container.current.getBoundingClientRect().width;
-        const margin = { left: 40, bottom: 20, right: 20, top: 10 };
+        const margin = { left: 50, bottom: 20, right: 20, top: 10 };
         // const margin.left = 60;
         // const margin.bottom = 20;
         // const margin.top = 10;
@@ -154,7 +154,9 @@ class KLDivergenceView extends React.Component {
                     "transform",
                     "translate(" + margin.left + "," + margin.top + ")"
                 )
-                .call(d3.axisLeft(klY));
+                .call(d3.axisLeft(klY))
+                .selectAll("text")
+                .attr("font-size", "0.8rem");
 
             klbase
                 .append("g")
@@ -166,13 +168,15 @@ class KLDivergenceView extends React.Component {
                         (klHeight - margin.bottom) +
                         ")"
                 )
-                .call(d3.axisBottom(klX).ticks(5));
+                .call(d3.axisBottom(klX).ticks(5))
+                .selectAll("text")
+                .attr("font-size", "0.8rem");
 
             klbase
                 .append("g")
                 .attr("transform", "translate(" + 0 + "," + margin.top + ")")
                 .append("text")
-                .attr("font-size", "0.7rem")
+                .attr("font-size", "0.8rem")
                 .text("Attribute");
 
             klbase
@@ -186,7 +190,8 @@ class KLDivergenceView extends React.Component {
                         ")"
                 )
                 .append("text")
-                .attr("font-size", "0.7rem")
+                .attr("x", -5)
+                .attr("font-size", "0.8rem")
                 .text("Divergence");
         }
     }

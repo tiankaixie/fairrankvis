@@ -168,17 +168,20 @@ class ParallelSetView extends React.Component {
                 .attr("x", -6)
                 .attr("dy", ".35em")
                 .attr("transform", "rotate(-35)")
-                .attr("font-size", "0.65rem")
+                .attr("font-size", "0.8rem")
                 .style("text-anchor", "end");
 
             svg.append("g")
                 .attr("transform", "translate(" + margin.left + ",0)")
-                .call(d3.axisLeft(yScale).ticks(3));
+                .call(d3.axisLeft(yScale).ticks(3))
+                .selectAll("text")
+                .attr("font-size", "0.8rem");
 
             svg.append("g")
                 .attr("transform", "translate(0," + Number(margin.top) + ")")
                 .append("text")
-                .attr("font-size", "0.65rem")
+                .attr("dy", "-1em")
+                .attr("font-size", "0.8rem")
                 .text("Count");
 
             svg.append("g")
@@ -191,7 +194,9 @@ class ParallelSetView extends React.Component {
                         ")"
                 )
                 .append("text")
-                .attr("font-size", "0.65rem")
+                .attr("dy", "-1em")
+                .attr("x", 4)
+                .attr("font-size", "0.8rem")
                 .text("Value");
         });
     }

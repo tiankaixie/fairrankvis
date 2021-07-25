@@ -160,7 +160,9 @@ class IndividualGroupDistribution extends React.Component {
                         return "";
                     }
                 })
-            );
+            )
+            .selectAll("text")
+            .attr("font-size", "0.8rem");
 
         detailView
             .selectAll("g.tick")
@@ -171,14 +173,14 @@ class IndividualGroupDistribution extends React.Component {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + 40 + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
+            .attr("font-size", "0.8rem")
             .text("Base Model");
 
         detailView
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + 90 + ")")
+            .attr("transform", "translate(" + margin.left + "," + 105 + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
+            .attr("font-size", "0.8rem")
             .text("Target Model");
     }
 

@@ -113,7 +113,7 @@ class GroupShiftingView extends React.Component {
                                 <Text>Group ID: {item}</Text>
                                 <IndividualGroupShift
                                     svgID={"igs-" + item}
-                                    canvasHeight={"70"}
+                                    canvasHeight={"110"}
                                     data={data[item]}
                                     extent={extent}
                                     nodeColor={nodeColor}
@@ -122,7 +122,7 @@ class GroupShiftingView extends React.Component {
                             <Col span={14}>
                                 <IndividualGroupDistribution
                                     svgID={"igd-" + item}
-                                    canvasHeight={"100"}
+                                    canvasHeight={"110"}
                                     groupID={item}
                                     extent={extent}
                                     nodeColor={nodeColor}

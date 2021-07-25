@@ -92,7 +92,7 @@ class Main extends React.Component {
             showAdvantagedNode: false,
             highlightAttribute: true,
             displayAttributeModal: false,
-            similarityThreshold: 0.0005
+            similarityThreshold: 0.0045
         };
     }
 
@@ -902,7 +902,7 @@ class Main extends React.Component {
                                             <Text>Similarity Threshold</Text>
                                             <Slider
                                                 min={0}
-                                                max={0.004}
+                                                max={0.005}
                                                 onChange={value => {
                                                     this.setState({
                                                         similarityThreshold: value
@@ -918,7 +918,7 @@ class Main extends React.Component {
                                             />
                                             <InputNumber
                                                 min={0}
-                                                max={0.004}
+                                                max={0.005}
                                                 value={
                                                     this.state
                                                         .similarityThreshold

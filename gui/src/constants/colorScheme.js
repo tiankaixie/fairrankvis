@@ -12,6 +12,7 @@ export const attributeBar = "#666";
 export const regularGrey = "#D6D6D6";
 export const textGrey = "#ddd";
 
+// Facebook
 export const subGroupColor = [
     "#F9C796",
     "#F0ABAC",
@@ -34,7 +35,6 @@ export const subGroupHighlightColor = [
     "#CEB86A"
 ];
 
-
 // Weibo
 // export const subGroupColor = [
 //     "#CEBAAF",
@@ -45,18 +45,6 @@ export const subGroupHighlightColor = [
 //     "#D7BDD0",
 //     "#F0ABAC",
 //     "#A7BCD3"
-// ];
-
-
-// export const subGroupColor = [
-//     "#BBDBD9",
-//     "#F0ABAC",
-//     "#ACD0A7",
-//     "#A7BCD3",
-//     "#F9C796",
-//     "#D7BDD0",
-//     "#CEBAAF",
-//     "#F6E4A4"
 // ];
 
 // export const subGroupHighlightColor = [

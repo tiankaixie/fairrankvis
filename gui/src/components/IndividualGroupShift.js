@@ -75,20 +75,22 @@ class IndividualGroupShift extends React.Component {
         svgBase
             .append("g")
             .attr("transform", "translate(0," + (margin.top + barHeight) + ")")
-            .call(d3.axisBottom(statXScale).ticks(5));
+            .call(d3.axisBottom(statXScale).ticks(5))
+            .selectAll("text")
+            .attr("font-size", "0.8rem");
 
         svgBase
             .append("g")
             .attr("transform", "translate(0," + barHeight + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
+            .attr("font-size", "0.8rem")
             .text("Average Ranking Change");
 
         svgBase
             .append("g")
-            .attr("transform", "translate(0," + (55 + barHeight) + ")")
+            .attr("transform", "translate(0," + (65 + barHeight) + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
+            .attr("font-size", "0.8rem")
             .text("Ranking Position");
 
         svgBase

@@ -64,7 +64,7 @@ class MiningResultDensity extends React.Component {
             clusterSliderUI,
             updateBrushClusterSelected
         } = props;
-        const margin = { top: 24, right: 25, bottom: 30, left: 45 };
+        const margin = { top: 24, right: 25, bottom: 40, left: 45 };
         const height = canvasHeight;
         const width = this.container.current.getBoundingClientRect().width;
 
@@ -189,7 +189,8 @@ class MiningResultDensity extends React.Component {
                     ")"
             )
             .append("text")
-            .attr("font-size", "0.6rem")
+            .attr("font-size", "0.8rem")
+            .attr("class", "label-text")
             .text("Ranking Score");
 
         svg.append("g")
@@ -198,7 +199,7 @@ class MiningResultDensity extends React.Component {
                 "translate(" + 0 + "," + Number(margin.top - 10) + ")"
             )
             .append("text")
-            .attr("font-size", "0.6rem")
+            .attr("font-size", "0.8rem")
             .text("Count");
 
         svg.append("g")
@@ -217,11 +218,13 @@ class MiningResultDensity extends React.Component {
             .attr("class", "label-text")
             .attr("dy", ".35em")
             .attr("transform", "rotate(-35)")
-            .attr("font-size", "0.6rem")
+            .attr("font-size", "0.8rem")
             .style("text-anchor", "end");
         svg.append("g")
             .attr("transform", "translate(" + margin.left + ",0)")
-            .call(d3.axisLeft(yScale).ticks(6));
+            .call(d3.axisLeft(yScale).ticks(5))
+            .selectAll("text")
+            .attr("font-size", "0.8rem");
     }
 
     renderScatterPlot(baseGroup, props) {
