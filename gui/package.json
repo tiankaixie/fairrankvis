@@ -11,6 +11,7 @@
         "antd": "^4.12.3",
         "array-normalize": "^2.0.0",
         "axios": "^0.21.1",
+        "clusters": "^0.0.4",
         "d3": "^5.10.0",
         "d3-tip": "^0.9.1",
         "http-proxy-middleware": "^1.0.3",

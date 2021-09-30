@@ -18,8 +18,8 @@ const initialStateConfig = {
     facebook: {
         initialAttributes: new Set([
             //"birthday",
-            //"gender",
-            //"locale"
+            // "gender",
+            // "locale"
             //"middle_name",
             //"political"
         ])

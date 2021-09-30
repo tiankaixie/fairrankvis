@@ -1,8 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import * as d3 from "d3";
 import { Table, Tag } from "antd";
-import {subGroupColor} from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -17,13 +15,13 @@ const mapStateToProps = state => {
 
 class SubgroupTable extends React.Component {
     render() {
-        let data = [];
         let columns = [];
         const {
             input,
             attributeList,
             brushSelectedCluster,
-            canvasHeight
+            canvasHeight,
+            nodeColor
         } = this.props;
         if (brushSelectedCluster.size === 0)
             return (
@@ -36,22 +34,20 @@ class SubgroupTable extends React.Component {
                 />
             );
         let wholeData = [];
-        let groupData = [];
+        let targetNodes = [];
         let similarGroup = {};
         let wholeGroup = {};
         let maxLen = 1;
         wholeData = Object.keys(input.nodes).map(key => input.nodes[key]);
-        groupData = wholeData.filter(item => {
+        targetNodes = wholeData.filter(item => {
             return brushSelectedCluster.has(String(item.id));
         });
         const dimensions = [...attributeList.selectedAttributes];
-        let itemSetIDLists = new Set()
         wholeData.forEach(value => {
             let itemSetID = "";
             dimensions.forEach((d, i) => {
                 itemSetID += value[d];
             });
-            itemSetIDLists.add(itemSetID)
             if (wholeGroup.hasOwnProperty(itemSetID)) {
                 wholeGroup[itemSetID].value += 1;
                 maxLen = Math.max(maxLen, wholeGroup[itemSetID].value);
@@ -62,7 +58,7 @@ class SubgroupTable extends React.Component {
                 };
             }
         });
-        groupData.forEach(value => {
+        targetNodes.forEach(value => {
             let itemSetID = "";
             let itemSetList = [];
             let itemSetAttr = {};
@@ -70,6 +66,7 @@ class SubgroupTable extends React.Component {
                 itemSetID += value[d];
                 itemSetAttr[d] = input.labels[d]["map"][value[d]];
             });
+
             if (similarGroup.hasOwnProperty(itemSetID)) {
                 similarGroup[itemSetID].groupCount += 1;
             } else {
@@ -91,12 +88,10 @@ class SubgroupTable extends React.Component {
             return b.groupCount - a.groupCount;
         });
 
-        itemSetIDLists = [...itemSetIDLists].sort()
-        console.log(itemSetIDLists);
-        const subgroupColor = d3
-            .scaleOrdinal()
-            .domain(itemSetIDLists)
-            .range(subGroupColor);
+        const subgroupColor = nodeColor;
+        // d3    .scaleOrdinal()
+        //     .domain(itemSetIDLists)
+        //     .range(subGroupColor);
 
         columns.push({
             title: "Color",
@@ -133,7 +128,7 @@ class SubgroupTable extends React.Component {
                 },
                 render: rowData => {
                     if (rowData[d]) {
-                        return <div style={{width: 100}}>{rowData[d]}</div>
+                        return <div style={{ width: 100 }}>{rowData[d]}</div>;
                     } else {
                         return "N/A";
                     }

@@ -1,12 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import store from "./store";
 import { Provider } from "react-redux";
 import "antd/dist/antd.css";
-import { Button, DatePicker, version } from "antd";
-import Main from "./components/Main";
 import Base from "./components/Base";
-
 
 function getWindowDimensions() {
     const { innerWidth: width, innerHeight: height } = window;
@@ -34,7 +31,7 @@ function useWindowDimensions() {
 }
 
 function App() {
-    const { height, width } = useWindowDimensions();
+    const { height } = useWindowDimensions();
     return (
         <div className="App">
             <Provider store={store}>

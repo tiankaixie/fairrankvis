@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { regularGreyDark } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -43,11 +42,8 @@ class IndividualGroupDistribution extends React.Component {
             input,
             output,
             groupID,
-            clusterSliderUI,
             attributeList,
             brushSelectedCluster,
-            modelName,
-            individualSim,
             nodeColor
         } = props;
 
@@ -94,11 +90,11 @@ class IndividualGroupDistribution extends React.Component {
             }
             let currRank = output["res"][node]["rank"];
             if (currRank >= rankStart && currRank <= rankEnd) {
-                data.push({ x: currRank, y: -1 });
+                data.push({ nodeID: "target" + node, x: currRank, y: -1 });
             }
             currRank = input["topological_feature"]["pagerank"][node]["rank"];
             if (currRank >= rankStart && currRank <= rankEnd) {
-                data.push({ x: currRank, y: 1 });
+                data.push({ nodeID: "base" + node, x: currRank, y: 1 });
             }
         });
 
@@ -125,6 +121,7 @@ class IndividualGroupDistribution extends React.Component {
             .selectAll("rect")
             .data(data)
             .join("rect")
+            .attr("id", d => "distr" + d["nodeID"])
             .attr("x", d => statXScale(d.x))
             .attr("y", d => {
                 if (d.y >= 0) {
@@ -163,7 +160,9 @@ class IndividualGroupDistribution extends React.Component {
                         return "";
                     }
                 })
-            );
+            )
+            .selectAll("text")
+            .attr("font-size", "0.8rem");
 
         detailView
             .selectAll("g.tick")
@@ -172,17 +171,17 @@ class IndividualGroupDistribution extends React.Component {
 
         detailView
             .append("g")
-            .attr("transform", "translate(" + (margin.left) + "," + 40 + ")")
+            .attr("transform", "translate(" + margin.left + "," + 40 + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
-            .text("Base Model")
+            .attr("font-size", "0.8rem")
+            .text("Base Model");
 
         detailView
             .append("g")
-            .attr("transform", "translate(" + (margin.left) + "," + 90 + ")")
+            .attr("transform", "translate(" + margin.left + "," + 105 + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
-            .text("Target Model")
+            .attr("font-size", "0.8rem")
+            .text("Target Model");
     }
 
     /**

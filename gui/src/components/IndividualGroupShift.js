@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
 import { connect } from "react-redux";
-import { regularGreyDark } from "../constants/colorScheme";
 
 const mapStateToProps = state => {
     return {
@@ -37,7 +36,7 @@ class IndividualGroupShift extends React.Component {
     }
 
     renderSvg(props) {
-        let { svgID, canvasHeight, data, extent, nodeColor } = props;
+        let { svgID, data, extent, nodeColor } = props;
 
         /***
          * Terminate rendering condition
@@ -47,7 +46,6 @@ class IndividualGroupShift extends React.Component {
         /***
          * Canvas setup
          */
-        const height = canvasHeight;
         const width = this.container.current.getBoundingClientRect().width - 5;
         const svgRoot = d3.select("#" + svgID);
         svgRoot.style("width", width);
@@ -77,20 +75,22 @@ class IndividualGroupShift extends React.Component {
         svgBase
             .append("g")
             .attr("transform", "translate(0," + (margin.top + barHeight) + ")")
-            .call(d3.axisBottom(statXScale).ticks(5));
+            .call(d3.axisBottom(statXScale).ticks(5))
+            .selectAll("text")
+            .attr("font-size", "0.8rem");
 
         svgBase
             .append("g")
-            .attr("transform", "translate(0," + (barHeight) + ")")
+            .attr("transform", "translate(0," + barHeight + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
+            .attr("font-size", "0.8rem")
             .text("Average Ranking Change");
 
         svgBase
             .append("g")
-            .attr("transform", "translate(0," + (55 + barHeight) + ")")
+            .attr("transform", "translate(0," + (65 + barHeight) + ")")
             .append("text")
-            .attr("font-size", "0.7rem")
+            .attr("font-size", "0.8rem")
             .text("Ranking Position");
 
         svgBase

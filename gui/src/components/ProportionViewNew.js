@@ -1,9 +1,7 @@
 import * as React from "react";
-import * as d3 from "d3";
 import { connect } from "react-redux";
-import { Row, Col, Space, Tooltip } from "antd";
+import { Row, Col, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
-import { subGroupColor } from "../constants/colorScheme";
 import { displayName } from "../constants/text";
 
 const mapStateToProps = state => {
@@ -27,15 +25,13 @@ class ProportionViewNew extends React.Component {
 
     render() {
         let {
-            svgID,
-            canvasHeight,
             input,
             output,
-            clusterSliderUI,
             attributeList,
             brushSelectedCluster,
             modelName,
-            individualSim
+            individualSim,
+            nodeColor
         } = this.props;
         //
         // /***
@@ -94,10 +90,10 @@ class ProportionViewNew extends React.Component {
         let subgroupIDs = Object.keys(resultTopK);
         subgroupIDs.sort((a, b) => resultTopK[b] - resultTopK[a]);
         itemSetIDLists = [...itemSetIDLists].sort();
-        const nodeColor = d3
-            .scaleOrdinal()
-            .domain(itemSetIDLists)
-            .range(subGroupColor);
+        // const nodeColor = d3
+        //     .scaleOrdinal()
+        //     .domain(itemSetIDLists)
+        //     .range(subGroupColor);
 
         let inputNodes = Object.keys(input["topological_feature"]["pagerank"]);
         inputNodes.sort(
@@ -167,9 +163,13 @@ class ProportionViewNew extends React.Component {
                     <Tooltip
                         placement="top"
                         title={
-                            "ID: " + key + " " + ((inputTopK[key]["count"] * 100) / total).toFixed(
+                            "ID: " +
+                            key +
+                            " " +
+                            ((inputTopK[key]["count"] * 100) / total).toFixed(
                                 2
-                            ) + "%"
+                            ) +
+                            "%"
                         }
                     >
                         <div
@@ -178,7 +178,7 @@ class ProportionViewNew extends React.Component {
                                     (inputTopK[key]["count"] / total) *
                                     totalWidth,
                                 backgroundColor: nodeColor(key),
-                                height: 20,
+                                height: 20
                             }}
                         />
                     </Tooltip>
@@ -195,9 +195,13 @@ class ProportionViewNew extends React.Component {
                     <Tooltip
                         placement="bottom"
                         title={
-                            "ID: " + key + " " + ((resultTopK[key]["count"] * 100) / total).toFixed(
+                            "ID: " +
+                            key +
+                            " " +
+                            ((resultTopK[key]["count"] * 100) / total).toFixed(
                                 2
-                            ) + "%"
+                            ) +
+                            "%"
                         }
                     >
                         <div
@@ -206,7 +210,7 @@ class ProportionViewNew extends React.Component {
                                     (resultTopK[key]["count"] / total) *
                                     totalWidth,
                                 backgroundColor: nodeColor(key),
-                                height: 20,
+                                height: 20
                             }}
                         />
                     </Tooltip>

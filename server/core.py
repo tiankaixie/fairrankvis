@@ -18,6 +18,7 @@ import utils
 from AttriRank import AttriRank
 from facebook_util import load_facebook_data
 from social_net_util import load_socialnet_data
+from sklearn.cluster import AffinityPropagation
 
 BASE_PATH = dirname(os.path.abspath(__file__))
 
@@ -517,11 +518,11 @@ def graph_mining(model_name: str, data: type(nx), labels: dict) -> dict:
         #                     print_every=args.print_every)
         scores = AttriRank(graph, feat, nodeCount=len(data.nodes()),
                            adjacency_matrix=nx.adjacency_matrix(data).todense()).runModel()
-        # print(scores)
-
+        # print(np.array(list(scores["0.85"])).reshape(-1, 1))
+        cluster =  AffinityPropagation(max_iter=1000).fit(np.array(list(scores["0.85"])).reshape(-1, 1))
         graph_nodes = list(data.nodes)
         for index, node in enumerate(graph_nodes):
-            res[node] = {"res": scores["0.85"][index]}
+            res[node] = {"res": scores["0.85"][index], "cluster": cluster.labels_[index]}
         rank_index = sorted(range(len(scores["0.85"])), key=lambda k: scores["0.85"][k], reverse=True)
         for rank, i in enumerate(rank_index):
             res[graph_nodes[i]]["rank"] = rank + 1
@@ -542,8 +543,9 @@ def graph_mining(model_name: str, data: type(nx), labels: dict) -> dict:
         graph_nodes = list(data.nodes)
         r = r.toarray().reshape(-1)
         # print(r[0])
+        cluster =  AffinityPropagation().fit(r.reshape(-1, 1))
         for index, node in enumerate(graph_nodes):
-            res[node] = {"res": r[index]}
+            res[node] = {"res": r[index], "cluster": cluster.labels_[index]}
         rank_index = sorted(range(len(r)), key=lambda k: r[k], reverse=True)
         for rank, i in enumerate(rank_index):
             res[graph_nodes[i]]["rank"] = rank + 1
