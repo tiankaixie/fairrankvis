@@ -23,7 +23,9 @@ import {
     Space,
     List,
     Tag,
-    Empty
+    Empty,
+    Alert,
+    Tooltip
 } from "antd";
 import { Typography } from "antd";
 import {
@@ -373,7 +375,14 @@ class Main extends React.Component {
                                                     {displayName["inform"]}
                                                 </Option>
                                             </Select>
-                                            <QuestionCircleOutlined />
+                                            <Tooltip
+                                                placement="right"
+                                                title={
+                                                    "Select 1. dataset, 2. base model and 3. target model"
+                                                }
+                                            >
+                                                <QuestionCircleOutlined />
+                                            </Tooltip>
                                         </Space>
                                     }
                                 >
@@ -473,7 +482,14 @@ class Main extends React.Component {
                                                             });
                                                         }}
                                                     />
-                                                    <QuestionCircleOutlined />
+                                                    <Tooltip
+                                                        placement="right"
+                                                        title={
+                                                            "Attribute view shows the distribution of attribute values."
+                                                        }
+                                                    >
+                                                        <QuestionCircleOutlined />
+                                                    </Tooltip>
                                                 </Space>
                                             }
                                         >
@@ -513,7 +529,16 @@ class Main extends React.Component {
                                         <Card
                                             size="small"
                                             title="ATTRIBUTES SETTING"
-                                            extra={<QuestionCircleOutlined />}
+                                            extra={
+                                                <Tooltip
+                                                    placement="left"
+                                                    title={
+                                                        "Attribute setting allows to select attributes as sensitive attributes"
+                                                    }
+                                                >
+                                                    <QuestionCircleOutlined />
+                                                </Tooltip>
+                                            }
                                         >
                                             <div style={{ padding: 16 }}>
                                                 <Row>
@@ -627,6 +652,10 @@ class Main extends React.Component {
                                                                                     );
                                                                                 }}
                                                                             >
+                                                                                <Alert
+                                                                                    message="Sorry, changing continous attributes to categorical attribute is under development. "
+                                                                                    type="warning"
+                                                                                />
                                                                                 <Space direction="vertical">
                                                                                     <Space>
                                                                                         <Text>
@@ -883,7 +912,14 @@ class Main extends React.Component {
                                                 size="small"
                                                 onSearch={() => {}}
                                             />
-                                            <QuestionCircleOutlined />
+                                            <Tooltip
+                                                placement="right"
+                                                title={
+                                                    "Generated groups identified by colors"
+                                                }
+                                            >
+                                                <QuestionCircleOutlined />
+                                            </Tooltip>
                                         </Space>
                                     }
                                 >
@@ -970,7 +1006,14 @@ class Main extends React.Component {
                                                     });
                                                 }}
                                             />
-                                            <QuestionCircleOutlined />
+                                            <Tooltip
+                                                placement="left"
+                                                title={
+                                                    "rank mapping view shows the ranking changes before and after applying the debiased model."
+                                                }
+                                            >
+                                                <QuestionCircleOutlined />
+                                            </Tooltip>
                                         </Space>
                                     }
                                 >
