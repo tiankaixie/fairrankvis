@@ -28,6 +28,4 @@ __pycache__
 
 /server/data
 
-/server/cached_data
-
 .vscode
